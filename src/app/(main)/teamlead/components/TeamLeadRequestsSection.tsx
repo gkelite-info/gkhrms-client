@@ -1,7 +1,10 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { UsersThree, FileText } from "phosphor-react"
+import TeamLeadMyRequestsSection from "./my-requests/TeamLeadMyRequestsSection"
+import { initialMyRequests } from "./my-requests/myRequestsData"
 import toast, { Toaster } from "react-hot-toast"
 import {
   DateFilterValue,
@@ -21,7 +24,23 @@ import { getRequestsColumns } from "../requests/components/requestsColumns"
 import { getDefaultDateFilterValue } from "../data/dateFilterUtils"
 
 export default function TeamLeadRequestsSection() {
+  const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  const tabParam = searchParams.get("tab")
+  const subtabParam = searchParams.get("subtab")
+  const activeSubtab =
+    tabParam === "my-requests" || subtabParam === "my-requests"
+      ? "my-requests"
+      : "team-requests"
+
+  const handleSubtabChange = (subtab: "team-requests" | "my-requests") => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", "requests")
+    params.set("subtab", subtab)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }
 
   const [requests, setRequests] = useState<AttendanceRequestItem[]>(initialRequests)
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") || searchParams.get("search") || "")
@@ -124,7 +143,67 @@ export default function TeamLeadRequestsSection() {
       <Toaster position="top-right" toastOptions={{ duration: 3200 }} />
       <RequestsHeader />
 
-      <RequestsStatsCards
+      <div className="w-full border-b border-gray-200 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-6 min-w-max pb-0.5">
+          <button
+            type="button"
+            onClick={() => handleSubtabChange("team-requests")}
+            className={`flex items-center gap-2 pb-3 pt-1 text-xs sm:text-sm font-semibold transition-all cursor-pointer border-b-2 -mb-[2px] ${
+              activeSubtab === "team-requests"
+                ? "border-[#5B50EC] text-[#5B50EC] font-bold"
+                : "border-transparent text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            <UsersThree
+              size={16}
+              weight={activeSubtab === "team-requests" ? "fill" : "bold"}
+              className={activeSubtab === "team-requests" ? "text-[#5B50EC]" : "text-gray-400"}
+            />
+            <span>Team Requests</span>
+            <span
+              className={`text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors ${
+                activeSubtab === "team-requests"
+                  ? "bg-[#EEF2FF] text-[#5B50EC]"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+            >
+              {requests.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSubtabChange("my-requests")}
+            className={`flex items-center gap-2 pb-3 pt-1 text-xs sm:text-sm font-semibold transition-all cursor-pointer border-b-2 -mb-[2px] ${
+              activeSubtab === "my-requests"
+                ? "border-[#5B50EC] text-[#5B50EC] font-bold"
+                : "border-transparent text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            <FileText
+              size={16}
+              weight={activeSubtab === "my-requests" ? "fill" : "bold"}
+              className={activeSubtab === "my-requests" ? "text-[#5B50EC]" : "text-gray-400"}
+            />
+            <span>My Requests</span>
+            <span
+              className={`text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors ${
+                activeSubtab === "my-requests"
+                  ? "bg-[#EEF2FF] text-[#5B50EC]"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+            >
+              {initialMyRequests.length}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {activeSubtab === "my-requests" ? (
+        <TeamLeadMyRequestsSection hideHeader={true} />
+      ) : (
+        <>
+          <RequestsStatsCards
         pendingCount={pendingCount}
         approvedCount={approvedCount}
         rejectedCount={rejectedCount}
@@ -181,6 +260,8 @@ export default function TeamLeadRequestsSection() {
           confirmText={confirmDialog.type === "approve" ? "Approve" : "Reject"}
           cancelText="Cancel"
         />
+      )}
+        </>
       )}
     </div>
   )

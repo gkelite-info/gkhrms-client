@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import toast from "react-hot-toast"
 import { MagnifyingGlass, X } from "phosphor-react"
 import {
@@ -38,14 +38,16 @@ export default function MyRequestsFilterBar({
 }: MyRequestsFilterBarProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const basePath = pathname?.startsWith("/manager") ? "/manager" : "/teamlead"
+  const searchParams = useSearchParams()
   const filterTabs: MyFilterType[] = ["All", "Leave", "Work From Home"]
 
   const handleTabClick = (tab: MyFilterType) => {
     onFilterTypeChange(tab)
     const typeQuery =
       tab === "Leave" ? "leave" : tab === "Work From Home" ? "wfh" : "all"
-    router.replace(`${basePath}?tab=my-requests&type=${typeQuery}`, {
+    const params = new URLSearchParams(searchParams ? searchParams.toString() : "");
+    params.set("type", typeQuery);
+    router.replace(`${pathname}?${params.toString()}`, {
       scroll: false,
     })
   }

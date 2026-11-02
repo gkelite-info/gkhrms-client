@@ -1,15 +1,25 @@
 "use client"
 import React from "react"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
-import { DonotChatData } from "../features/hr/components/ExperienceDistribution"
+import { DonotChatData } from "../Features/Hr/Components/ExperienceDistribution"
 
 interface DonutChartProps {
   chartData: DonotChatData[]
+  innerRadius?: number
+  outerRadius?: number
+  height?: number | string
+  width?: number | string
 }
 
-const DonutChart: React.FC<DonutChartProps> = ({ chartData }) => {
+const DonutChart: React.FC<DonutChartProps> = ({
+  chartData,
+  innerRadius = 38,
+  outerRadius = 58,
+  height = 140,
+  width = "100%",
+}) => {
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width={width} height={height}>
       <PieChart>
         <Pie
           data={chartData}
@@ -17,19 +27,14 @@ const DonutChart: React.FC<DonutChartProps> = ({ chartData }) => {
           nameKey="name"
           cx="50%"
           cy="50%"
-          innerRadius={50}
-          outerRadius={80}
+          innerRadius={innerRadius}
+          outerRadius={outerRadius}
           paddingAngle={0}
-          //   label={({ name, percent }) =>
-          //     `${name} ${(percent * 100).toFixed(0)}%`
-          //   }
         >
           {chartData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
         </Pie>
-        {/* <Tooltip /> */}
-        {/* <Legend /> */}
       </PieChart>
     </ResponsiveContainer>
   )

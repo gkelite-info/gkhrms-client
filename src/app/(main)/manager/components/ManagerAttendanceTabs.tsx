@@ -47,19 +47,9 @@ export default function ManagerAttendanceTabs({
       icon: Users,
     },
     {
-      key: "tl-wise-attendance" as ManagerTabKey,
-      label: "TL-wise Attendance",
-      icon: UsersThree,
-    },
-    {
       key: "requests" as ManagerTabKey,
       label: "Requests",
       icon: Article,
-    },
-    {
-      key: "my-requests" as ManagerTabKey,
-      label: "My Requests",
-      icon: FileText,
     },
     {
       key: "exception-history" as ManagerTabKey,
@@ -82,7 +72,10 @@ export default function ManagerAttendanceTabs({
         <div className="bg-white rounded-full p-1 shadow-xs border border-gray-100 inline-flex items-center gap-1 sm:gap-1.5 shrink-0">
           {tabs.map((tab) => {
             const Icon = tab.icon
-            const isActive = activeTab === tab.key
+            const isActive =
+              activeTab === tab.key ||
+              (tab.key === "requests" && activeTab === "my-requests") ||
+              (tab.key === "team-attendance" && activeTab === "tl-wise-attendance")
 
             return (
               <button
