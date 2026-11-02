@@ -1,6 +1,7 @@
 "use client"
 
-import React from "react"
+import React, { useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { CalendarBlank, X } from "phosphor-react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -34,6 +35,7 @@ interface DateFilterModalProps {
   onSelectDate: (day: number, month?: number, year?: number) => void
   onSelectMonth: (mIdx: number) => void
   onSelectYear: (yr: number) => void
+  minYear?: number
 }
 
 export default function DateFilterModal({
@@ -57,28 +59,46 @@ export default function DateFilterModal({
   onSelectDate,
   onSelectMonth,
   onSelectYear,
+  minYear,
 }: DateFilterModalProps) {
-  return (
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [isOpen, onClose])
+
+  if (!mounted) return null
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+        <motion.div
+          key="date-filter-modal-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          onClick={onClose}
+          className={`fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 ${
+            backdropClassName || "bg-black/55 backdrop-blur-xs"
+          }`}
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={onClose}
-            className={`fixed inset-0 ${
-              backdropClassName || "bg-black/60 backdrop-blur-md"
-            }`}
-          />
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 8 }}
+            initial={{ opacity: 0, scale: 0.95, y: 6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 8 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="relative z-10 w-full max-w-[340px] sm:max-w-[350px] bg-white rounded-3xl shadow-2xl border border-gray-100 p-4 sm:p-4.5 flex flex-col gap-2.5 select-none"
+            exit={{ opacity: 0, scale: 0.95, y: 6 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-[340px] sm:max-w-[350px] bg-white rounded-3xl shadow-2xl border border-gray-100 p-4 sm:p-4.5 flex flex-col gap-2.5 select-none"
           >
             <div className="flex items-center justify-between border-b border-gray-100 pb-2 px-0.5 shrink-0">
               <div className="flex items-center gap-2">
@@ -164,6 +184,16 @@ export default function DateFilterModal({
                     }
                   }}
                   onSelectDate={onSelectDate}
+                  onSwitchToMonth={
+                    availableModes.includes("month")
+                      ? () => setActiveTab("month")
+                      : undefined
+                  }
+                  onSwitchToYear={
+                    availableModes.includes("year")
+                      ? () => setActiveTab("year")
+                      : undefined
+                  }
                 />
               )}
 
@@ -175,13 +205,19 @@ export default function DateFilterModal({
                   onPrevYear={() => setNavYear(navYear - 1)}
                   onNextYear={() => setNavYear(navYear + 1)}
                   onSelectMonth={onSelectMonth}
+                  onSwitchToYear={
+                    availableModes.includes("year")
+                      ? () => setActiveTab("year")
+                      : undefined
+                  }
                 />
               )}
 
               {activeTab === "year" && (
                 <YearView
                   navYear={navYear}
-                  selectedYear={value.selectedYear}
+                  selectedYear={navYear || value.selectedYear}
+                  minYear={minYear}
                   onPrevDecade={() => setNavYear((prev) => prev - 10)}
                   onNextDecade={() => setNavYear((prev) => prev + 10)}
                   onSelectYear={onSelectYear}
@@ -189,8 +225,9 @@ export default function DateFilterModal({
               )}
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }

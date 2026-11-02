@@ -200,7 +200,7 @@ export default function HrAttendanceTableSection({
               placeholder="Search by name, employee ID, department..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#5B50EC] focus:ring-1 focus:ring-[#5B50EC] transition-all bg-white"
+              className="w-full h-10 pl-9 pr-3.5 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#5B50EC] focus:ring-1 focus:ring-[#5B50EC] transition-all bg-white"
             />
           </div>
 
@@ -208,9 +208,10 @@ export default function HrAttendanceTableSection({
             <ReusableDateFilter
               value={fromDate}
               onChange={onFromDateChange}
-              modes={["date", "30-days"]}
+              modes={["date", "month", "year"]}
               title="Select From Date"
               className="w-full sm:w-auto"
+              buttonClassName="w-full sm:w-auto h-10 px-3.5 flex items-center justify-between gap-2 rounded-xl bg-white border border-gray-200 text-xs sm:text-sm font-medium text-gray-700 hover:border-[#5B50EC] hover:bg-gray-50/50 transition-all shadow-xs cursor-pointer select-none"
             />
           </div>
 
@@ -218,9 +219,10 @@ export default function HrAttendanceTableSection({
             <ReusableDateFilter
               value={toDate}
               onChange={onToDateChange}
-              modes={["date", "30-days"]}
+              modes={["date", "month", "year"]}
               title="Select To Date"
               className="w-full sm:w-auto"
+              buttonClassName="w-full sm:w-auto h-10 px-3.5 flex items-center justify-between gap-2 rounded-xl bg-white border border-gray-200 text-xs sm:text-sm font-medium text-gray-700 hover:border-[#5B50EC] hover:bg-gray-50/50 transition-all shadow-xs cursor-pointer select-none"
             />
           </div>
 
@@ -231,7 +233,7 @@ export default function HrAttendanceTableSection({
               onChange={(val) => onRoleFilterChange(String(val))}
               placeholder="Select Role"
               align="left"
-              buttonClassName="px-3.5 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white hover:bg-gray-50/50"
+              buttonClassName="w-full sm:w-auto h-10 px-3.5 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white hover:bg-gray-50/50 flex items-center justify-between gap-2"
             />
           </div>
         </div>
@@ -240,7 +242,7 @@ export default function HrAttendanceTableSection({
           <button
             type="button"
             onClick={onResetFilters}
-            className="text-xs font-semibold text-[#5B50EC] hover:underline cursor-pointer transition-colors px-2 py-1"
+            className="h-10 px-3 flex items-center text-xs font-semibold text-[#5B50EC] hover:underline cursor-pointer transition-colors"
           >
             Reset Filters
           </button>

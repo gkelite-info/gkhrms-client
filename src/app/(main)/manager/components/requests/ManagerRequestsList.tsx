@@ -6,6 +6,7 @@ import ManagerRequestItemCard from "./ManagerRequestItemCard"
 
 interface ManagerRequestsListProps {
   currentSubtab: "team-member" | "team-lead"
+  title?: string
   paginatedRequests: ManagerRequestItem[]
   totalItems: number
   currentPage: number
@@ -20,6 +21,7 @@ interface ManagerRequestsListProps {
 
 export default function ManagerRequestsList({
   currentSubtab,
+  title,
   paginatedRequests,
   totalItems,
   currentPage,
@@ -34,7 +36,7 @@ export default function ManagerRequestsList({
   return (
     <div className="flex flex-col gap-3">
       <h2 className="text-sm sm:text-base font-bold text-gray-900">
-        {currentSubtab === "team-lead" ? "Team Lead Requests" : "Team Member Requests"} ({totalItems})
+        {title || (currentSubtab === "team-lead" ? "Team Lead Requests" : "Team Member Requests")} ({totalItems})
       </h2>
 
       {paginatedRequests.length === 0 ? (

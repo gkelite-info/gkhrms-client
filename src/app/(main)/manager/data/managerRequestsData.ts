@@ -4,6 +4,7 @@ export interface ManagerRequestItem extends AttendanceRequestItem {
   duration?: string
   requestedOnTime?: string
   subtab?: "team-member" | "team-lead"
+  role?: string
 }
 
 export const INITIAL_MANAGER_REQUESTS: ManagerRequestItem[] = [
@@ -216,5 +217,39 @@ Please reach out directly on my primary phone number for any critical blockers.`
     reason: "Home electrical rewiring and structural repairs.",
     status: "Rejected",
     subtab: "team-lead",
+  },
+  {
+    id: "MREQ-013",
+    employeeId: "MGR001",
+    name: "Rajesh Kumar",
+    designation: "Engineering Manager",
+    department: "Engineering",
+    role: "Manager",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=160&auto=format&fit=crop&q=80",
+    requestType: "Leave",
+    date: "25 Aug 2025",
+    requestedTime: "1 Day",
+    duration: "(1 Day)",
+    requestedOnTime: "24 Aug 2025, 09:00 AM",
+    reason: "Attending quarterly management leadership offsite summit.",
+    status: "Approved",
+    subtab: "team-lead",
+  },
+  {
+    id: "MREQ-014",
+    employeeId: "HR001",
+    name: "Pooja Malhotra",
+    designation: "HR Specialist",
+    department: "Human Resources",
+    role: "HR",
+    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=160&auto=format&fit=crop&q=80",
+    requestType: "Work From Home",
+    date: "22 Aug 2025",
+    requestedTime: "1 Day",
+    duration: "(1 Day)",
+    requestedOnTime: "21 Aug 2025, 03:15 PM",
+    reason: "Coordination of candidate campus drive interviews and HR records audit.",
+    status: "Pending",
+    subtab: "team-member",
   },
 ]

@@ -6,94 +6,100 @@ import { CaretLeft, CaretRight } from "phosphor-react"
 interface YearViewProps {
   navYear: number
   selectedYear?: number
+  minYear?: number
   onPrevDecade: () => void
   onNextDecade: () => void
   onSelectYear: (year: number) => void
 }
 
-const ROW_HEIGHT = 38
+const SCROLL_STEP = 168
 
 export default function YearView({
   navYear,
   selectedYear,
+  minYear,
   onSelectYear,
 }: YearViewProps) {
   const currentYear = new Date().getFullYear()
-  const activeYear = selectedYear || currentYear
+  const activeYear = selectedYear || navYear || currentYear
 
-  const [minYear, setMinYear] = useState(1940)
-  const [maxYear, setMaxYear] = useState(2080)
-  const [visibleDecade, setVisibleDecade] = useState(Math.floor(activeYear / 10) * 10)
+  const startYear = useMemo(() => {
+    if (minYear !== undefined) return minYear
+    return Math.min(2025, activeYear, currentYear)
+  }, [minYear, activeYear, currentYear])
+
+  const [maxYear, setMaxYear] = useState(() =>
+    Math.max(startYear + 35, activeYear + 15)
+  )
+
+  const [visibleDecade, setVisibleDecade] = useState(
+    Math.floor(activeYear / 10) * 10
+  )
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const isUserScrollingRef = useRef(false)
+  const selectedYearRef = useRef<HTMLButtonElement>(null)
 
   const yearsList = useMemo(() => {
     const list: number[] = []
-    for (let yr = minYear; yr <= maxYear; yr++) {
+    for (let yr = startYear; yr <= maxYear; yr++) {
       list.push(yr)
     }
     return list
-  }, [minYear, maxYear])
+  }, [startYear, maxYear])
 
-  const scrollToYear = useCallback((targetYear: number, smooth = true) => {
-    const el = scrollContainerRef.current
-    if (!el) return
+  const scrollToActiveYear = useCallback((smooth = false) => {
+    const container = scrollContainerRef.current
+    const target = selectedYearRef.current
+    if (!container || !target) return
 
-    if (targetYear < minYear) {
-      setMinYear(targetYear - 15)
-    } else if (targetYear > maxYear) {
-      setMaxYear(targetYear + 15)
-    }
+    const containerTop = container.getBoundingClientRect().top
+    const targetTop = target.getBoundingClientRect().top
+    const relativeTop = targetTop - containerTop + container.scrollTop
+    const centeredTop =
+      relativeTop - container.clientHeight / 2 + target.clientHeight / 2
 
-    const yearIdx = targetYear - minYear
-    const rowIdx = Math.floor(yearIdx / 3)
-    const targetTop = Math.max(0, rowIdx * ROW_HEIGHT - 65)
-
-    el.scrollTo({
-      top: targetTop,
+    container.scrollTo({
+      top: Math.max(0, centeredTop),
       behavior: smooth ? "smooth" : "auto",
     })
-    setVisibleDecade(Math.floor(targetYear / 10) * 10)
-  }, [minYear, maxYear])
+  }, [])
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToYear(activeYear, false)
-    }, 10)
-    return () => clearTimeout(timer)
-  }, [activeYear, scrollToYear])
+    scrollToActiveYear(false)
+    const frameId = requestAnimationFrame(() => scrollToActiveYear(false))
+    const timer = setTimeout(() => scrollToActiveYear(false), 50)
+    return () => {
+      cancelAnimationFrame(frameId)
+      clearTimeout(timer)
+    }
+  }, [activeYear, scrollToActiveYear])
 
   const handleScroll = () => {
     const el = scrollContainerRef.current
     if (!el) return
 
-    const rowIdx = Math.floor(el.scrollTop / ROW_HEIGHT)
-    const topYear = minYear + rowIdx * 3
-    const newDecade = Math.floor(topYear / 10) * 10
-    setVisibleDecade(newDecade)
-
     if (el.scrollTop + el.clientHeight >= el.scrollHeight - 50) {
-      setMaxYear((prev) => prev + 30)
+      setMaxYear((prev) => prev + 24)
     }
 
-    if (el.scrollTop <= 25) {
-      const prevHeight = el.scrollHeight
-      const prevTop = el.scrollTop
-      setMinYear((prev) => prev - 30)
-
-      requestAnimationFrame(() => {
-        if (el) {
-          const heightDiff = el.scrollHeight - prevHeight
-          el.scrollTop = prevTop + heightDiff
-        }
-      })
-    }
+    const rowIdx = Math.floor((el.scrollTop + 36) / 42)
+    const topYear = startYear + rowIdx * 3
+    const newDecade = Math.floor(Math.max(startYear, topYear) / 10) * 10
+    setVisibleDecade(newDecade)
   }
 
   const handleStepDecade = (delta: number) => {
-    const target = visibleDecade + delta * 10
-    scrollToYear(target + 4, true)
+    const el = scrollContainerRef.current
+    if (!el) return
+
+    if (delta > 0 && el.scrollTop + el.clientHeight >= el.scrollHeight - 100) {
+      setMaxYear((prev) => prev + 24)
+    }
+
+    el.scrollBy({
+      top: delta * SCROLL_STEP,
+      behavior: "smooth",
+    })
   }
 
   const decadeEnd = visibleDecade + 9
@@ -106,7 +112,7 @@ export default function YearView({
           <button
             type="button"
             onClick={() => handleStepDecade(-1)}
-            title="Previous 10 Years"
+            title="Scroll Up"
             className="p-1 rounded-lg hover:bg-white text-gray-600 hover:text-[#5B50EC] transition-all cursor-pointer shadow-2xs"
           >
             <CaretLeft size={14} weight="bold" />
@@ -114,7 +120,7 @@ export default function YearView({
           <button
             type="button"
             onClick={() => handleStepDecade(1)}
-            title="Next 10 Years"
+            title="Scroll Down"
             className="p-1 rounded-lg hover:bg-white text-gray-600 hover:text-[#5B50EC] transition-all cursor-pointer shadow-2xs"
           >
             <CaretRight size={14} weight="bold" />
@@ -125,16 +131,17 @@ export default function YearView({
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="h-[180px] overflow-y-auto pr-1 space-y-1 custom-scrollbar my-0.5"
+        className="h-[200px] overflow-y-auto pr-1 space-y-1 custom-scrollbar my-0.5"
       >
         <div className="grid grid-cols-3 gap-1.5 pt-0.5">
           {yearsList.map((yr) => {
-            const isSelected = selectedYear === yr
+            const isSelected = activeYear === yr
             const isCurrent = currentYear === yr
 
             return (
               <button
                 key={yr}
+                ref={isSelected ? selectedYearRef : undefined}
                 type="button"
                 onClick={() => onSelectYear(yr)}
                 className={`h-9 px-1 rounded-xl text-xs font-semibold transition-all cursor-pointer select-none text-center flex items-center justify-center ${
@@ -153,12 +160,12 @@ export default function YearView({
       </div>
 
       <div className="flex items-center justify-between text-[11px] text-gray-400 font-medium pt-2 border-t border-gray-100 px-1 shrink-0">
-        <span className="text-[10px]">Continuous scroll ({minYear}+)</span>
+        <span className="text-[10px]">{startYear} – Future Years</span>
         <button
           type="button"
           onClick={() => {
             onSelectYear(currentYear)
-            scrollToYear(currentYear, true)
+            scrollToActiveYear(true)
           }}
           className="text-[#5B50EC] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
         >

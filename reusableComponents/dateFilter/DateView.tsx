@@ -11,6 +11,8 @@ interface DateViewProps {
   onPrevMonth: () => void
   onNextMonth: () => void
   onSelectDate: (day: number, month?: number, year?: number) => void
+  onSwitchToMonth?: () => void
+  onSwitchToYear?: () => void
 }
 
 export default function DateView({
@@ -20,6 +22,8 @@ export default function DateView({
   onPrevMonth,
   onNextMonth,
   onSelectDate,
+  onSwitchToMonth,
+  onSwitchToYear,
 }: DateViewProps) {
   const daysInMonth = new Date(navYear, navMonth + 1, 0).getDate()
   const firstDayIndex = new Date(navYear, navMonth, 1).getDay()
@@ -32,7 +36,32 @@ export default function DateView({
   return (
     <div className="w-full flex flex-col gap-2 pt-0.5">
       <div className="flex items-center justify-between text-xs font-bold text-gray-800 px-2.5 py-1.5 bg-gray-50/90 rounded-xl border border-gray-100 shrink-0">
-        <span>{MONTH_NAMES[navMonth]} {navYear}</span>
+        <div className="flex items-center gap-1">
+          {onSwitchToMonth ? (
+            <button
+              type="button"
+              onClick={onSwitchToMonth}
+              className="hover:text-[#5B50EC] hover:bg-white px-1 py-0.5 rounded-md transition-colors cursor-pointer"
+              title="Change month"
+            >
+              {MONTH_NAMES[navMonth]}
+            </button>
+          ) : (
+            <span>{MONTH_NAMES[navMonth]}</span>
+          )}
+          {onSwitchToYear ? (
+            <button
+              type="button"
+              onClick={onSwitchToYear}
+              className="hover:text-[#5B50EC] hover:bg-white px-1 py-0.5 rounded-md transition-colors cursor-pointer"
+              title="Change year"
+            >
+              {navYear}
+            </button>
+          ) : (
+            <span>{navYear}</span>
+          )}
+        </div>
         <div className="flex items-center gap-1">
           <button
             type="button"

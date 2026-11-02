@@ -11,6 +11,7 @@ interface MonthViewProps {
   onPrevYear: () => void
   onNextYear: () => void
   onSelectMonth: (monthIdx: number) => void
+  onSwitchToYear?: () => void
 }
 
 export default function MonthView({
@@ -20,6 +21,7 @@ export default function MonthView({
   onPrevYear,
   onNextYear,
   onSelectMonth,
+  onSwitchToYear,
 }: MonthViewProps) {
   const currentMonthIdx = new Date().getMonth()
   const currentYear = new Date().getFullYear()
@@ -27,7 +29,18 @@ export default function MonthView({
   return (
     <div className="w-full flex flex-col gap-2 pt-0.5">
       <div className="flex items-center justify-between text-xs font-bold text-gray-800 px-2.5 py-1.5 bg-gray-50/90 rounded-xl border border-gray-100 shrink-0">
-        <span>Year {navYear}</span>
+        {onSwitchToYear ? (
+          <button
+            type="button"
+            onClick={onSwitchToYear}
+            className="hover:text-[#5B50EC] hover:bg-white px-1 py-0.5 rounded-md transition-colors cursor-pointer"
+            title="Change year"
+          >
+            Year {navYear}
+          </button>
+        ) : (
+          <span>Year {navYear}</span>
+        )}
         <div className="flex items-center gap-1">
           <button
             type="button"

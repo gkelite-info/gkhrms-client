@@ -1,7 +1,7 @@
 "use client"
 
 import {  useState, useMemo  } from "react";
-import { useSearchParams, useRouter } from "next/navigation"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Toaster } from "react-hot-toast"
 import { DateFilterValue } from "@/components/reusableComponents"
 import {
@@ -15,12 +15,23 @@ import ManagerRequestsList from "./ManagerRequestsList"
 import ManagerRequestModals from "./ManagerRequestModals"
 import { useManagerRequestActions } from "./useManagerRequestActions"
 
-export default function ManagerRequestsSection() {
+interface ManagerRequestsSectionProps {
+  hideSubtabs?: boolean
+}
+
+export default function ManagerRequestsSection({
+  hideSubtabs = false,
+}: ManagerRequestsSectionProps = {}) {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  const isHrView = Boolean(hideSubtabs || pathname?.startsWith("/hr"))
 
   const currentSubtab =
     searchParams.get("subtab") === "team-lead" ? "team-lead" : "team-member"
+
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([])
 
   const [requests, setRequests] = useState<ManagerRequestItem[]>(INITIAL_MANAGER_REQUESTS)
   const [searchQuery, setSearchQuery] = useState("")
@@ -35,13 +46,18 @@ export default function ManagerRequestsSection() {
     useManagerRequestActions(requests, setRequests, viewingRequest, setViewingRequest)
 
   const handleSubtabChange = (subtab: "team-member" | "team-lead") => {
-    router.push(`/manager?tab=requests&subtab=${subtab}`)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("subtab", subtab)
+    router.push(`${pathname}?${params.toString()}`)
     setCurrentPage(1)
   }
 
   const subtabRequests = useMemo(() => {
+    if (isHrView) {
+      return requests
+    }
     return requests.filter((r) => r.subtab === currentSubtab)
-  }, [requests, currentSubtab])
+  }, [requests, currentSubtab, isHrView])
 
   const pendingCount = useMemo(
     () => subtabRequests.filter((r) => r.status === "Pending").length,
@@ -64,6 +80,25 @@ export default function ManagerRequestsSection() {
     [subtabRequests]
   )
 
+  const roleOptions = useMemo(() => ["Team Lead", "Manager", "Employee", "HR"], [])
+
+  const getRequestRole = (item: ManagerRequestItem): string => {
+    if (item.role) return item.role
+    if (item.subtab === "team-lead" || item.designation?.toLowerCase().includes("lead")) {
+      return "Team Lead"
+    }
+    if (item.designation?.toLowerCase().includes("manager")) {
+      return "Manager"
+    }
+    if (
+      item.department?.toLowerCase().includes("human") ||
+      item.designation?.toLowerCase().includes("hr")
+    ) {
+      return "HR"
+    }
+    return "Employee"
+  }
+
   const filteredRequests = useMemo(() => {
     return subtabRequests.filter((item) => {
       if (searchQuery.trim()) {
@@ -74,6 +109,9 @@ export default function ManagerRequestsSection() {
           item.reason.toLowerCase().includes(query) ||
           item.designation.toLowerCase().includes(query)
         if (!match) return false
+      }
+      if (selectedRoles.length > 0 && !selectedRoles.includes(getRequestRole(item))) {
+        return false
       }
       if (requestTypeFilter !== "All Types" && item.requestType !== requestTypeFilter) {
         return false
@@ -87,7 +125,7 @@ export default function ManagerRequestsSection() {
       }
       return true
     })
-  }, [subtabRequests, searchQuery, requestTypeFilter, statusFilter])
+  }, [subtabRequests, searchQuery, requestTypeFilter, statusFilter, selectedRoles])
 
   const totalPages = Math.max(1, Math.ceil(filteredRequests.length / pageSize))
   const paginatedRequests = useMemo(() => {
@@ -98,6 +136,7 @@ export default function ManagerRequestsSection() {
   const handleResetFilters = () => {
     setSearchQuery("")
     setRequestTypeFilter("All Types")
+    setSelectedRoles([])
     setStatusFilter("All Requests")
     setDateFilter(new Date(2025, 7, 24))
     setCurrentPage(1)
@@ -107,10 +146,12 @@ export default function ManagerRequestsSection() {
     <div className="w-full flex flex-col gap-4 sm:gap-5 min-w-0">
       <Toaster position="top-right" toastOptions={{ duration: 3200 }} />
 
-      <ManagerRequestsSubtabs
-        currentSubtab={currentSubtab}
-        onSubtabChange={handleSubtabChange}
-      />
+      {!isHrView && (
+        <ManagerRequestsSubtabs
+          currentSubtab={currentSubtab}
+          onSubtabChange={handleSubtabChange}
+        />
+      )}
 
       <ManagerRequestsStatsCards
         pendingCount={pendingCount}
@@ -136,6 +177,12 @@ export default function ManagerRequestsSection() {
           setStatusFilter(s)
           setCurrentPage(1)
         }}
+        selectedRoles={selectedRoles}
+        onRolesChange={(roles) => {
+          setSelectedRoles(roles)
+          setCurrentPage(1)
+        }}
+        roleOptions={roleOptions}
         dateFilter={dateFilter}
         onDateChange={(d) => {
           setDateFilter(d)
@@ -146,6 +193,7 @@ export default function ManagerRequestsSection() {
 
       <ManagerRequestsList
         currentSubtab={currentSubtab}
+        title={isHrView ? "Attendance Requests" : undefined}
         paginatedRequests={paginatedRequests}
         totalItems={filteredRequests.length}
         currentPage={currentPage}

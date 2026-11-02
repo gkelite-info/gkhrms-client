@@ -61,6 +61,8 @@ export default function HrDepartmentOverviewCards({
   selectedDepartment,
   onSelectDepartment,
 }: HrDepartmentOverviewCardsProps) {
+  const activeDept = selectedDepartment || HR_DEPARTMENT_OVERVIEWS[0]?.name || "Technology"
+
   const getDeptIcon = (iconType: HrDepartmentOverview["iconType"]) => {
     switch (iconType) {
       case "technology":
@@ -106,13 +108,13 @@ export default function HrDepartmentOverviewCards({
         {HR_DEPARTMENT_OVERVIEWS.map((dept) => {
           const config = getDeptIcon(dept.iconType)
           const Icon = config.icon
-          const isSelected = selectedDepartment === dept.name
+          const isSelected = activeDept === dept.name
 
           return (
             <div
               key={dept.id}
               onClick={() => onSelectDepartment?.(dept.name)}
-              className={`bg-white rounded-2xl p-4 border shadow-xs flex flex-col justify-between gap-3 transition-all cursor-pointer ${
+              className={`bg-white rounded-2xl p-4 border shadow-xs flex flex-col justify-between gap-3 h-full min-h-[142px] transition-all cursor-pointer select-none ${
                 isSelected
                   ? "border-[#5B50EC] ring-2 ring-[#5B50EC]/20"
                   : "border-gray-100 hover:border-[#5B50EC]/40"
@@ -127,18 +129,24 @@ export default function HrDepartmentOverviewCards({
                 <CircularProgress percentage={dept.percentage} />
               </div>
 
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-gray-900">
+              <div className="flex flex-col gap-1 min-w-0">
+                <span className="text-sm font-bold text-gray-900 truncate" title={dept.name}>
                   {dept.name}
                 </span>
-                <div className="text-xs text-gray-400 mt-1 flex items-center gap-1 font-medium">
-                  <span className="font-bold text-gray-800">
-                    {dept.present} / {dept.total}
-                  </span>
-                  <span>present</span>
-                  <span className="mx-1 text-gray-300">|</span>
-                  <span className="font-bold text-gray-700">{dept.absent}</span>
-                  <span>absent</span>
+
+                <div className="flex flex-col gap-0.5 mt-0.5">
+                  <div className="text-xs text-gray-500 font-medium whitespace-nowrap flex items-center gap-1">
+                    <span className="font-bold text-gray-900">
+                      {dept.present} / {dept.total}
+                    </span>
+                    <span className="text-gray-400 font-normal">present</span>
+                  </div>
+
+                  <div className="text-[11px] text-gray-400 font-medium whitespace-nowrap flex items-center gap-1">
+                    <span className="text-gray-300 font-light">|</span>
+                    <span className="font-semibold text-gray-700">{dept.absent}</span>
+                    <span>absent</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -148,4 +156,3 @@ export default function HrDepartmentOverviewCards({
     </div>
   )
 }
-
