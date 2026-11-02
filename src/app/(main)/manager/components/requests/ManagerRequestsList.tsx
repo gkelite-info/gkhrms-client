@@ -5,7 +5,7 @@ import { ManagerRequestItem } from "../../data/managerRequestsData"
 import ManagerRequestItemCard from "./ManagerRequestItemCard"
 
 interface ManagerRequestsListProps {
-  currentSubtab: "team-member" | "team-lead"
+  currentSubtab: "team-member" | "team-lead" | "my-requests"
   title?: string
   paginatedRequests: ManagerRequestItem[]
   totalItems: number

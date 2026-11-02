@@ -13,10 +13,8 @@ import AttendanceStatsCard from "../teamlead/components/AttendanceStatsCard"
 import TimingsCard from "../teamlead/components/TimingsCard"
 import ActionsCard from "../teamlead/components/ActionsCard"
 import LeaveBalanceSection from "../teamlead/components/LeaveBalanceSection"
-import ManagerTLWiseAttendanceSection from "./components/ManagerTLWiseAttendanceSection"
 import ManagerRequestsSection from "./components/requests/ManagerRequestsSection"
 import AttendanceLogSection from "../teamlead/components/AttendanceLogSection"
-import TeamLeadMyRequestsSection from "../teamlead/components/my-requests/TeamLeadMyRequestsSection"
 import TeamLeadExceptionHistorySection from "../teamlead/components/exception-history/TeamLeadExceptionHistorySection"
 import TeamLeadAttendanceFormContainer from "../teamlead/components/attendance-forms/TeamLeadAttendanceFormContainer"
 
@@ -36,13 +34,15 @@ function ManagerAttendanceContent() {
   const validTabs: ManagerTabKey[] = [
     "my-attendance",
     "team-attendance",
-    "tl-wise-attendance",
     "requests",
-    "my-requests",
     "exception-history",
   ]
   const activeTab: ManagerTabKey =
-    tabParam && validTabs.includes(tabParam as ManagerTabKey)
+    tabParam === "my-requests"
+      ? "requests"
+      : tabParam === "tl-wise-attendance"
+      ? "team-attendance"
+      : tabParam && validTabs.includes(tabParam as ManagerTabKey)
       ? (tabParam as ManagerTabKey)
       : "my-attendance"
 
@@ -59,18 +59,11 @@ function ManagerAttendanceContent() {
           <ManagerTabHeaderBanner activeTab={activeTab} />
           <ManagerTeamAttendanceSection />
         </>
-      ) : activeTab === "tl-wise-attendance" ? (
-        <>
-          <ManagerTabHeaderBanner activeTab={activeTab} />
-          <ManagerTLWiseAttendanceSection />
-        </>
       ) : activeTab === "requests" ? (
         <>
           <ManagerTabHeaderBanner activeTab={activeTab} />
           <ManagerRequestsSection />
         </>
-      ) : activeTab === "my-requests" ? (
-        <TeamLeadMyRequestsSection />
       ) : activeTab === "exception-history" ? (
         <TeamLeadExceptionHistorySection />
       ) : (

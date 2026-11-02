@@ -14,7 +14,13 @@ import MyRequestsFilterBar from "./MyRequestsFilterBar"
 import MyRequestsTable from "./MyRequestsTable"
 import MyRequestDetailModal from "./MyRequestDetailModal"
 
-export default function TeamLeadMyRequestsSection() {
+interface TeamLeadMyRequestsSectionProps {
+  hideHeader?: boolean
+}
+
+export default function TeamLeadMyRequestsSection({
+  hideHeader = false,
+}: TeamLeadMyRequestsSectionProps = {}) {
   const searchParams = useSearchParams()
   const typeParam = searchParams.get("type")
 
@@ -90,7 +96,7 @@ export default function TeamLeadMyRequestsSection() {
     <div className="flex flex-col gap-4 sm:gap-5 w-full min-w-0">
       <Toaster position="top-right" />
 
-      <MyRequestsHeader />
+      {!hideHeader && <MyRequestsHeader />}
 
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex flex-col gap-4 min-w-0">
         <MyRequestsFilterBar

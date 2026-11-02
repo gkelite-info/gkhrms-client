@@ -50,11 +50,6 @@ export default function AttendanceTabs({
       icon: Article,
     },
     {
-      key: "my-requests" as TabKey,
-      label: "My Requests",
-      icon: FileText,
-    },
-    {
       key: "exception-history" as TabKey,
       label: "Exception History",
       icon: ClockCounterClockwise,
@@ -75,7 +70,7 @@ export default function AttendanceTabs({
         <div className="bg-white rounded-full p-1 shadow-xs border border-gray-100 inline-flex items-center gap-1 sm:gap-1.5 shrink-0">
           {tabs.map((tab) => {
             const Icon = tab.icon
-            const isActive = activeTab === tab.key
+            const isActive = activeTab === tab.key || (tab.key === "requests" && activeTab === "my-requests")
 
             return (
               <button

@@ -82,7 +82,7 @@ export default function ManagerRequestItemCard({
         </div>
       </div>
 
-      <div className="rounded-xl bg-gray-50/70 p-3 border border-gray-100 flex flex-col gap-1 min-w-0">
+      <div className="rounded-xl bg-gray-50/70 p-3.5 border border-gray-100 flex flex-col gap-1.5 min-w-0">
         <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
           Reason for Request
         </span>
@@ -90,20 +90,20 @@ export default function ManagerRequestItemCard({
           {isExpanded || !isLongReason ? (
             item.reason
           ) : (
-            <>
-              <span className="line-clamp-2">{item.reason}</span>
-            </>
+            <span className="line-clamp-2">{item.reason}</span>
           )}
-          {isLongReason && (
+        </div>
+        {isLongReason && (
+          <div className="pt-2 mt-1 border-t border-gray-100/70">
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-[#5B50EC] font-bold hover:underline cursor-pointer inline-block mt-1 text-xs"
+              className="text-[#5B50EC] font-semibold hover:underline cursor-pointer inline-flex items-center gap-1 text-xs transition-colors"
             >
               {isExpanded ? "Show less" : "Read full reason"}
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2.5 border-t border-gray-100 min-w-0">

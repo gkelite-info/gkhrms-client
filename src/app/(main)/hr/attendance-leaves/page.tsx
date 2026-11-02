@@ -2,7 +2,7 @@
 
 import { useState, useMemo, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { User, ClipboardText } from "phosphor-react"
+import { User } from "phosphor-react"
 import { DateFilterValue } from "@/components/reusableComponents"
 import HrAttendanceHeader from "./components/HrAttendanceHeader"
 import HrAttendanceTabs, { HrAttendanceTab } from "./components/HrAttendanceTabs"
@@ -14,7 +14,7 @@ import {
   HR_ATTENDANCE_RECORDS,
   HrAttendanceRecord,
 } from "./data/hrAttendanceData"
-import TeamLeadMyRequestsSection from "../../teamlead/components/my-requests/TeamLeadMyRequestsSection"
+import HrAttendanceRequestsSection from "./components/requests/HrAttendanceRequestsSection"
 import HrExceptionHistorySection from "./components/exceptions/HrExceptionHistorySection"
 import ProfileSummaryCard from "../../teamlead/components/ProfileSummaryCard"
 import AttendanceDonutCard from "../../teamlead/components/AttendanceDonutCard"
@@ -25,7 +25,6 @@ import TimingsCard from "../../teamlead/components/TimingsCard"
 import ActionsCard from "../../teamlead/components/ActionsCard"
 import LeaveBalanceSection from "../../teamlead/components/LeaveBalanceSection"
 import AttendanceLogSection from "../../teamlead/components/AttendanceLogSection"
-import ManagerRequestsSection from "../../manager/components/requests/ManagerRequestsSection"
 import TeamLeadAttendanceFormContainer from "../../teamlead/components/attendance-forms/TeamLeadAttendanceFormContainer"
 
 function HrAttendanceLeavesContent() {
@@ -37,12 +36,13 @@ function HrAttendanceLeavesContent() {
     "my-attendance",
     "organization-attendance",
     "attendance-requests",
-    "my-requests",
     "exception-history",
   ]
 
   const activeTab: HrAttendanceTab =
-    tabParam && validTabs.includes(tabParam)
+    tabParam === "my-requests"
+      ? "attendance-requests"
+      : tabParam && validTabs.includes(tabParam)
       ? tabParam
       : "my-attendance"
 
@@ -219,28 +219,7 @@ function HrAttendanceLeavesContent() {
       )}
 
       {activeTab === "attendance-requests" && (
-        <div className="flex flex-col gap-4">
-          <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex items-center justify-between gap-4 min-w-0 transition-all">
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#EEF2FF] text-[#5B50EC] flex items-center justify-center shrink-0">
-                <ClipboardText size={24} weight="bold" />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-tight break-words">
-                  Attendance Requests
-                </h1>
-                <p className="text-xs sm:text-sm text-gray-400 font-medium mt-0.5 break-words">
-                  Review and manage leave and work from home requests across the organization.
-                </p>
-              </div>
-            </div>
-          </div>
-          <ManagerRequestsSection hideSubtabs={true} />
-        </div>
-      )}
-
-      {activeTab === "my-requests" && (
-        <TeamLeadMyRequestsSection />
+        <HrAttendanceRequestsSection />
       )}
 
       {activeTab === "exception-history" && (

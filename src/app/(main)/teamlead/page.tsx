@@ -15,7 +15,6 @@ import LeaveBalanceSection from "./components/LeaveBalanceSection"
 import AttendanceLogSection from "./components/AttendanceLogSection"
 import TeamLeadRequestsSection from "./components/TeamLeadRequestsSection"
 import TeamLeadApplyLeaveSection from "./components/TeamLeadApplyLeaveSection"
-import TeamLeadMyRequestsSection from "./components/my-requests/TeamLeadMyRequestsSection"
 import TeamLeadExceptionHistorySection from "./components/exception-history/TeamLeadExceptionHistorySection"
 
 function TeamLeadAttendanceContent() {
@@ -32,10 +31,11 @@ function TeamLeadAttendanceContent() {
   }
 
   const activeTab: TabKey =
-    tabParam === "team-attendance" ||
-    tabParam === "requests" ||
-    tabParam === "my-requests" ||
-    tabParam === "exception-history"
+    tabParam === "my-requests"
+      ? "requests"
+      : tabParam === "team-attendance" ||
+        tabParam === "requests" ||
+        tabParam === "exception-history"
       ? tabParam
       : "my-attendance"
 
@@ -51,8 +51,6 @@ function TeamLeadAttendanceContent() {
         <TeamAttendanceSection />
       ) : activeTab === "requests" ? (
         <TeamLeadRequestsSection />
-      ) : activeTab === "my-requests" ? (
-        <TeamLeadMyRequestsSection />
       ) : activeTab === "exception-history" ? (
         <TeamLeadExceptionHistorySection />
       ) : (

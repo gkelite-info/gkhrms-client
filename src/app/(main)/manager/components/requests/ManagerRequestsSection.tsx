@@ -8,7 +8,9 @@ import {
   INITIAL_MANAGER_REQUESTS,
   ManagerRequestItem,
 } from "../../data/managerRequestsData"
-import ManagerRequestsSubtabs from "./ManagerRequestsSubtabs"
+import ManagerRequestsSubtabs, { ManagerSubtabKey } from "./ManagerRequestsSubtabs"
+import TeamLeadMyRequestsSection from "@/app/(main)/teamlead/components/my-requests/TeamLeadMyRequestsSection"
+import { initialMyRequests } from "@/app/(main)/teamlead/components/my-requests/myRequestsData"
 import ManagerRequestsStatsCards from "./ManagerRequestsStatsCards"
 import ManagerRequestsFilterBar from "./ManagerRequestsFilterBar"
 import ManagerRequestsList from "./ManagerRequestsList"
@@ -28,8 +30,14 @@ export default function ManagerRequestsSection({
 
   const isHrView = Boolean(hideSubtabs || pathname?.startsWith("/hr"))
 
-  const currentSubtab =
-    searchParams.get("subtab") === "team-lead" ? "team-lead" : "team-member"
+  const tabParam = searchParams.get("tab")
+  const subtabParam = searchParams.get("subtab")
+  const currentSubtab: ManagerSubtabKey =
+    tabParam === "my-requests" || subtabParam === "my-requests"
+      ? "my-requests"
+      : subtabParam === "team-lead"
+      ? "team-lead"
+      : "team-member"
 
   const [selectedRoles, setSelectedRoles] = useState<string[]>([])
 
@@ -45,12 +53,23 @@ export default function ManagerRequestsSection({
   const { confirmDialog, setConfirmDialog, promptAction, executeConfirmAction } =
     useManagerRequestActions(requests, setRequests, viewingRequest, setViewingRequest)
 
-  const handleSubtabChange = (subtab: "team-member" | "team-lead") => {
+  const handleSubtabChange = (subtab: ManagerSubtabKey) => {
     const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", "requests")
     params.set("subtab", subtab)
-    router.push(`${pathname}?${params.toString()}`)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
     setCurrentPage(1)
   }
+
+  const teamMemberCount = useMemo(
+    () => requests.filter((r) => r.subtab === "team-member").length,
+    [requests]
+  )
+  const teamLeadCount = useMemo(
+    () => requests.filter((r) => r.subtab === "team-lead").length,
+    [requests]
+  )
+  const myRequestsCount = initialMyRequests.length
 
   const subtabRequests = useMemo(() => {
     if (isHrView) {
@@ -150,10 +169,17 @@ export default function ManagerRequestsSection({
         <ManagerRequestsSubtabs
           currentSubtab={currentSubtab}
           onSubtabChange={handleSubtabChange}
+          teamMemberCount={teamMemberCount}
+          teamLeadCount={teamLeadCount}
+          myRequestsCount={myRequestsCount}
         />
       )}
 
-      <ManagerRequestsStatsCards
+      {currentSubtab === "my-requests" && !isHrView ? (
+        <TeamLeadMyRequestsSection hideHeader={true} />
+      ) : (
+        <>
+          <ManagerRequestsStatsCards
         pendingCount={pendingCount}
         approvedCount={approvedCount}
         rejectedCount={rejectedCount}
@@ -218,6 +244,8 @@ export default function ManagerRequestsSection({
         onCloseConfirm={() => setConfirmDialog(null)}
         onConfirmAction={executeConfirmAction}
       />
+        </>
+      )}
     </div>
   )
 }

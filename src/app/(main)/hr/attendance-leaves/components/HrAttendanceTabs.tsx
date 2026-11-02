@@ -47,7 +47,6 @@ export default function HrAttendanceTabs({
       label: "Attendance Requests",
       icon: ClipboardText,
     },
-    { id: "my-requests" as const, label: "MY Requests", icon: FileText },
     {
       id: "exception-history" as const,
       label: "Exception History",
@@ -61,7 +60,9 @@ export default function HrAttendanceTabs({
         <div className="flex items-center gap-2 min-w-max">
           {tabs.map((tab) => {
             const Icon = tab.icon
-            const isActive = activeTab === tab.id
+            const isActive =
+              activeTab === tab.id ||
+              (tab.id === "attendance-requests" && activeTab === "my-requests")
 
             return (
               <button

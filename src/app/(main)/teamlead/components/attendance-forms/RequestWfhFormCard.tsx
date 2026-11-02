@@ -129,7 +129,7 @@ export default function RequestWfhFormCard({
       toast.success("Work from home request submitted successfully!", {
         position: "top-right",
       })
-      setTimeout(() => router.push(isHr ? "/hr/attendance-leaves?tab=my-requests" : `${basePath}?tab=my-requests`), 600)
+      setTimeout(() => router.push(isHr ? "/hr/attendance-leaves?tab=attendance-requests&subtab=my-requests" : `${basePath}?tab=requests&subtab=my-requests`), 600)
     }, 500)
   }
 

@@ -1,6 +1,9 @@
 "use client"
 
-import {  useState, useMemo  } from "react";
+import { useState, useMemo } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { Users, UsersThree } from "phosphor-react"
+import ManagerTLWiseAttendanceSection from "./ManagerTLWiseAttendanceSection"
 import { DateFilterValue } from "@/components/reusableComponents"
 import {
   MANAGER_TEAM_LEADS,
@@ -12,6 +15,24 @@ import ManagerTeamLeadsScroll from "./team-attendance/ManagerTeamLeadsScroll"
 import ManagerTeamMembersTable from "./team-attendance/ManagerTeamMembersTable"
 
 export default function ManagerTeamAttendanceSection() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const tabParam = searchParams.get("tab")
+  const subtabParam = searchParams.get("subtab")
+  const activeSubtab =
+    tabParam === "tl-wise-attendance" || subtabParam === "tl-wise" || subtabParam === "tl-wise-attendance"
+      ? "tl-wise"
+      : "team-attendance"
+
+  const handleSubtabChange = (subtab: "team-attendance" | "tl-wise") => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", "team-attendance")
+    params.set("subtab", subtab)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
   const [selectedLeadId, setSelectedLeadId] = useState<string>("TL-001")
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
@@ -98,8 +119,68 @@ export default function ManagerTeamAttendanceSection() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-5 sm:gap-6 min-w-0">
-      <ManagerAttendanceStatsGrid
+    <div className="w-full flex flex-col gap-4 sm:gap-5 min-w-0">
+      <div className="w-full border-b border-gray-200 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-6 min-w-max pb-0.5">
+          <button
+            type="button"
+            onClick={() => handleSubtabChange("team-attendance")}
+            className={`flex items-center gap-2 pb-3 pt-1 text-xs sm:text-sm font-semibold transition-all cursor-pointer border-b-2 -mb-[2px] ${
+              activeSubtab === "team-attendance"
+                ? "border-[#5B50EC] text-[#5B50EC] font-bold"
+                : "border-transparent text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            <Users
+              size={16}
+              weight={activeSubtab === "team-attendance" ? "fill" : "bold"}
+              className={activeSubtab === "team-attendance" ? "text-[#5B50EC]" : "text-gray-400"}
+            />
+            <span>Team Attendance</span>
+            <span
+              className={`text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors ${
+                activeSubtab === "team-attendance"
+                  ? "bg-[#EEF2FF] text-[#5B50EC]"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+            >
+              {totalMembersCount}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSubtabChange("tl-wise")}
+            className={`flex items-center gap-2 pb-3 pt-1 text-xs sm:text-sm font-semibold transition-all cursor-pointer border-b-2 -mb-[2px] ${
+              activeSubtab === "tl-wise"
+                ? "border-[#5B50EC] text-[#5B50EC] font-bold"
+                : "border-transparent text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            <UsersThree
+              size={16}
+              weight={activeSubtab === "tl-wise" ? "fill" : "bold"}
+              className={activeSubtab === "tl-wise" ? "text-[#5B50EC]" : "text-gray-400"}
+            />
+            <span>TL-wise Attendance</span>
+            <span
+              className={`text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors ${
+                activeSubtab === "tl-wise"
+                  ? "bg-[#EEF2FF] text-[#5B50EC]"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+            >
+              {MANAGER_TEAM_LEADS.length}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {activeSubtab === "tl-wise" ? (
+        <ManagerTLWiseAttendanceSection />
+      ) : (
+        <>
+          <ManagerAttendanceStatsGrid
         totalMembersCount={totalMembersCount}
         totalPresent={totalPresent}
         totalAbsent={totalAbsent}
@@ -154,6 +235,8 @@ export default function ManagerTeamAttendanceSection() {
           setCurrentPage(1)
         }}
       />
+        </>
+      )}
     </div>
   )
 }
