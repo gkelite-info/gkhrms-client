@@ -14,6 +14,9 @@ interface ManagerRequestsFilterBarProps {
   onRequestTypeChange: (type: string) => void
   statusFilter: string
   onStatusChange: (status: string) => void
+  selectedRoles: string[]
+  onRolesChange: (roles: string[]) => void
+  roleOptions: string[]
   dateFilter: DateFilterValue
   onDateChange: (date: DateFilterValue) => void
   onResetFilters: () => void
@@ -26,6 +29,9 @@ export default function ManagerRequestsFilterBar({
   onRequestTypeChange,
   statusFilter,
   onStatusChange,
+  selectedRoles,
+  onRolesChange,
+  roleOptions,
   dateFilter,
   onDateChange,
   onResetFilters,
@@ -60,7 +66,7 @@ export default function ManagerRequestsFilterBar({
             placeholder="Search employee name, ID..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#5B50EC] focus:ring-1 focus:ring-[#5B50EC] transition-all bg-white"
+            className="w-full h-10 pl-9 pr-3.5 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#5B50EC] focus:ring-1 focus:ring-[#5B50EC] transition-all bg-white"
           />
         </div>
 
@@ -70,8 +76,8 @@ export default function ManagerRequestsFilterBar({
           onChange={(val) => onRequestTypeChange(String(val))}
           align="left"
           placeholder="Request Type"
-          className="w-auto"
-          buttonClassName="px-3 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white hover:bg-gray-50/50"
+          className="w-full sm:w-auto"
+          buttonClassName="w-full sm:w-auto h-10 px-3.5 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white hover:bg-gray-50/50 flex items-center justify-between gap-2"
         />
 
         <ReusableDropdown
@@ -80,8 +86,20 @@ export default function ManagerRequestsFilterBar({
           onChange={(val) => onStatusChange(String(val))}
           align="left"
           placeholder="Status"
-          className="w-auto"
-          buttonClassName="px-3 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white hover:bg-gray-50/50"
+          className="w-full sm:w-auto"
+          buttonClassName="w-full sm:w-auto h-10 px-3.5 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white hover:bg-gray-50/50 flex items-center justify-between gap-2"
+        />
+
+        <ReusableDropdown
+          value={selectedRoles}
+          options={roleOptions}
+          onChange={(val) => onRolesChange(val)}
+          selectionType="checkbox"
+          multiple={true}
+          placeholder="All Roles"
+          className="w-full sm:w-auto"
+          buttonClassName="w-full sm:w-auto h-10 px-3.5 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white hover:bg-gray-50/50 flex items-center justify-between gap-2"
+          menuClassName="w-56"
         />
 
         <ReusableDateFilter
@@ -89,7 +107,8 @@ export default function ManagerRequestsFilterBar({
           onChange={onDateChange}
           modes={["date", "month", "year"]}
           title="Filter Request Date"
-          className="w-auto"
+          className="w-full sm:w-auto"
+          buttonClassName="w-full sm:w-auto h-10 px-3.5 flex items-center justify-between gap-2 rounded-xl bg-white border border-gray-200 text-xs sm:text-sm font-medium text-gray-700 hover:border-[#5B50EC] hover:bg-gray-50/50 transition-all shadow-xs cursor-pointer select-none"
         />
       </div>
 
@@ -97,7 +116,7 @@ export default function ManagerRequestsFilterBar({
         <button
           type="button"
           onClick={onResetFilters}
-          className="text-xs sm:text-sm font-semibold text-[#5B50EC] hover:text-[#4338CA] hover:underline transition-all cursor-pointer"
+          className="h-10 px-3 flex items-center text-xs sm:text-sm font-semibold text-[#5B50EC] hover:text-[#4338CA] hover:underline transition-all cursor-pointer"
         >
           Reset Filters
         </button>

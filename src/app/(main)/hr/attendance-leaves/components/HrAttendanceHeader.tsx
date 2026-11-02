@@ -1,19 +1,19 @@
 "use client"
 
 import { UsersThree } from "phosphor-react"
-import { ReusableDateFilter, DateFilterValue } from "@/components/reusableComponents"
+import type { DateFilterValue } from "@/components/reusableComponents"
 
 interface HrAttendanceHeaderProps {
-  selectedDate: DateFilterValue
-  onDateChange: (date: DateFilterValue) => void
+  selectedDate?: DateFilterValue
+  onDateChange?: (date: DateFilterValue) => void
 }
 
 export default function HrAttendanceHeader({
   selectedDate,
   onDateChange,
-}: HrAttendanceHeaderProps) {
+}: HrAttendanceHeaderProps = {}) {
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex items-center justify-between gap-4">
       <div className="flex items-center gap-3.5">
         <div className="w-11 h-11 rounded-2xl bg-[#EEF2FF] text-[#5B50EC] flex items-center justify-center shrink-0">
           <UsersThree size={24} weight="bold" />
@@ -22,22 +22,11 @@ export default function HrAttendanceHeader({
           <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-tight">
             Organization Attendance
           </h1>
-          <p className="text-xs text-gray-400 font-medium mt-0.5">
+          <p className="text-xs sm:text-sm text-gray-400 font-medium mt-0.5">
             Monitor organization-wide attendance, workforce availability, and daily attendance activity.
           </p>
         </div>
       </div>
-
-      <div className="shrink-0">
-        <ReusableDateFilter
-          value={selectedDate}
-          onChange={onDateChange}
-          modes={["date", "30-days", "month"]}
-          title="Filter Organization Attendance"
-          className="w-full sm:w-auto"
-        />
-      </div>
     </div>
   )
 }
-

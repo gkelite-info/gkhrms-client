@@ -44,7 +44,10 @@ export interface ReusableDateFilterProps<T = DateFilterValue> {
   tabLabels?: Partial<Record<DateFilterMode, string>>
   quickRangeOptions?: QuickRangeOption[]
   className?: string
+  buttonClassName?: string
   backdropClassName?: string
+  minYear?: number
+  showCaret?: boolean
 }
 
 export default function ReusableDateFilter<T = DateFilterValue>({
@@ -57,7 +60,10 @@ export default function ReusableDateFilter<T = DateFilterValue>({
   tabLabels,
   quickRangeOptions,
   className = "",
+  buttonClassName,
   backdropClassName,
+  minYear,
+  showCaret = true,
 }: ReusableDateFilterProps<T>) {
   const [isOpen, setIsOpen] = useState(false)
   const normalizedValue = useMemo(() => resolveDateFilterValue(value), [value])
@@ -132,6 +138,10 @@ export default function ReusableDateFilter<T = DateFilterValue>({
 
   const handleSelectMonth = (mIdx: number) => {
     setNavMonth(mIdx)
+    if (availableModes.includes("date")) {
+      setActiveTab("date")
+      return
+    }
     triggerChange({
       mode: "month",
       label: `${MONTH_NAMES[mIdx]} ${navYear}`,
@@ -143,6 +153,14 @@ export default function ReusableDateFilter<T = DateFilterValue>({
 
   const handleSelectYear = (yr: number) => {
     setNavYear(yr)
+    if (availableModes.includes("month")) {
+      setActiveTab("month")
+      return
+    }
+    if (availableModes.includes("date")) {
+      setActiveTab("date")
+      return
+    }
     triggerChange({ mode: "year", label: `Year ${yr}`, selectedYear: yr })
     setIsOpen(false)
   }
@@ -163,11 +181,14 @@ export default function ReusableDateFilter<T = DateFilterValue>({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1F2433] hover:border-[#5B50EC] hover:bg-[#F9F8FE] transition-all shadow-xs cursor-pointer select-none"
+        className={
+          buttonClassName ||
+          "flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1F2433] hover:border-[#5B50EC] hover:bg-[#F9F8FE] transition-all shadow-xs cursor-pointer select-none"
+        }
       >
         <CalendarBlank size={16} weight="bold" className="text-[#5B50EC] shrink-0" />
         <span className="whitespace-nowrap">{normalizedValue.label}</span>
-        <CaretDown size={12} weight="bold" className="text-gray-400 shrink-0" />
+        {showCaret && <CaretDown size={12} weight="bold" className="text-gray-400 shrink-0" />}
       </button>
 
       <DateFilterModal
@@ -191,6 +212,7 @@ export default function ReusableDateFilter<T = DateFilterValue>({
         onSelectDate={handleSelectDate}
         onSelectMonth={handleSelectMonth}
         onSelectYear={handleSelectYear}
+        minYear={minYear}
       />
     </div>
   )

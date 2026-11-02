@@ -15,7 +15,7 @@ import {
   HrAttendanceRecord,
 } from "./data/hrAttendanceData"
 import TeamLeadMyRequestsSection from "../../teamlead/components/my-requests/TeamLeadMyRequestsSection"
-import TeamLeadExceptionHistorySection from "../../teamlead/components/exception-history/TeamLeadExceptionHistorySection"
+import HrExceptionHistorySection from "./components/exceptions/HrExceptionHistorySection"
 import ProfileSummaryCard from "../../teamlead/components/ProfileSummaryCard"
 import AttendanceDonutCard from "../../teamlead/components/AttendanceDonutCard"
 import AttendanceRequestsCard from "../../teamlead/components/AttendanceRequestsCard"
@@ -51,7 +51,7 @@ function HrAttendanceLeavesContent() {
   const [toDate, setToDate] = useState<DateFilterValue>(new Date(2025, 7, 28))
   const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState("All")
-  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null)
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>("Technology")
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(8)
   const [selectedModalRecord, setSelectedModalRecord] = useState<HrAttendanceRecord | null>(null)
@@ -97,14 +97,14 @@ function HrAttendanceLeavesContent() {
   }
 
   const handleSelectDepartment = (deptName: string) => {
-    setSelectedDepartment((prev) => (prev === deptName ? null : deptName))
+    setSelectedDepartment(deptName)
     setCurrentPage(1)
   }
 
   const handleResetFilters = () => {
     setSearchQuery("")
     setRoleFilter("All")
-    setSelectedDepartment(null)
+    setSelectedDepartment("Technology")
     setFromDate(new Date(2025, 7, 26))
     setToDate(new Date(2025, 7, 28))
     setCurrentPage(1)
@@ -153,6 +153,7 @@ function HrAttendanceLeavesContent() {
               newApprovalHref="/hr/attendance-leaves?tab=attendance-requests"
               pendingHref="/hr/attendance-leaves?tab=attendance-requests"
             />
+  
             <PerformanceDonutCard score={98} subtitle="This Month (OCT)" />
           </div>
 
@@ -171,10 +172,7 @@ function HrAttendanceLeavesContent() {
 
       {activeTab === "organization-attendance" && (
         <div className="flex flex-col gap-4 sm:gap-5">
-          <HrAttendanceHeader
-            selectedDate={headerDate}
-            onDateChange={setHeaderDate}
-          />
+          <HrAttendanceHeader />
 
           <HrAttendanceStatsCards />
 
@@ -182,6 +180,7 @@ function HrAttendanceLeavesContent() {
             selectedDepartment={selectedDepartment}
             onSelectDepartment={handleSelectDepartment}
           />
+
 
           <HrAttendanceTableSection
             records={paginatedRecords}
@@ -215,6 +214,7 @@ function HrAttendanceLeavesContent() {
             }}
             onViewRecord={setSelectedModalRecord}
           />
+
         </div>
       )}
 
@@ -235,7 +235,7 @@ function HrAttendanceLeavesContent() {
               </div>
             </div>
           </div>
-          <ManagerRequestsSection />
+          <ManagerRequestsSection hideSubtabs={true} />
         </div>
       )}
 
@@ -244,7 +244,7 @@ function HrAttendanceLeavesContent() {
       )}
 
       {activeTab === "exception-history" && (
-        <TeamLeadExceptionHistorySection />
+        <HrExceptionHistorySection />
       )}
 
       <HrEmployeeAttendanceModal
