@@ -491,10 +491,11 @@ export default function EngageChatPanel() {
                           className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
                         >
                           <div
-                            className={`max-w-[88%] px-2.5 py-1 rounded-xl text-[10.5px] leading-tight shadow-2xs ${isMe
-                              ? "bg-[#EDE9FE] text-gray-800 rounded-br-xs"
-                              : "bg-[#F1F3F5] text-gray-800 rounded-bl-xs"
-                              }`}
+                            className={`max-w-[88%] px-2.5 py-1 rounded-xl text-[10.5px] leading-tight shadow-2xs ${
+                              isMe
+                                ? "bg-[#EDE9FE] text-gray-800 rounded-br-xs"
+                                : "bg-[#F1F3F5] text-gray-800 rounded-bl-xs"
+                            }`}
                           >
                             {msg.text}
                           </div>

@@ -6,6 +6,10 @@ import FinanceFormsView from "./FinanceFormsView"
 import FinanceTaxFilingView from "./FinanceTaxFilingView"
 import FinanceTaxSavingInvestmentView from "./FinanceTaxSavingInvestmentView"
 
+export interface FinanceManageTaxViewProps {
+  basePath?: string
+}
+
 type ManageTaxSubTab =
   | "declaration"
   | "forms"
@@ -40,7 +44,9 @@ const normalizeSubTab = (param: string | null): ManageTaxSubTab => {
   return "declaration"
 }
 
-export default function FinanceManageTaxView() {
+export default function FinanceManageTaxView({
+  basePath = "/employee/finance",
+}: FinanceManageTaxViewProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const rawSubTab = searchParams.get("subtab")
@@ -55,12 +61,13 @@ export default function FinanceManageTaxView() {
 
   const handleSelectSubTab = (tabId: ManageTaxSubTab) => {
     setActiveSubTab(tabId)
-    router.push(`/employee/finance?tab=manage_tax&subtab=${tabId}`)
+    const sep = basePath.includes("?") ? "&" : "?"
+    router.push(`${basePath}${sep}tab=manage_tax&subtab=${tabId}`)
   }
 
   return (
-    <div className="w-full h-full min-h-0 flex flex-col">
-      <div className="shrink-0 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 w-full select-none mb-3 sm:mb-3.5">
+    <div className="w-full flex flex-col">
+      <div className="shrink-0 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full select-none mb-3 sm:mb-3.5">
         {SUB_TABS.map((tab) => {
           const isActive = activeSubTab === tab.id
           return (
@@ -80,7 +87,7 @@ export default function FinanceManageTaxView() {
         })}
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide pr-0.5 pb-4">
+      <div className="w-full flex flex-col pb-4">
         {activeSubTab === "declaration" && (
           <div className="w-full flex flex-col gap-3.5 sm:gap-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
@@ -115,7 +122,7 @@ export default function FinanceManageTaxView() {
                   Proof Submission
                 </h3>
 
-                <div className="flex flex-wrap items-baseline text-xs sm:text-sm">
+                <div className="flex items-baseline text-xs sm:text-sm">
                   <span className="font-semibold text-slate-800">
                     Current windows :
                   </span>
@@ -173,4 +180,3 @@ export default function FinanceManageTaxView() {
     </div>
   )
 }
-

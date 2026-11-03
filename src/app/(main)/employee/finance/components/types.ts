@@ -2,6 +2,7 @@ export type FinanceTabType =
   | "summary"
   | "mypay"
   | "manage_tax"
+  | "org_salary_overview"
   | "expenses_travel"
 
 export interface PayrollSummaryData {
@@ -45,4 +46,3 @@ export interface IdentityInfoData {
     verified: boolean
   }
 }
-

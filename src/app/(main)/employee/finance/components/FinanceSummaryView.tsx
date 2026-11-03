@@ -1,8 +1,10 @@
 import React from "react"
 import IndiaFlag from "./IndiaFlag"
+import { HrPayrollEmployee } from "./hrPayrollData"
 
 export interface FinanceSummaryViewProps {
   onViewPayslip: () => void
+  employee?: HrPayrollEmployee
 }
 
 interface DetailRowProps {
@@ -30,7 +32,26 @@ function DetailRow({
 
 export default function FinanceSummaryView({
   onViewPayslip,
+  employee,
 }: FinanceSummaryViewProps) {
+  const bankName = employee?.bankInfo?.bankName || "Bank of aroda"
+  const accountNumber = employee?.bankInfo?.accountNumber || "2345678906789"
+  const ifscCode = employee?.bankInfo?.ifscCode || "234567890"
+  const accountName = employee?.bankInfo?.accountName || employee?.name || "Alexander"
+  const branch = employee?.bankInfo?.branch || "N/A"
+  const pfStatus = employee?.statutoryInfo?.pfStatus || "Enabled"
+  const pfNumber = employee?.statutoryInfo?.pfNumber || "DFG3456789045678"
+  const uan = employee?.statutoryInfo?.uan || "1234567890567"
+  const pfJoinDate = employee?.statutoryInfo?.pfJoinDate || "21 Jan 2025"
+  const aadharNumber = employee?.identityInfo?.aadhaarNumber || "49087579678"
+  const dob = employee?.identityInfo?.dob || "19 Feb 2003"
+  const address = employee?.identityInfo?.address || "Flat 502, Sun..."
+  const enrollmentNumber = employee?.identityInfo?.enrollmentNumber || "49087579678"
+  const empName = employee?.name || "Alexander"
+  const gender = employee?.identityInfo?.gender || "Female"
+  const panNumber = employee?.identityInfo?.panNumber || "XXXXXXXX9678"
+  const fatherName = employee?.identityInfo?.fatherName || "Jones"
+
   return (
     <div className="w-full flex flex-col gap-4 sm:gap-5">
       <div className="w-full bg-white rounded-xl shadow-xs p-4 sm:p-5 md:p-6 border border-slate-100/80">
@@ -104,27 +125,27 @@ export default function FinanceSummaryView({
             <div className="flex flex-col gap-2.5 sm:gap-3">
               <DetailRow
                 label="Bank Name"
-                value="Bank of aroda"
+                value={bankName}
                 labelWidthClass="w-[180px] sm:w-[210px]"
               />
               <DetailRow
                 label="Account Number"
-                value="2345678906789"
+                value={accountNumber}
                 labelWidthClass="w-[180px] sm:w-[210px]"
               />
               <DetailRow
                 label="IFSC Code"
-                value="234567890"
+                value={ifscCode}
                 labelWidthClass="w-[180px] sm:w-[210px]"
               />
               <DetailRow
                 label="Name on the Account"
-                value="Alexander"
+                value={accountName}
                 labelWidthClass="w-[180px] sm:w-[210px]"
               />
               <DetailRow
                 label="Branch"
-                value="N/A"
+                value={branch}
                 labelWidthClass="w-[180px] sm:w-[210px]"
               />
             </div>
@@ -143,22 +164,22 @@ export default function FinanceSummaryView({
             <div className="flex flex-col gap-2.5 sm:gap-3">
               <DetailRow
                 label="PF Status"
-                value="Enabled"
+                value={pfStatus}
                 labelWidthClass="w-[190px] sm:w-[220px]"
               />
               <DetailRow
                 label="PF Number"
-                value="DFG3456789045678"
+                value={pfNumber}
                 labelWidthClass="w-[190px] sm:w-[220px]"
               />
               <DetailRow
                 label="Universal Account Number"
-                value="1234567890567"
+                value={uan}
                 labelWidthClass="w-[190px] sm:w-[220px]"
               />
               <DetailRow
                 label="PF Join Date"
-                value="21 Jan 2025"
+                value={pfJoinDate}
                 labelWidthClass="w-[190px] sm:w-[220px]"
               />
             </div>
@@ -190,32 +211,32 @@ export default function FinanceSummaryView({
             <div className="flex flex-col gap-2.5 sm:gap-3">
               <DetailRow
                 label="Aadhar Number"
-                value="49087579678"
+                value={aadharNumber}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
               <DetailRow
                 label="Date of Birth"
-                value="19 Feb 2003"
+                value={dob}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
               <DetailRow
                 label="Address"
-                value="Flat 502, Sun..."
+                value={address}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
               <DetailRow
                 label="Enrollment Number"
-                value="49087579678"
+                value={enrollmentNumber}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
               <DetailRow
                 label="Name"
-                value="Alexander"
+                value={empName}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
               <DetailRow
                 label="Gender"
-                value="Female"
+                value={gender}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
             </div>
@@ -236,22 +257,22 @@ export default function FinanceSummaryView({
             <div className="flex flex-col gap-2.5 sm:gap-3">
               <DetailRow
                 label="Permanent Account Number"
-                value="XXXXXXXX9678"
+                value={panNumber}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
               <DetailRow
                 label="Date Of Birth"
-                value="19 Feb 2003"
+                value={dob}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
               <DetailRow
                 label="Name"
-                value="Alexander"
+                value={empName}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
               <DetailRow
                 label="Father's Name"
-                value="Jones"
+                value={fatherName}
                 labelWidthClass="w-[200px] sm:w-[240px]"
               />
             </div>

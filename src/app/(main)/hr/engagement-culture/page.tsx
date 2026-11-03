@@ -1,6 +1,7 @@
+"use client"
 
-const EngagementCulture = () => {
-  return <div>EngagementCulture</div>
+import EmployeeEngagePage from "../../employee/engage/page"
+
+export default function HrEngagementCulturePage() {
+  return <EmployeeEngagePage />
 }
-
-export default EngagementCulture
