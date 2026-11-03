@@ -14,6 +14,7 @@ interface PaginationDesktopControlsProps {
   setIsJumpOpen: React.Dispatch<React.SetStateAction<boolean>>
   quickJumpPages?: number[]
   isTwoRow: boolean
+  isEmpty?: boolean
 }
 
 export default function PaginationDesktopControls({
@@ -26,6 +27,7 @@ export default function PaginationDesktopControls({
   setIsJumpOpen,
   quickJumpPages,
   isTwoRow,
+  isEmpty = false,
 }: PaginationDesktopControlsProps) {
   return (
     <div
@@ -36,7 +38,7 @@ export default function PaginationDesktopControls({
       <button
         type="button"
         onClick={() => onPageChange(1)}
-        disabled={currentPage === 1}
+        disabled={currentPage === 1 || isEmpty}
         className="w-8 h-8 rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-[#F1F0FD] hover:text-[#5B50EC] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-xs shrink-0 cursor-pointer"
         title="First Page"
         aria-label="First page"
@@ -47,7 +49,7 @@ export default function PaginationDesktopControls({
       <button
         type="button"
         onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+        disabled={currentPage === 1 || isEmpty}
         className="w-8 h-8 rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-[#F1F0FD] hover:text-[#5B50EC] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-xs shrink-0 cursor-pointer"
         title="Previous Page"
         aria-label="Previous page"
@@ -63,9 +65,9 @@ export default function PaginationDesktopControls({
                 key={`ellipsis-${idx}`}
                 type="button"
                 onClick={() => {
-                  if (totalPages > 1) setIsJumpOpen(true)
+                  if (totalPages > 1 && !isEmpty) setIsJumpOpen(true)
                 }}
-                disabled={totalPages <= 1}
+                disabled={totalPages <= 1 || isEmpty}
                 className="px-1.5 py-1 text-gray-400 hover:text-[#5B50EC] hover:bg-[#F1F0FD] rounded-lg font-bold select-none text-xs transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 title="Click to jump to page"
                 aria-label="Jump to page"
@@ -75,17 +77,20 @@ export default function PaginationDesktopControls({
             )
           }
           const pageNum = Number(p)
-          const isActive = pageNum === currentPage
+          const isActive = pageNum === currentPage && !isEmpty
 
           return (
             <button
               key={`page-${pageNum}`}
               type="button"
+              disabled={isEmpty}
               onClick={() => onPageChange(pageNum)}
-              className={`w-8 h-8 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer select-none ${
-                isActive
-                  ? "bg-[#5B50EC] text-white shadow-xs"
-                  : "border border-gray-200 bg-white text-gray-700 hover:border-[#5B50EC] hover:text-[#5B50EC] hover:bg-[#F9F9FE]"
+              className={`w-8 h-8 rounded-xl text-xs font-bold transition-all shrink-0 select-none ${
+                isEmpty
+                  ? "border border-gray-200 bg-gray-50 text-gray-400 opacity-40 cursor-not-allowed shadow-none"
+                  : isActive
+                  ? "bg-[#5B50EC] text-white shadow-xs cursor-pointer"
+                  : "border border-gray-200 bg-white text-gray-700 hover:border-[#5B50EC] hover:text-[#5B50EC] hover:bg-[#F9F9FE] cursor-pointer"
               }`}
               aria-current={isActive ? "page" : undefined}
               aria-label={`Page ${pageNum}`}
@@ -99,7 +104,7 @@ export default function PaginationDesktopControls({
       <button
         type="button"
         onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        disabled={currentPage >= totalPages || isEmpty}
         className="w-8 h-8 rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-[#F1F0FD] hover:text-[#5B50EC] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-xs shrink-0 cursor-pointer"
         title="Next Page"
         aria-label="Next page"
@@ -110,7 +115,7 @@ export default function PaginationDesktopControls({
       <button
         type="button"
         onClick={() => onPageChange(totalPages)}
-        disabled={currentPage === totalPages}
+        disabled={currentPage >= totalPages || isEmpty}
         className="w-8 h-8 rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-[#F1F0FD] hover:text-[#5B50EC] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-xs shrink-0 cursor-pointer"
         title="Last Page"
         aria-label="Last page"
@@ -127,6 +132,7 @@ export default function PaginationDesktopControls({
           currentPage={currentPage}
           onPageChange={onPageChange}
           quickJumpPages={quickJumpPages}
+          disabled={totalPages <= 1 || isEmpty}
         />
       )}
     </div>

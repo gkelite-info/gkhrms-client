@@ -1,18 +1,17 @@
-import { Suspense } from "react"
-import TeamLeadExceptionHistorySection from "../components/exception-history/TeamLeadExceptionHistorySection"
+import { redirect } from "next/navigation"
 
-export default function TeamLeadExceptionHistoryPage() {
-  return (
-    <div className="w-full flex-1 p-3 sm:p-4 md:p-6 pb-16 sm:pb-8 flex flex-col gap-4 sm:gap-5 max-w-[1600px] mx-auto animate-in fade-in duration-200 min-w-0">
-      <Suspense
-        fallback={
-          <div className="w-full min-h-[400px] flex items-center justify-center text-xs text-gray-400">
-            Loading...
-          </div>
-        }
-      >
-        <TeamLeadExceptionHistorySection />
-      </Suspense>
-    </div>
-  )
+export default async function TeamLeadExceptionHistoryRedirectPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const resolvedParams = searchParams ? await searchParams : {}
+  const query = new URLSearchParams()
+  query.set("tab", "exception-history")
+  for (const [key, val] of Object.entries(resolvedParams)) {
+    if (key !== "tab" && typeof val === "string") {
+      query.set(key, val)
+    }
+  }
+  redirect(`/teamlead/attendance?${query.toString()}`)
 }

@@ -55,6 +55,7 @@ export default function CurrentLeaveBalanceCard({ role }: CurrentLeaveBalanceCar
 
   const isHr = pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
+  const isProductManager = pathname?.startsWith("/productmanager")
 
   const activeRole: ApplicantRole =
     role ||
@@ -62,16 +63,38 @@ export default function CurrentLeaveBalanceCard({ role }: CurrentLeaveBalanceCar
       ? "HR"
       : isManager
       ? "Manager"
+      : isProductManager
+      ? "Product Manager"
       : authRole === "Hr"
       ? "HR"
       : authRole === "Manager"
       ? "Manager"
+      : authRole === "ProductManager"
+      ? "Product Manager"
       : authRole === "Employee"
       ? "Employee"
       : "Team Lead")
 
   const getLeaveInstructions = () => {
     switch (activeRole) {
+      case "Product Manager":
+        return [
+          {
+            icon: UsersThree,
+            title: "Product Leadership Sign-Off",
+            text: "Product Manager leaves require sign-off from Head of Product / VP and HRBP.",
+          },
+          {
+            icon: Clock,
+            title: "Sprint Alignment Notice",
+            text: "Submit leaves in advance of sprint planning to ensure roadmap delivery is unblocked.",
+          },
+          {
+            icon: ShieldCheck,
+            title: "Delegate Ownership",
+            text: "Designate an interim sprint lead for backlog grooming and stakeholder updates.",
+          },
+        ]
       case "HR":
         return [
           {

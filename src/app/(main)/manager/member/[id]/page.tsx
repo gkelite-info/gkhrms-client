@@ -107,7 +107,7 @@ export default function ManagerMemberDetailsPage() {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={() => router.push("/manager?tab=team-attendance")}
+          onClick={() => router.push("/manager/attendance?tab=team-attendance")}
           className="p-2 sm:p-2.5 rounded-xl bg-white border border-gray-200 text-gray-600 hover:text-[#5B50EC] hover:border-[#5B50EC] transition-all cursor-pointer shadow-2xs shrink-0 flex items-center justify-center"
           title="Back to Team Attendance"
           aria-label="Back to Team Attendance"

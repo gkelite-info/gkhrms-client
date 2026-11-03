@@ -8,6 +8,7 @@ import EmployeeSidebar from "./EmployeeSidebar"
 import TeamLeadSidebar from "./TeamLeadSidebar"
 import ManagerSidebar from "./ManagerSidebar"
 import HrSidebar from "./HrSidebar"
+import ProductManagerSidebar from "./ProductManagerSidebar"
 import ReusableSidebar from "../reusableComponents/ReusableSidebar"
 
 export default function Sidebar() {
@@ -24,6 +25,10 @@ export default function Sidebar() {
 
   if (pathname?.startsWith("/hr") || role === "Hr") {
     return <HrSidebar />
+  }
+
+  if (pathname?.startsWith("/productmanager") || role === "ProductManager") {
+    return <ProductManagerSidebar />
   }
 
   if (pathname?.startsWith("/employee") || role === "Employee") {

@@ -13,5 +13,5 @@ export default async function TeamLeadRequestsRedirectPage({
       query.set(key, val)
     }
   }
-  redirect(`/teamlead?${query.toString()}`)
+  redirect(`/teamlead/attendance?${query.toString()}`)
 }

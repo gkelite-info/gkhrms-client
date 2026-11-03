@@ -5,7 +5,6 @@ import {
   User,
   UsersThree,
   Article,
-  FileText,
   ClockCounterClockwise,
 } from "phosphor-react"
 
@@ -60,7 +59,7 @@ export default function AttendanceTabs({
     if (onTabChange) {
       onTabChange(tabKey)
     } else {
-      router.push(`/teamlead?tab=${tabKey}`)
+      router.push(`/teamlead/attendance?tab=${tabKey}`)
     }
   }
 
@@ -103,7 +102,7 @@ export default function AttendanceTabs({
               if (onApplyLeave) {
                 onApplyLeave()
               } else {
-                router.push("/teamlead/apply-leave")
+                router.push("/teamlead/attendance?tab=apply-leave")
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"
@@ -116,7 +115,7 @@ export default function AttendanceTabs({
               if (onRequestWfh) {
                 onRequestWfh()
               } else {
-                router.push("/teamlead/apply-leave?type=wfh")
+                router.push("/teamlead/attendance?tab=request-wfh")
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"

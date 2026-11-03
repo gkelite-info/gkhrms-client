@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
+import { useState, useMemo, type FormEvent } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useSelector } from "react-redux"
 import toast from "react-hot-toast"
@@ -39,14 +39,30 @@ export default function ApplyLeaveFormCard({
 
   const isHr = pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
-  const basePath = isHr ? "/hr/attendance-leaves" : isManager ? "/manager" : "/teamlead"
+  const isProductManager = pathname?.startsWith("/productmanager")
+  const basePath = isHr
+    ? "/hr/attendance"
+    : isManager
+    ? "/manager/attendance"
+    : isProductManager
+    ? "/productmanager/attendance"
+    : "/teamlead/attendance"
+
+  const availableRoles: ApplicantRole[] = useMemo(() => {
+    if (isHr) return ["HR", "Manager", "Product Manager", "Team Lead", "Employee"]
+    if (isManager) return ["Manager", "Team Lead", "Employee"]
+    if (isProductManager) return ["Product Manager", "Team Lead", "Employee"]
+    return ["Team Lead", "Employee"]
+  }, [isHr, isManager, isProductManager])
 
   const resolveInitialRole = (): ApplicantRole => {
-    if (currentRole) return currentRole
+    if (currentRole && availableRoles.includes(currentRole)) return currentRole
     if (isHr) return "HR"
     if (isManager) return "Manager"
+    if (isProductManager) return "Product Manager"
     if (authRole === "Hr") return "HR"
     if (authRole === "Manager") return "Manager"
+    if (authRole === "ProductManager") return "Product Manager"
     if (authRole === "Employee") return "Employee"
     return "Team Lead"
   }
@@ -166,7 +182,7 @@ export default function ApplyLeaveFormCard({
           </label>
           <ReusableDropdown
             value={applicantRole}
-            options={applicantRoles.map((r) => ({ label: r, value: r }))}
+            options={availableRoles.map((r) => ({ label: r, value: r }))}
             onChange={(val) => handleRoleChange(val as ApplicantRole)}
             placeholder="Select Applicant Role"
             align="left"

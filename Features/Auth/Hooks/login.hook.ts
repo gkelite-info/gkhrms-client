@@ -42,6 +42,9 @@ export const useLogin = () => {
         case "TeamLead":
           router.push("/teamlead")
           break
+        case "ProductManager":
+          router.push("/productmanager")
+          break
         default:
           router.push("/login")
       }

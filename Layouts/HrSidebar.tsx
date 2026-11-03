@@ -6,6 +6,7 @@ import {
   CurrencyCircleDollar,
   Timer,
   ChartBar,
+  UsersThree,
 } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
@@ -19,7 +20,7 @@ export const hrNavItems: ReusableSidebarItem[] = [
     href: "/hr/payrole-compliance",
     icon: CurrencyCircleDollar,
   },
-  { label: "Attendance & Leave", href: "/hr/attendance-leaves", icon: Timer },
+  { label: "Attendance", href: "/hr/attendance", icon: UsersThree },
   {
     label: "Engagement & Culture",
     href: "/hr/engagement-culture",
@@ -39,6 +40,13 @@ export default function HrSidebar() {
   ): boolean => {
     if (item.href === "/hr") {
       return currentPath === "/hr" || currentPath === "/"
+    }
+    if (item.href === "/hr/attendance") {
+      return (
+        currentPath === "/hr/attendance" ||
+        currentPath.startsWith("/hr/attendance") ||
+        currentPath.startsWith("/hr/attendance-leaves")
+      )
     }
     return currentPath === item.href || currentPath.startsWith(`${item.href}/`)
   }

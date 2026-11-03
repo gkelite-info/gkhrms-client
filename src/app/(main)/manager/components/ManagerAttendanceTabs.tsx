@@ -3,19 +3,17 @@
 import { useRouter } from "next/navigation"
 import {
   User,
-  Users,
   UsersThree,
   Article,
-  FileText,
   ClockCounterClockwise,
 } from "phosphor-react"
 
 export type ManagerTabKey =
   | "my-attendance"
   | "team-attendance"
-  | "tl-wise-attendance"
   | "requests"
   | "my-requests"
+  | "tl-wise-attendance"
   | "exception-history"
 
 interface ManagerAttendanceTabsProps {
@@ -44,7 +42,7 @@ export default function ManagerAttendanceTabs({
     {
       key: "team-attendance" as ManagerTabKey,
       label: "Team Attendance",
-      icon: Users,
+      icon: UsersThree,
     },
     {
       key: "requests" as ManagerTabKey,
@@ -62,7 +60,7 @@ export default function ManagerAttendanceTabs({
     if (onTabChange) {
       onTabChange(tabKey)
     } else {
-      router.push(`/manager?tab=${tabKey}`)
+      router.push(`/manager/attendance?tab=${tabKey}`)
     }
   }
 
@@ -108,7 +106,7 @@ export default function ManagerAttendanceTabs({
               if (onApplyLeave) {
                 onApplyLeave()
               } else {
-                router.push("/manager/apply-leave")
+                router.push("/manager/attendance?tab=apply-leave")
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"
@@ -121,7 +119,7 @@ export default function ManagerAttendanceTabs({
               if (onRequestWfh) {
                 onRequestWfh()
               } else {
-                router.push("/manager/apply-leave?type=wfh")
+                router.push("/manager/attendance?tab=request-wfh")
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"

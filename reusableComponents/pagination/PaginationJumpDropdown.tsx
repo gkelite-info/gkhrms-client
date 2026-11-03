@@ -12,6 +12,7 @@ interface PaginationJumpDropdownProps {
   currentPage: number
   onPageChange: (page: number) => void
   quickJumpPages?: number[]
+  disabled?: boolean
 }
 
 export default function PaginationJumpDropdown({
@@ -22,6 +23,7 @@ export default function PaginationJumpDropdown({
   currentPage,
   onPageChange,
   quickJumpPages,
+  disabled = false,
 }: PaginationJumpDropdownProps) {
   const [jumpValue, setJumpValue] = useState("")
   const [jumpError, setJumpError] = useState("")
@@ -115,9 +117,9 @@ export default function PaginationJumpDropdown({
       <button
         type="button"
         onClick={onToggle}
-        disabled={totalPages <= 1}
+        disabled={disabled || totalPages <= 1}
         className="h-8 px-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 hover:border-[#5B50EC] hover:bg-[#F9F9FE] hover:text-[#5B50EC] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 transition-all text-xs font-semibold shadow-xs shrink-0 cursor-pointer whitespace-nowrap"
-        title={totalPages <= 1 ? "No pages to jump" : "Go to page"}
+        title={disabled || totalPages <= 1 ? "No pages to jump" : "Go to page"}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
       >

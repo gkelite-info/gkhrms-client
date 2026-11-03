@@ -2,7 +2,12 @@ import type { ElementType } from "react"
 
 export type FormTabType = "leave" | "wfh"
 export type DayOption = "full" | "half"
-export type ApplicantRole = "Employee" | "Team Lead" | "Manager" | "HR"
+export type ApplicantRole =
+  | "Employee"
+  | "Team Lead"
+  | "Manager"
+  | "HR"
+  | "Product Manager"
 
 export interface RoleApprovalConfig {
   primaryLabel: string
