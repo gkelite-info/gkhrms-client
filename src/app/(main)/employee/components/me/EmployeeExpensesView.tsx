@@ -1,6 +1,6 @@
 "use client"
 
-import {  useState, useRef, useEffect, Suspense  } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation"
 import { Plus, AirplaneInFlight, Laptop } from "phosphor-react"
 
@@ -178,11 +178,10 @@ function EmployeeExpensesContent({
           type="button"
           onClick={() => handleSubTabChange("new_pending")}
           style={{ cursor: "pointer" }}
-          className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer select-none focus:outline-none ${
-            subTab === "new_pending"
+          className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer select-none focus:outline-none ${subTab === "new_pending"
               ? "bg-[#7D73E3] text-white shadow-sm"
               : "bg-[#E5E5EA] text-[#374151] hover:bg-[#dedde3] hover:text-[#1F2937]"
-          }`}
+            }`}
         >
           New/Pending Expenses
         </button>
@@ -191,11 +190,10 @@ function EmployeeExpensesContent({
           type="button"
           onClick={() => handleSubTabChange("past_rejected")}
           style={{ cursor: "pointer" }}
-          className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer select-none focus:outline-none ${
-            subTab === "past_rejected"
+          className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer select-none focus:outline-none ${subTab === "past_rejected"
               ? "bg-[#7D73E3] text-white shadow-sm"
               : "bg-[#E5E5EA] text-[#374151] hover:bg-[#dedde3] hover:text-[#1F2937]"
-          }`}
+            }`}
         >
           Past Claims / Rejected Claims
         </button>

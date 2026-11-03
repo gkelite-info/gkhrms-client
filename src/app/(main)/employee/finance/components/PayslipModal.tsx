@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { X, Download, Printer, Loader2 } from "lucide-react"
+import { X, Download, Loader2 } from "lucide-react"
 import EmployeePayslipDocument, { PayslipData } from "./EmployeePayslipDocument"
 import { downloadPayslipPdf } from "../utils/downloadPdf"
 
@@ -31,10 +31,6 @@ export default function PayslipModal({
   }, [isOpen, onClose])
 
   if (!isOpen) return null
-
-  const handlePrint = () => {
-    window.print()
-  }
 
   const handleDownload = () => {
     if (isDownloading) return
@@ -66,14 +62,6 @@ export default function PayslipModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Print</span>
-            </button>
             <button
               type="button"
               onClick={handleDownload}

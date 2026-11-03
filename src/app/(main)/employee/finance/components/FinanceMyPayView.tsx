@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Download } from "lucide-react"
-import MiniCalendarCard from "./MiniCalendarCard"
+import { ReusableCalendar } from "@/../reusableComponents"
 import FinanceIncomeTaxView from "./FinanceIncomeTaxView"
 import { downloadPayslipPdf } from "../utils/downloadPdf"
 import { DEFAULT_PAYSLIP_DATA } from "./EmployeePayslipDocument"
 
 export interface FinanceMyPayViewProps {
   onViewPayslip: () => void
+  basePath?: string
 }
 
 interface PaySlipCardData {
@@ -42,6 +43,7 @@ const PAY_SLIP_ITEMS: PaySlipCardData[] = [
 
 export default function FinanceMyPayView({
   onViewPayslip,
+  basePath = "/employee/finance",
 }: FinanceMyPayViewProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -61,7 +63,8 @@ export default function FinanceMyPayView({
 
   const handleSelectSubTab = (tab: "salary_payslips" | "income_tax") => {
     setSubTab(tab)
-    router.push(`/employee/finance?tab=mypay&subtab=${tab}`)
+    const sep = basePath.includes("?") ? "&" : "?"
+    router.push(`${basePath}${sep}tab=mypay&subtab=${tab}`)
   }
 
   const handleDownloadCard = (cardTitle: string, e: React.MouseEvent) => {
@@ -74,7 +77,7 @@ export default function FinanceMyPayView({
   }
 
   return (
-    <div className="w-full h-full min-h-0 flex flex-col">
+    <div className="w-full flex flex-col">
       <div className="shrink-0 flex items-center gap-2 select-none mb-3 sm:mb-3.5">
         <button
           type="button"
@@ -99,7 +102,7 @@ export default function FinanceMyPayView({
         </button>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide pr-0.5 pb-4">
+      <div className="w-full flex flex-col pb-4">
         {subTab === "income_tax" ? (
           <FinanceIncomeTaxView />
         ) : (
@@ -196,7 +199,7 @@ export default function FinanceMyPayView({
               </div>
 
               <div className="w-full lg:w-[215px] shrink-0">
-                <MiniCalendarCard monthName="January" className="h-full" />
+                <ReusableCalendar monthName="January" className="h-full" />
               </div>
             </div>
           </div>
@@ -206,9 +209,9 @@ export default function FinanceMyPayView({
               Pay Slips
             </h3>
 
-            <div className="flex flex-col lg:flex-row gap-2.5 sm:gap-3 items-start">
+            <div className="flex flex-col lg:flex-row gap-2.5 sm:gap-3 items-stretch">
               <div className="w-full lg:w-[215px] shrink-0">
-                <MiniCalendarCard monthName="January" />
+                <ReusableCalendar monthName="January" className="h-full" />
               </div>
 
               <div className="flex-1 min-w-0 w-full flex flex-col gap-2.5">

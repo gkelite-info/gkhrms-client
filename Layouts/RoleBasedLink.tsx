@@ -14,6 +14,9 @@ import {
   TrendUp,
   ChatCircleDots,
   ChartLineUp,
+  Laptop,
+  CalendarBlank,
+  ArrowsLeftRight,
 } from "phosphor-react"
 import { Roles } from "../Features/Auth/Slice/loginType"
 
@@ -70,22 +73,35 @@ export const roleBasedNav: Record<
   ],
   Hr: [
     { label: "Home", href: "/hr", icon: House },
-    { label: "Workforce", href: "/hr/workforce", icon: User },
+    { label: "Me", href: "/hr/me", icon: User },
+    { label: "My Team", href: "/hr/myteam", icon: UsersThree },
+    { label: "Workforce", href: "/hr/workforce", icon: Laptop },
     {
-      label: "Payroll & Compliance",
-      href: "/hr/payrole-compliance",
+      label: "Finance & Payroll",
+      href: "/hr/finance",
       icon: CurrencyCircleDollar,
     },
     { label: "Attendance", href: "/hr/attendance", icon: UsersThree },
     {
-      label: "Engagement & Culture",
-      href: "/hr/engagement-culture",
-      icon: Timer,
+      label: "Attendance & Leave",
+      href: "/hr/attendance-leaves",
+      icon: CalendarBlank,
     },
+    {
+      label: "Automation & Integration",
+      href: "/hr/integration-automation",
+      icon: ArrowsLeftRight,
+    },
+    { label: "Org", href: "/hr/org", icon: Buildings },
     {
       label: "Analytics & Reports",
       href: "/hr/analytics-reports",
       icon: ChartBar,
+    },
+    {
+      label: "Engage",
+      href: "/hr/engage",
+      icon: ChatCircleDots,
     },
   ],
   TeamLead: [

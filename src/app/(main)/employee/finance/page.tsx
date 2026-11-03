@@ -71,14 +71,14 @@ function FinanceContent() {
   }
 
   return (
-    <div className="w-full h-full max-w-full min-w-0 flex flex-col px-3 pt-2.5 sm:px-4 sm:pt-3 md:px-6 md:pt-3 pb-2 overflow-hidden">
+    <div className="w-full min-h-full max-w-full min-w-0 flex flex-col px-3 pt-2.5 sm:px-4 sm:pt-3 md:px-6 md:pt-3 pb-8 overflow-y-auto overflow-x-hidden scrollbar-hide">
       <div className="shrink-0 mb-2 sm:mb-2.5">
         <FinanceTabs activeTab={activeTab} onSelectTab={handleSelectTab} />
       </div>
 
-      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+      <div className="w-full flex flex-col mt-2">
         {activeTab === "summary" && (
-          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide pr-0.5 pb-4">
+          <div className="w-full flex flex-col pb-4">
             <FinanceSummaryView onViewPayslip={handleOpenPayslip} />
           </div>
         )}
@@ -90,7 +90,7 @@ function FinanceContent() {
         {activeTab === "manage_tax" && <FinanceManageTaxView />}
 
         {activeTab === "expenses_travel" && (
-          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide pr-0.5 pb-4">
+          <div className="w-full flex flex-col pb-4">
             <EmployeeExpensesView onAddMore={() => router.push("/employee/tickets")} />
           </div>
         )}

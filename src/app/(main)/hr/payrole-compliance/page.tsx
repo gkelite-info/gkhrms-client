@@ -1,6 +1,8 @@
+"use client"
 
-const PayroleCompliance = () => {
-  return <div className="p-4">PayroleCompliance</div>
+import React from "react"
+import FinanceContainer from "../../employee/finance/components/FinanceContainer"
+
+export default function HrPayrollCompliancePage() {
+  return <FinanceContainer basePath="/hr/payrole-compliance" variant="hr" />
 }
-
-export default PayroleCompliance

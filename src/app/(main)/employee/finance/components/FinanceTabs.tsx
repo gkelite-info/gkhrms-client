@@ -1,17 +1,26 @@
 import React from "react"
 import { FinanceTabType } from "./types"
 
-export interface FinanceTabsProps {
-  activeTab: FinanceTabType
-  onSelectTab: (tab: FinanceTabType) => void
-}
-
-interface TabItem {
+export interface TabItem {
   id: FinanceTabType
   label: string
 }
 
-const TABS: TabItem[] = [
+export interface FinanceTabsProps {
+  activeTab: FinanceTabType
+  onSelectTab: (tab: FinanceTabType) => void
+  tabs?: TabItem[]
+  variant?: "employee" | "hr"
+}
+
+const EMPLOYEE_TABS: TabItem[] = [
+  { id: "summary", label: "Summary" },
+  { id: "mypay", label: "My Pay" },
+  { id: "manage_tax", label: "Manage TAX" },
+  { id: "org_salary_overview", label: "Org Salary Overview" },
+]
+
+const HR_TABS: TabItem[] = [
   { id: "summary", label: "Summary" },
   { id: "mypay", label: "My Pay" },
   { id: "manage_tax", label: "Manage TAX" },
@@ -21,11 +30,21 @@ const TABS: TabItem[] = [
 export default function FinanceTabs({
   activeTab,
   onSelectTab,
+  tabs,
+  variant = "employee",
 }: FinanceTabsProps) {
+  const defaultList = variant === "hr" ? HR_TABS : EMPLOYEE_TABS
+  const displayTabs = tabs && tabs.length > 0 ? tabs : defaultList
+
   return (
-    <div className="w-full bg-white rounded-xl shadow-2xs p-1 sm:p-1.5">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
-        {TABS.map((tab) => {
+    <div className="w-full bg-white rounded-2xl border border-slate-100/80 shadow-2xs p-1.5">
+      <div
+        className="grid gap-1.5 sm:gap-2"
+        style={{
+          gridTemplateColumns: `repeat(${displayTabs.length}, minmax(0, 1fr))`,
+        }}
+      >
+        {displayTabs.map((tab) => {
           const isActive = activeTab === tab.id
           return (
             <button
