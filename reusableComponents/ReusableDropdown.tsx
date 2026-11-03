@@ -178,8 +178,8 @@ export default function ReusableDropdown<T extends string | number>({
               align === "full"
                 ? "left-0 right-0 w-full"
                 : align === "right"
-                ? "right-0 min-w-[150px]"
-                : "left-0 min-w-[150px]"
+                ? "right-0 min-w-full w-max max-w-[calc(100vw-2rem)]"
+                : "left-0 min-w-full w-max max-w-[calc(100vw-2rem)]"
             } ${openUpward ? "bottom-full mb-1.5" : "top-full mt-1.5"} ${menuClassName}`}
             role="listbox"
           >
@@ -200,7 +200,7 @@ export default function ReusableDropdown<T extends string | number>({
                     role="option"
                     aria-selected={active}
                   >
-                    <span className="truncate">{opt.label}</span>
+                    <span className="truncate flex-1 min-w-0 text-left">{opt.label}</span>
 
                     {selectionType === "radio" && (
                       <span

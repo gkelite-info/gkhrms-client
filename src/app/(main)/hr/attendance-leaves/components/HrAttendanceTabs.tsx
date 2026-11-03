@@ -5,7 +5,6 @@ import {
   User,
   UsersThree,
   ClipboardText,
-  FileText,
   ClockCounterClockwise,
 } from "phosphor-react"
 
@@ -36,7 +35,11 @@ export default function HrAttendanceTabs({
   const router = useRouter()
 
   const tabs = [
-    { id: "my-attendance" as const, label: "My Attendance", icon: User },
+    {
+      id: "my-attendance" as const,
+      label: "My Attendance",
+      icon: User,
+    },
     {
       id: "organization-attendance" as const,
       label: "Organization Attendance",
@@ -95,7 +98,7 @@ export default function HrAttendanceTabs({
               if (onApplyLeave) {
                 onApplyLeave()
               } else {
-                router.push("/hr/attendance-leaves?tab=apply-leave")
+                router.push("/hr/attendance?tab=apply-leave")
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"
@@ -108,7 +111,7 @@ export default function HrAttendanceTabs({
               if (onRequestWfh) {
                 onRequestWfh()
               } else {
-                router.push("/hr/attendance-leaves?tab=request-wfh")
+                router.push("/hr/attendance?tab=request-wfh")
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"

@@ -20,6 +20,45 @@ interface WfhGuidelinesCardProps {
 
 const getRoleGuidelines = (role: ApplicantRole): WfhGuidelineItem[] => {
   switch (role) {
+    case "Product Manager":
+      return [
+        {
+          id: "approval-required",
+          title: "Product VP & HR Approval Required",
+          description:
+            "All WFH requests are subject to Head of Product / VP and HR Manager approval.",
+          icon: UsersThree,
+          iconBg: "bg-[#FFF7ED]",
+          iconColor: "text-[#EA580C]",
+        },
+        {
+          id: "available-hours",
+          title: "Cross-Functional Sync Availability",
+          description:
+            "Maintain active presence on Slack/Teams for standups, design reviews, and engineering syncs.",
+          icon: Clock,
+          iconBg: "bg-[#ECFDF5]",
+          iconColor: "text-[#059669]",
+        },
+        {
+          id: "stable-internet",
+          title: "High-Speed Internet for Demos & Sprints",
+          description:
+            "Ensure high-speed connectivity for product walkthroughs, customer demos, and sprint planning.",
+          icon: WifiHigh,
+          iconBg: "bg-[#FAF5FF]",
+          iconColor: "text-[#9333EA]",
+        },
+        {
+          id: "attachment-note",
+          title: "Attachment (Optional)",
+          description:
+            "Attach sprint schedule, async updates plan, or demo notes if working remotely.",
+          icon: FileText,
+          iconBg: "bg-[#EFF6FF]",
+          iconColor: "text-[#2563EB]",
+        },
+      ]
     case "HR":
       return [
         {
@@ -189,6 +228,7 @@ export default function WfhGuidelinesCard({ role }: WfhGuidelinesCardProps) {
 
   const isHr = pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
+  const isProductManager = pathname?.startsWith("/productmanager")
 
   const activeRole: ApplicantRole =
     role ||
@@ -196,10 +236,14 @@ export default function WfhGuidelinesCard({ role }: WfhGuidelinesCardProps) {
       ? "HR"
       : isManager
       ? "Manager"
+      : isProductManager
+      ? "Product Manager"
       : authRole === "Hr"
       ? "HR"
       : authRole === "Manager"
       ? "Manager"
+      : authRole === "ProductManager"
+      ? "Product Manager"
       : authRole === "Employee"
       ? "Employee"
       : "Team Lead")

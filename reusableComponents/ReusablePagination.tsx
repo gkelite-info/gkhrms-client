@@ -40,18 +40,14 @@ export default function ReusablePagination({
 }: ReusablePaginationProps) {
   const [isJumpOpen, setIsJumpOpen] = useState(false)
 
-  if (totalPages <= 0) return null
+  if (totalPages <= 0 && totalItems === undefined) return null
+
+  const isEmpty = totalItems !== undefined ? totalItems === 0 : totalPages <= 0
 
   const getPageNumbers = (): (number | string)[] => {
-    if (totalPages <= 5) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1)
-    }
-    if (currentPage <= 3) {
-      return [1, 2, 3, "...", totalPages]
-    }
-    if (currentPage >= totalPages - 2) {
-      return [1, "...", totalPages - 2, totalPages - 1, totalPages]
-    }
+    if (totalPages <= 5) return Array.from({ length: Math.max(1, totalPages) }, (_, i) => i + 1)
+    if (currentPage <= 3) return [1, 2, 3, "...", totalPages]
+    if (currentPage >= totalPages - 2) return [1, "...", totalPages - 2, totalPages - 1, totalPages]
     return [1, "...", currentPage, "...", totalPages]
   }
 
@@ -77,14 +73,23 @@ export default function ReusablePagination({
       >
         {showTotalInfo && (
           <span className="text-gray-500 font-medium text-xs whitespace-nowrap">
-            {totalItems ? (
-              <>
-                <span>Showing </span>
-                <strong className="text-gray-800">{startItem.toLocaleString()}</strong>-
-                <strong className="text-gray-800">{endItem.toLocaleString()}</strong> of{" "}
-                <strong className="text-gray-800">{totalItems.toLocaleString()}</strong>
-                <span> entries</span>
-              </>
+            {totalItems !== undefined ? (
+              totalItems === 0 ? (
+                <>
+                  <span>Showing </span>
+                  <strong className="text-gray-800">0</strong> of{" "}
+                  <strong className="text-gray-800">0</strong>
+                  <span> entries</span>
+                </>
+              ) : (
+                <>
+                  <span>Showing </span>
+                  <strong className="text-gray-800">{startItem.toLocaleString()}</strong>-
+                  <strong className="text-gray-800">{endItem.toLocaleString()}</strong> of{" "}
+                  <strong className="text-gray-800">{totalItems.toLocaleString()}</strong>
+                  <span> entries</span>
+                </>
+              )
             ) : (
               `Page ${currentPage} of ${totalPages}`
             )}
@@ -106,7 +111,9 @@ export default function ReusablePagination({
               value={pageSize}
               options={pageSizeOptions.map((opt) => ({ label: `${opt}`, value: opt }))}
               onChange={(val) => onPageSizeChange(Number(val))}
-              buttonClassName="py-1 px-2.5 text-xs h-7.5"
+              className="min-w-[54px]"
+              buttonClassName="py-1 px-2.5 text-xs h-7.5 w-full min-w-[54px]"
+              menuClassName="min-w-[76px]"
               selectionType="radio"
               align="right"
             />
@@ -118,7 +125,7 @@ export default function ReusablePagination({
         <button
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || isEmpty}
           className="w-9 h-8.5 rounded-xl border border-gray-200 bg-white text-gray-700 flex items-center justify-center shadow-2xs hover:bg-gray-50 active:scale-98 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
           title="Previous Page"
           aria-label="Previous page"
@@ -128,14 +135,14 @@ export default function ReusablePagination({
 
         <div className="shrink-0 h-8.5 px-3 rounded-xl bg-gray-50 text-gray-700 font-bold text-xs flex items-center justify-center border border-gray-100 shadow-2xs">
           <span className="whitespace-nowrap">
-            Page {currentPage} of {totalPages}
+            {isEmpty ? "Page 0 of 0" : `Page ${currentPage} of ${totalPages}`}
           </span>
         </div>
 
         <button
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage >= totalPages || isEmpty}
           className="w-9 h-8.5 rounded-xl border border-gray-200 bg-white text-gray-700 flex items-center justify-center shadow-2xs hover:bg-gray-50 active:scale-98 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
           title="Next Page"
           aria-label="Next page"
@@ -147,9 +154,9 @@ export default function ReusablePagination({
           <button
             type="button"
             onClick={() => {
-              if (totalPages > 1) setIsJumpOpen(true)
+              if (totalPages > 1 && !isEmpty) setIsJumpOpen(true)
             }}
-            disabled={totalPages <= 1}
+            disabled={totalPages <= 1 || isEmpty}
             className="h-8.5 px-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 hover:text-[#5B50EC] hover:border-[#5B50EC] active:scale-98 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 text-xs font-semibold shrink-0 cursor-pointer whitespace-nowrap shadow-2xs transition-all"
             title="Go to page"
             aria-label="Go to page"
@@ -170,6 +177,7 @@ export default function ReusablePagination({
         setIsJumpOpen={setIsJumpOpen}
         quickJumpPages={quickJumpPages}
         isTwoRow={isTwoRow}
+        isEmpty={isEmpty}
       />
 
       <PaginationJumpModal

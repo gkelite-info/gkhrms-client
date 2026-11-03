@@ -1,16 +1,5 @@
-import { Suspense } from "react"
-import TeamLeadApplyLeaveSection from "../components/TeamLeadApplyLeaveSection"
+import { redirect } from "next/navigation"
 
 export default function TeamLeadApplyLeavePage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="w-full min-h-[400px] flex items-center justify-center text-xs text-gray-400">
-          Loading...
-        </div>
-      }
-    >
-      <TeamLeadApplyLeaveSection />
-    </Suspense>
-  )
+  redirect("/teamlead/attendance?tab=apply-leave")
 }

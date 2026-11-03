@@ -28,13 +28,22 @@ export default function TeamLeadAttendanceFormContainer({
 
   const isHr = pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
-  const basePath = isHr ? "/hr/attendance-leaves" : isManager ? "/manager" : "/teamlead"
+  const isProductManager = pathname?.startsWith("/productmanager")
+  const basePath = isHr
+    ? "/hr/attendance"
+    : isManager
+    ? "/manager/attendance"
+    : isProductManager
+    ? "/productmanager/attendance"
+    : "/teamlead/attendance"
 
   const [selectedRole, setSelectedRole] = useState<ApplicantRole>(() => {
     if (isHr) return "HR"
     if (isManager) return "Manager"
+    if (isProductManager) return "Product Manager"
     if (authRole === "Hr") return "HR"
     if (authRole === "Manager") return "Manager"
+    if (authRole === "ProductManager") return "Product Manager"
     if (authRole === "Employee") return "Employee"
     return "Team Lead"
   })
@@ -54,13 +63,7 @@ export default function TeamLeadAttendanceFormContainer({
 
   const handleTabChange = (tab: FormTabType) => {
     setActiveTab(tab)
-    if (isHr) {
-      router.replace(`/hr/attendance-leaves?tab=${tab === "wfh" ? "request-wfh" : "apply-leave"}`, {
-        scroll: false,
-      })
-    } else {
-      router.replace(`${basePath}/apply-leave?type=${tab}`, { scroll: false })
-    }
+    router.replace(`${basePath}?tab=${tab === "wfh" ? "request-wfh" : "apply-leave"}`, { scroll: false })
   }
 
   return (

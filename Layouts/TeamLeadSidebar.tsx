@@ -6,7 +6,7 @@ import ReusableSidebar, {
 } from "../reusableComponents/ReusableSidebar"
 
 export const teamLeadNavItems: ReusableSidebarItem[] = [
-  { label: "Attendance", href: "/teamlead", icon: UsersThree },
+  { label: "Attendance", href: "/teamlead/attendance", icon: UsersThree },
   { label: "Performance", href: "/teamlead/performance", icon: ChartLineUp },
   { label: "Profile", href: "/teamlead/profile", icon: User },
 ]
@@ -21,11 +21,16 @@ export default function TeamLeadSidebar() {
       "/teamlead/profile",
     ].some((route) => currentPath === route || currentPath.startsWith(`${route}/`))
 
-    if (item.href === "/teamlead") {
+    if (item.href === "/teamlead/attendance") {
       return (
-        currentPath === "/teamlead" ||
-        currentPath.startsWith("/teamlead/member") ||
-        (!isOtherSubRoute && currentPath.startsWith("/teamlead"))
+        !isOtherSubRoute &&
+        (currentPath === "/teamlead" ||
+          currentPath.startsWith("/teamlead/attendance") ||
+          currentPath.startsWith("/teamlead/member") ||
+          currentPath.startsWith("/teamlead/apply-leave") ||
+          currentPath.startsWith("/teamlead/request-wfh") ||
+          currentPath.startsWith("/teamlead/requests") ||
+          currentPath.startsWith("/teamlead/exception-history"))
       )
     }
 

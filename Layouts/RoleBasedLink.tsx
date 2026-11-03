@@ -6,8 +6,6 @@ import {
   CurrencyCircleDollar,
   Timer,
   ChartBar,
-  Tray,
-  Files,
   Airplay,
   Gear,
   Lock,
@@ -15,7 +13,6 @@ import {
   ChatsCircle,
   TrendUp,
   ChatCircleDots,
-  ClipboardText,
   ChartLineUp,
 } from "phosphor-react"
 import { Roles } from "../Features/Auth/Slice/loginType"
@@ -55,7 +52,7 @@ export const roleBasedNav: Record<
     },
   ],
   Manager: [
-    { label: "Attendance", href: "/manager", icon: UsersThree },
+    { label: "Attendance", href: "/manager/attendance", icon: UsersThree },
     { label: "Profile", href: "/manager/profile", icon: User },
   ],
   Employee: [
@@ -79,7 +76,7 @@ export const roleBasedNav: Record<
       href: "/hr/payrole-compliance",
       icon: CurrencyCircleDollar,
     },
-    { label: "Attendance & Leave", href: "/hr/attendance-leaves", icon: Timer },
+    { label: "Attendance", href: "/hr/attendance", icon: UsersThree },
     {
       label: "Engagement & Culture",
       href: "/hr/engagement-culture",
@@ -92,8 +89,11 @@ export const roleBasedNav: Record<
     },
   ],
   TeamLead: [
-    { label: "Attendance", href: "/teamlead", icon: UsersThree },
+    { label: "Attendance", href: "/teamlead/attendance", icon: UsersThree },
     { label: "Performance", href: "/teamlead/performance", icon: ChartLineUp },
     { label: "Profile", href: "/teamlead/profile", icon: User },
+  ],
+  ProductManager: [
+    { label: "Attendance", href: "/productmanager/attendance", icon: UsersThree },
   ],
 }

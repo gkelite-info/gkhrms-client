@@ -19,10 +19,12 @@ import { useManagerRequestActions } from "./useManagerRequestActions"
 
 interface ManagerRequestsSectionProps {
   hideSubtabs?: boolean
+  customTitle?: string
 }
 
 export default function ManagerRequestsSection({
   hideSubtabs = false,
+  customTitle,
 }: ManagerRequestsSectionProps = {}) {
   const router = useRouter()
   const pathname = usePathname()
@@ -219,7 +221,7 @@ export default function ManagerRequestsSection({
 
       <ManagerRequestsList
         currentSubtab={currentSubtab}
-        title={isHrView ? "Attendance Requests" : undefined}
+        title={customTitle || (isHrView ? "Attendance Requests" : undefined)}
         paginatedRequests={paginatedRequests}
         totalItems={filteredRequests.length}
         currentPage={currentPage}
