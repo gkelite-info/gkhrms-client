@@ -60,6 +60,7 @@ export const roleBasedNav: Record<
   ],
   Employee: [
     { label: "Home", href: "/employee", icon: House },
+    { label: "Attendance", href: "/employee/attendance", icon: UsersThree },
     { label: "Me", href: "/employee/me", icon: User },
     { label: "My Team", href: "/employee/myteam", icon: UsersThree },
     {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, type ChangeEvent, type FormEvent } from "react"
+import { useState, useMemo, type FormEvent, type ChangeEvent } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useSelector } from "react-redux"
 import toast from "react-hot-toast"
@@ -8,8 +8,12 @@ import { House, CalendarBlank } from "phosphor-react"
 import { ReusableDropdown } from "@/components/reusableComponents"
 import { RootState } from "../../../../../../Redux/Store"
 import FileUploadDropzone from "./FileUploadDropzone"
-import { ApplicantRole, DayOption, UploadedFileItem } from "./types"
-import { applicantRoles, ROLE_APPROVAL_CONFIG } from "./approvalConfig"
+import {
+  ApplicantRole,
+  DayOption,
+  UploadedFileItem,
+} from "./types"
+import { ROLE_APPROVAL_CONFIG } from "./approvalConfig"
 
 interface RequestWfhFormCardProps {
   currentRole?: ApplicantRole
@@ -27,26 +31,31 @@ export default function RequestWfhFormCard({
   const isHr = pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
+  const isEmployee = pathname?.startsWith("/employee")
   const basePath = isHr
     ? "/hr/attendance"
     : isManager
     ? "/manager/attendance"
     : isProductManager
     ? "/productmanager/attendance"
+    : isEmployee
+    ? "/employee/attendance"
     : "/teamlead/attendance"
 
   const availableRoles: ApplicantRole[] = useMemo(() => {
     if (isHr) return ["HR", "Manager", "Product Manager", "Team Lead", "Employee"]
     if (isManager) return ["Manager", "Team Lead", "Employee"]
     if (isProductManager) return ["Product Manager", "Team Lead", "Employee"]
+    if (isEmployee) return ["Employee", "Team Lead"]
     return ["Team Lead", "Employee"]
-  }, [isHr, isManager, isProductManager])
+  }, [isHr, isManager, isProductManager, isEmployee])
 
   const resolveInitialRole = (): ApplicantRole => {
     if (currentRole && availableRoles.includes(currentRole)) return currentRole
     if (isHr) return "HR"
     if (isManager) return "Manager"
     if (isProductManager) return "Product Manager"
+    if (isEmployee) return "Employee"
     if (authRole === "Hr") return "HR"
     if (authRole === "Manager") return "Manager"
     if (authRole === "ProductManager") return "Product Manager"

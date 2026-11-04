@@ -29,18 +29,22 @@ export default function TeamLeadAttendanceFormContainer({
   const isHr = pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
+  const isEmployee = pathname?.startsWith("/employee")
   const basePath = isHr
     ? "/hr/attendance"
     : isManager
     ? "/manager/attendance"
     : isProductManager
     ? "/productmanager/attendance"
+    : isEmployee
+    ? "/employee/attendance"
     : "/teamlead/attendance"
 
   const [selectedRole, setSelectedRole] = useState<ApplicantRole>(() => {
     if (isHr) return "HR"
     if (isManager) return "Manager"
     if (isProductManager) return "Product Manager"
+    if (isEmployee) return "Employee"
     if (authRole === "Hr") return "HR"
     if (authRole === "Manager") return "Manager"
     if (authRole === "ProductManager") return "Product Manager"

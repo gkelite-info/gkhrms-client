@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import {
   ReusableTable,
   ReusablePagination,
@@ -18,6 +18,10 @@ import { getDefaultDateFilterValue } from "../data/dateFilterUtils"
 
 export default function TeamAttendanceSection() {
   const router = useRouter()
+  const pathname = usePathname()
+  const isEmployee = pathname?.startsWith("/employee")
+  const memberBasePath = isEmployee ? "/employee/member" : "/teamlead/member"
+
   const [data] = useState<TeamMemberAttendance[]>(mockTeamMembers)
   const [searchQuery, setSearchQuery] = useState("")
   const [departmentFilter, setDepartmentFilter] = useState("All Departments")
@@ -67,9 +71,9 @@ export default function TeamAttendanceSection() {
   const columns = useMemo(
     () =>
       getTeamAttendanceColumns({
-        onView: (id) => router.push(`/teamlead/member/${id}`),
+        onView: (id) => router.push(`${memberBasePath}/${id}`),
       }),
-    [router]
+    [router, memberBasePath]
   )
 
   return (

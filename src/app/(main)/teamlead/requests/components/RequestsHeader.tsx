@@ -2,7 +2,15 @@
 
 import { Article } from "phosphor-react"
 
-export default function RequestsHeader() {
+interface RequestsHeaderProps {
+  title?: string
+  subtitle?: string
+}
+
+export default function RequestsHeader({
+  title = "Attendance Requests",
+  subtitle = "Review and manage attendance-related requests from your team members.",
+}: RequestsHeaderProps = {}) {
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex items-center justify-between gap-4">
       <div className="flex items-center gap-3 min-w-0">
@@ -11,10 +19,10 @@ export default function RequestsHeader() {
         </div>
         <div className="flex flex-col min-w-0">
           <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-tight truncate">
-            Attendance Requests
+            {title}
           </h1>
           <p className="text-xs text-gray-400 font-medium mt-0.5 truncate">
-            Review and manage attendance-related requests from your team members.
+            {subtitle}
           </p>
         </div>
       </div>

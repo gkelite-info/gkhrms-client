@@ -8,12 +8,14 @@ interface GetRequestsColumnsProps {
   onApprove: (id: string) => void
   onReject: (id: string) => void
   onView: (row: AttendanceRequestItem) => void
+  canApprove?: boolean
 }
 
 export function getRequestsColumns({
   onApprove,
   onReject,
   onView,
+  canApprove = true,
 }: GetRequestsColumnsProps): TableColumn<AttendanceRequestItem>[] {
   return [
     {
@@ -83,6 +85,21 @@ export function getRequestsColumns({
       className: "whitespace-nowrap",
       render: (row) => {
         const isPending = row.status === "Pending"
+
+        if (!canApprove) {
+          return (
+            <div className="flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => onView(row)}
+                className="text-[#5B50EC] hover:text-[#4338CA] font-semibold text-xs transition-colors cursor-pointer px-2.5 py-1 rounded-lg hover:bg-[#EEF2FF] border border-[#C5C1FF]/70"
+              >
+                View
+              </button>
+            </div>
+          )
+        }
+
         return (
           <div className="flex items-center justify-center gap-2">
             <button

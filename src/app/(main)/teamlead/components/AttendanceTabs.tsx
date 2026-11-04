@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import {
   User,
   UsersThree,
@@ -21,6 +21,7 @@ interface AttendanceTabsProps {
   showActions?: boolean
   onApplyLeave?: () => void
   onRequestWfh?: () => void
+  basePath?: string
 }
 
 export default function AttendanceTabs({
@@ -29,10 +30,22 @@ export default function AttendanceTabs({
   showActions = true,
   onApplyLeave,
   onRequestWfh,
+  basePath,
 }: AttendanceTabsProps) {
   const router = useRouter()
+  const pathname = usePathname()
 
-  const tabs = [
+  const isEmployee = pathname?.startsWith("/employee")
+  const defaultBasePath = isEmployee
+    ? "/employee/attendance"
+    : pathname?.startsWith("/manager")
+    ? "/manager/attendance"
+    : pathname?.startsWith("/productmanager")
+    ? "/productmanager/attendance"
+    : "/teamlead/attendance"
+  const targetBasePath = basePath || defaultBasePath
+
+  const allTabs = [
     {
       key: "my-attendance" as TabKey,
       label: "My Attendance",
@@ -55,11 +68,15 @@ export default function AttendanceTabs({
     },
   ]
 
+  const tabs = isEmployee
+    ? allTabs.filter((tab) => tab.key !== "team-attendance")
+    : allTabs
+
   const handleTabClick = (tabKey: TabKey) => {
     if (onTabChange) {
       onTabChange(tabKey)
     } else {
-      router.push(`/teamlead/attendance?tab=${tabKey}`)
+      router.push(`${targetBasePath}?tab=${tabKey}`)
     }
   }
 
@@ -102,7 +119,7 @@ export default function AttendanceTabs({
               if (onApplyLeave) {
                 onApplyLeave()
               } else {
-                router.push("/teamlead/attendance?tab=apply-leave")
+                router.push(`${targetBasePath}?tab=apply-leave`)
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"
@@ -115,7 +132,7 @@ export default function AttendanceTabs({
               if (onRequestWfh) {
                 onRequestWfh()
               } else {
-                router.push("/teamlead/attendance?tab=request-wfh")
+                router.push(`${targetBasePath}?tab=request-wfh`)
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"
