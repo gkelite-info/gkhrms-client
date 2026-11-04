@@ -16,6 +16,7 @@ import ReusableSidebar, {
 
 export const employeeNavItems: ReusableSidebarItem[] = [
   { label: "Home", href: "/employee", icon: House, exact: true },
+  { label: "Attendance", href: "/employee/attendance", icon: UsersThree },
   { label: "Me", href: "/employee/me", icon: User },
   { label: "My Team", href: "/employee/myteam", icon: UsersThree },
   {
@@ -33,11 +34,32 @@ export interface EmployeeNavbarProps {
 }
 
 export default function EmployeeNavbar({ className = "" }: EmployeeNavbarProps) {
+  const isEmployeeItemActive = (
+    item: ReusableSidebarItem,
+    currentPath: string
+  ): boolean => {
+    if (item.href === "/employee/attendance") {
+      return (
+        currentPath.startsWith("/employee/attendance") ||
+        currentPath.startsWith("/employee/apply-leave") ||
+        currentPath.startsWith("/employee/request-wfh") ||
+        currentPath.startsWith("/employee/requests") ||
+        currentPath.startsWith("/employee/exception-history") ||
+        currentPath.startsWith("/employee/member")
+      )
+    }
+    if (item.exact) {
+      return currentPath === item.href
+    }
+    return currentPath === item.href || currentPath.startsWith(`${item.href}/`)
+  }
+
   return (
     <ReusableSidebar
       items={employeeNavItems}
       toggleEventName="toggle-employee-sidebar"
       closeEventName="close-employee-sidebar"
+      isItemActive={isEmployeeItemActive}
       desktopWidthClass="w-[210px] min-w-[210px]"
       drawerWidthClass="w-[240px]"
       activeColorClass="bg-[#5B50EC] text-white shadow-sm ring-1 ring-[#5B50EC]/30"

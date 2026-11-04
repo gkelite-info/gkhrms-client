@@ -11,6 +11,7 @@ interface RequestDetailModalProps {
   onClose: () => void
   onApprove: (id: string) => void
   onReject: (id: string) => void
+  canApprove?: boolean
 }
 
 export default function RequestDetailModal({
@@ -18,6 +19,7 @@ export default function RequestDetailModal({
   onClose,
   onApprove,
   onReject,
+  canApprove = true,
 }: RequestDetailModalProps) {
   const [remarks, setRemarks] = useState("")
 
@@ -28,24 +30,25 @@ export default function RequestDetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md select-none animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-[480px] max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
-        <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
-          <h2 className="text-base font-bold text-gray-900">
-            Request Details
-          </h2>
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-gray-100 bg-white shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm sm:text-base font-bold text-gray-900">
+              Attendance Request Details
+            </span>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
-            aria-label="Close modal"
+            className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
           >
             <X size={18} weight="bold" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-4 custom-scrollbar">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3.5 p-4 rounded-2xl bg-gray-50/80 border border-gray-100">
-            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-3.5 text-center sm:text-left w-full sm:w-auto">
-              <div className="flex justify-center shrink-0">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6 flex flex-col gap-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#F8F9FD] border border-gray-100">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="relative shrink-0">
                 <ReusableAvatar
                   src={request.avatar}
                   name={request.name}
@@ -85,22 +88,24 @@ export default function RequestDetailModal({
 
           <RequestDetailContent request={request} />
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-gray-800">
-              Manager Remarks (Optional)
-            </label>
-            <textarea
-              rows={4}
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
-              placeholder="Add remarks..."
-              className="w-full min-h-[96px] p-3 rounded-2xl border border-gray-200 text-xs sm:text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#5B50EC] focus:ring-2 focus:ring-[#5B50EC]/15 transition-all resize-none"
-            />
-          </div>
+          {canApprove && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-gray-800">
+                Manager Remarks (Optional)
+              </label>
+              <textarea
+                rows={4}
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+                placeholder="Add remarks..."
+                className="w-full min-h-[96px] p-3 rounded-2xl border border-gray-200 text-xs sm:text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#5B50EC] focus:ring-2 focus:ring-[#5B50EC]/15 transition-all resize-none"
+              />
+            </div>
+          )}
         </div>
 
         <div className="shrink-0 p-4 sm:px-5 sm:py-3.5 border-t border-gray-100 bg-white">
-          {isPending ? (
+          {isPending && canApprove ? (
             <div className="flex items-center gap-3">
               <button
                 type="button"

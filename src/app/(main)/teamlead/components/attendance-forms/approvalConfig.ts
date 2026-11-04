@@ -10,22 +10,28 @@ export const applicantRoles: ApplicantRole[] = [
 
 export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
   Employee: {
-    primaryLabel: "Team Lead",
-    primaryPlaceholder: "Select Team Lead",
+    primaryLabel: "Team Lead / Reporting Manager",
+    primaryPlaceholder: "Select Team Lead / Manager / Product Manager",
     primaryOptions: [
       "Rohit Sharma (Lead Software Engineer)",
       "Ananya Sen (Frontend Team Lead)",
       "Vikram Malhotra (Backend Team Lead)",
       "Siddharth Rao (QA Lead)",
       "Pooja Hegde (UI/UX Lead)",
+      "Rajesh Kumar (Senior Project Manager)",
+      "Anjali Mehta (Product Manager)",
+      "Deepak Reddy (Technical Delivery Manager)",
+      "Suresh N (Engineering Manager)",
     ],
-    secondaryLabel: "HR Business Partner",
-    secondaryPlaceholder: "Select HRBP",
+    secondaryLabel: "HR Business Partner / Manager",
+    secondaryPlaceholder: "Select HRBP / HR Manager",
     secondaryOptions: [
       "Sneha Kapoor (HR Manager)",
       "Priya Mehta (Senior HRBP)",
       "Amit Verma (HR Operations Lead)",
       "Neha Singh (People Operations)",
+      "Kavita Nair (Enterprise Project Manager)",
+      "Dr. Priya Mehta (CHRO)",
     ],
   },
   "Team Lead": {
@@ -98,4 +104,4 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
       "Amit Verma (HR Operations Lead)",
     ],
   },
-};
+}

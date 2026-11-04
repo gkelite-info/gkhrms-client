@@ -2,6 +2,7 @@
 
 import { CaretRight } from "phosphor-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 interface AttendanceRequestsCardProps {
   newApprovalCount?: number
@@ -14,14 +15,33 @@ interface AttendanceRequestsCardProps {
 export default function AttendanceRequestsCard({
   newApprovalCount = 3,
   pendingCount = 2,
-  newApprovalHref = "/teamlead?tab=requests&status=Pending",
-  pendingHref = "/teamlead?tab=requests&status=Pending",
-  href = "/teamlead?tab=requests",
+  newApprovalHref,
+  pendingHref,
+  href,
 }: AttendanceRequestsCardProps) {
+  const pathname = usePathname()
+  const isEmployee = pathname?.startsWith("/employee")
+
+  const targetHref =
+    href ||
+    (isEmployee
+      ? "/employee/attendance?tab=requests&subtab=my-requests"
+      : "/teamlead?tab=requests")
+  const targetNewApprovalHref =
+    newApprovalHref ||
+    (isEmployee
+      ? "/employee/attendance?tab=requests&subtab=my-requests"
+      : "/teamlead?tab=requests&status=Pending")
+  const targetPendingHref =
+    pendingHref ||
+    (isEmployee
+      ? "/employee/attendance?tab=requests&subtab=my-requests&status=Pending"
+      : "/teamlead?tab=requests&status=Pending")
+
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between transition-all hover:shadow-md min-h-[110px] h-auto">
       <Link
-        href={href}
+        href={targetHref}
         className="text-sm font-bold text-[#1F2433] hover:text-[#5B50EC] transition-colors w-fit"
       >
         Attendance Requests
@@ -29,11 +49,11 @@ export default function AttendanceRequestsCard({
 
       <div className="flex flex-col gap-1.5 pt-1">
         <Link
-          href={newApprovalHref}
+          href={targetNewApprovalHref}
           className="flex items-center justify-between text-xs text-gray-700 hover:text-[#5B50EC] transition-colors py-0.5 group"
         >
           <span className="font-medium group-hover:translate-x-0.5 transition-transform">
-            New Approval
+            {isEmployee ? "My Submissions" : "New Approval"}
           </span>
           <div className="flex items-center gap-1.5 text-gray-400 group-hover:text-[#5B50EC]">
             {newApprovalCount > 0 && (
@@ -46,7 +66,7 @@ export default function AttendanceRequestsCard({
         </Link>
 
         <Link
-          href={pendingHref}
+          href={targetPendingHref}
           className="flex items-center justify-between text-xs text-gray-700 hover:text-[#5B50EC] transition-colors py-0.5 group"
         >
           <span className="font-medium group-hover:translate-x-0.5 transition-transform">

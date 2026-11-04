@@ -14,7 +14,7 @@ import {
   DayOption,
   UploadedFileItem,
 } from "./types"
-import { applicantRoles, ROLE_APPROVAL_CONFIG } from "./approvalConfig"
+import { ROLE_APPROVAL_CONFIG } from "./approvalConfig"
 
 const leaveOptions = [
   "Casual Leave",
@@ -40,26 +40,31 @@ export default function ApplyLeaveFormCard({
   const isHr = pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
+  const isEmployee = pathname?.startsWith("/employee")
   const basePath = isHr
     ? "/hr/attendance"
     : isManager
     ? "/manager/attendance"
     : isProductManager
     ? "/productmanager/attendance"
+    : isEmployee
+    ? "/employee/attendance"
     : "/teamlead/attendance"
 
   const availableRoles: ApplicantRole[] = useMemo(() => {
     if (isHr) return ["HR", "Manager", "Product Manager", "Team Lead", "Employee"]
     if (isManager) return ["Manager", "Team Lead", "Employee"]
     if (isProductManager) return ["Product Manager", "Team Lead", "Employee"]
+    if (isEmployee) return ["Employee", "Team Lead"]
     return ["Team Lead", "Employee"]
-  }, [isHr, isManager, isProductManager])
+  }, [isHr, isManager, isProductManager, isEmployee])
 
   const resolveInitialRole = (): ApplicantRole => {
     if (currentRole && availableRoles.includes(currentRole)) return currentRole
     if (isHr) return "HR"
     if (isManager) return "Manager"
     if (isProductManager) return "Product Manager"
+    if (isEmployee) return "Employee"
     if (authRole === "Hr") return "HR"
     if (authRole === "Manager") return "Manager"
     if (authRole === "ProductManager") return "Product Manager"

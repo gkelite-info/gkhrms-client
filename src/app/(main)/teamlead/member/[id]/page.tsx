@@ -1,25 +1,28 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useParams, useRouter } from "next/navigation"
-import Link from "next/link"
+import { useParams, useRouter, usePathname } from "next/navigation"
 import { ArrowLeft, Article } from "phosphor-react"
 import {
   ReusableTable,
   TableColumn,
   ReusablePagination,
   ReusableDateFilter,
-  DateFilterValue,
 } from "@/components/reusableComponents"
 import { getMemberById, MemberDailyAttendance } from "../../data/teamAttendanceData"
 import MemberProfileBanner from "./components/MemberProfileBanner"
 import MemberStatCards from "./components/MemberStatCards"
 import MonthlyTrendChart from "./components/MonthlyTrendChart"
-import { getDefaultDateFilterValue } from "../../data/dateFilterUtils"
 
 export default function TeamMemberDetailsPage() {
   const params = useParams()
   const router = useRouter()
+  const pathname = usePathname()
+  const isEmployee = pathname?.startsWith("/employee")
+  const backHref = isEmployee
+    ? "/employee/attendance?tab=team-attendance"
+    : "/teamlead/attendance?tab=team-attendance"
+
   const memberId = (params?.id as string) || "EMP001"
 
   const member = useMemo(() => {
@@ -98,7 +101,7 @@ export default function TeamMemberDetailsPage() {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={() => router.push("/teamlead/attendance?tab=team-attendance")}
+          onClick={() => router.push(backHref)}
           className="p-2 sm:p-2.5 rounded-xl bg-white border border-gray-200 text-gray-600 hover:text-[#5B50EC] hover:border-[#5B50EC] transition-all cursor-pointer shadow-2xs shrink-0 flex items-center justify-center"
           title="Back to Team Attendance"
           aria-label="Back to Team Attendance"
