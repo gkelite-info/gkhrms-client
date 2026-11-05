@@ -11,8 +11,9 @@ export default function MainLayout({
 }) {
   const pathname = usePathname()
   const isSuperAdmin = pathname?.startsWith("/superadmin")
+  const isHrManager = pathname?.startsWith("/hrmanager")
 
-  if (isSuperAdmin) {
+  if (isSuperAdmin || isHrManager) {
     return <div className="w-full h-screen overflow-hidden">{children}</div>
   }
 
