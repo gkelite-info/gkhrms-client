@@ -1,4 +1,4 @@
-export type Roles = "Employee" | "Hr" | "Manager" | "Admin" | "TeamLead" | "ProductManager" | "HrManager"
+export type Roles = "Employee" | "Hr" | "Manager" | "Admin" | "TeamLead" | "ProductManager" | "HrManager" | "Finance" | "FinanceManager"
 
 export interface LoginUserData {
   email: string

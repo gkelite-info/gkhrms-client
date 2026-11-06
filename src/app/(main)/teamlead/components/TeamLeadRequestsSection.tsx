@@ -26,11 +26,14 @@ export default function TeamLeadRequestsSection({ canApprove: canApproveProp }: 
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isEmployee = pathname?.startsWith("/employee")
-  const canApprove = canApproveProp ?? !isEmployee
+  const isFinance =
+    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
+  const isEmployeeLike = isEmployee || isFinance
+  const canApprove = canApproveProp ?? !isEmployeeLike
 
   const tabParam = searchParams.get("tab")
   const subtabParam = searchParams.get("subtab")
-  const activeSubtab = isEmployee
+  const activeSubtab = isEmployeeLike
     ? "my-requests"
     : subtabParam === "team-requests"
     ? "team-requests"
@@ -121,7 +124,7 @@ export default function TeamLeadRequestsSection({ canApprove: canApproveProp }: 
     [promptAction, canApprove]
   )
 
-  const subtitle = isEmployee
+  const subtitle = isEmployeeLike
     ? "Track and manage your leave and work from home requests."
     : "Review and manage attendance-related requests from your team members."
 
@@ -129,7 +132,7 @@ export default function TeamLeadRequestsSection({ canApprove: canApproveProp }: 
     <div className="w-full flex flex-col gap-4 sm:gap-5 min-w-0">
       <Toaster position="top-right" toastOptions={{ duration: 3200 }} />
       <RequestsHeader subtitle={subtitle} />
-      {!isEmployee && (
+      {!isEmployeeLike && (
         <RequestsSubTabNav
           activeSubtab={activeSubtab}
           onSubtabChange={handleSubtabChange}
@@ -137,7 +140,7 @@ export default function TeamLeadRequestsSection({ canApprove: canApproveProp }: 
           myRequestsCount={initialMyRequests.length}
         />
       )}
-      {activeSubtab === "my-requests" || isEmployee ? (
+      {activeSubtab === "my-requests" || isEmployeeLike ? (
         <TeamLeadMyRequestsSection hideHeader={true} />
       ) : (
         <>
@@ -146,7 +149,7 @@ export default function TeamLeadRequestsSection({ canApprove: canApproveProp }: 
             approvedCount={approvedCount}
             rejectedCount={rejectedCount}
             activeStatus={statusFilter}
-            onSelectStatus={(status) => { setStatusFilter(status); setCurrentPage(1); }}
+            onStatusSelect={(status: string) => { setStatusFilter(status); setCurrentPage(1); }}
           />
           <RequestsTableCard
             searchQuery={searchQuery}

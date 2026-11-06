@@ -28,12 +28,18 @@ export default function RequestWfhFormCard({
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isFinance =
+    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
   const isHrManager = pathname?.startsWith("/hrmanager")
   const isHr = !isHrManager && pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
-  const basePath = isHrManager
+  const basePath = pathname?.startsWith("/financemanager")
+    ? "/financemanager/attendance"
+    : isFinance
+    ? "/finance/attendance"
+    : isHrManager
     ? "/hrmanager/attendance"
     : isHr
     ? "/hr/attendance"
@@ -46,25 +52,29 @@ export default function RequestWfhFormCard({
     : "/teamlead/attendance"
 
   const availableRoles: ApplicantRole[] = useMemo(() => {
-    if (isHrManager) return ["HR Manager", "HR", "Manager", "Product Manager", "Team Lead", "Employee"]
-    if (isHr) return ["HR", "Manager", "Product Manager", "Team Lead", "Employee"]
-    if (isManager) return ["Manager", "Team Lead", "Employee"]
-    if (isProductManager) return ["Product Manager", "Team Lead", "Employee"]
-    if (isEmployee) return ["Employee", "Team Lead"]
-    return ["Team Lead", "Employee"]
-  }, [isHr, isManager, isProductManager, isEmployee])
+    if (isFinance) return ["Finance Manager"]
+    if (isHrManager) return ["HR Manager"]
+    if (isHr) return ["HR"]
+    if (isManager) return ["Manager"]
+    if (isProductManager) return ["Product Manager"]
+    if (isEmployee) return ["Employee"]
+    return ["Team Lead"]
+  }, [isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
 
   const resolveInitialRole = (): ApplicantRole => {
     if (currentRole && availableRoles.includes(currentRole)) return currentRole
+    if (
+      isFinance ||
+      (authRole as string) === "Finance" ||
+      (authRole as string) === "FinanceManager" ||
+      (authRole as string) === "Finance Manager"
+    )
+      return "Finance Manager"
     if (isHrManager || authRole === "HrManager") return "HR Manager"
     if (isHr || authRole === "Hr") return "HR"
-    if (isManager) return "Manager"
-    if (isProductManager) return "Product Manager"
-    if (isEmployee) return "Employee"
-    if (authRole === "Hr") return "HR"
-    if (authRole === "Manager") return "Manager"
-    if (authRole === "ProductManager") return "Product Manager"
-    if (authRole === "Employee") return "Employee"
+    if (isManager || authRole === "Manager") return "Manager"
+    if (isProductManager || authRole === "ProductManager") return "Product Manager"
+    if (isEmployee || authRole === "Employee") return "Employee"
     return "Team Lead"
   }
 
@@ -194,14 +204,12 @@ export default function RequestWfhFormCard({
           <label className="text-xs font-bold text-gray-700">
             Applicant Role <span className="text-rose-500">*</span>
           </label>
-          <ReusableDropdown
+          <input
+            type="text"
             value={applicantRole}
-            options={availableRoles.map((r) => ({ label: r, value: r }))}
-            onChange={(val) => handleRoleChange(val as ApplicantRole)}
-            placeholder="Select Applicant Role"
-            align="left"
-            className="w-full"
-            buttonClassName="h-10 px-3.5 w-full rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-800 bg-white hover:bg-gray-50/50 justify-between"
+            disabled
+            readOnly
+            className="h-10 px-3.5 w-full rounded-xl border border-gray-200 text-xs sm:text-sm font-semibold text-gray-700 bg-gray-50/80 cursor-not-allowed select-none focus:outline-none"
           />
         </div>
 

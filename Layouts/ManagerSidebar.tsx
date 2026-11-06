@@ -40,6 +40,8 @@ export default function ManagerSidebar() {
       items={managerNavItems}
       toggleEventName="toggle-manager-sidebar"
       closeEventName="close-manager-sidebar"
+      desktopWidthClass="w-[210px] min-w-[210px] max-w-[210px] shrink-0"
+      drawerWidthClass="w-[240px]"
       isItemActive={isManagerItemActive}
     />
   )

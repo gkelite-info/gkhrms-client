@@ -30,6 +30,8 @@ export default function ProductManagerSidebar() {
       items={productManagerNavItems}
       toggleEventName="toggle-productmanager-sidebar"
       closeEventName="close-productmanager-sidebar"
+      desktopWidthClass="w-[210px] min-w-[210px] max-w-[210px] shrink-0"
+      drawerWidthClass="w-[240px]"
       isItemActive={isProductManagerItemActive}
     />
   )

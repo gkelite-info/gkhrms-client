@@ -60,6 +60,11 @@ export default function CurrentLeaveBalanceCard({ role }: CurrentLeaveBalanceCar
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isFinance =
+    pathname?.startsWith("/financemanager") ||
+    pathname?.startsWith("/finance") ||
+    (authRole as string) === "Finance" ||
+    (authRole as string) === "FinanceManager"
   const isHrManager =
     pathname?.startsWith("/hrmanager") || authRole === "HrManager"
   const isHr = !isHrManager && (pathname?.startsWith("/hr") || authRole === "Hr")
@@ -71,7 +76,9 @@ export default function CurrentLeaveBalanceCard({ role }: CurrentLeaveBalanceCar
 
   const activeRole: ApplicantRole =
     role ||
-    (isHrManager
+    (isFinance
+      ? "Finance Manager"
+      : isHrManager
       ? "HR Manager"
       : isHr
       ? "HR"

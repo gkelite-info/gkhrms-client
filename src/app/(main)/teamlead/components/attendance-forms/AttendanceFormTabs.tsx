@@ -36,6 +36,17 @@ export default function AttendanceFormTabs({
         >
           Request Work From Home
         </button>
+        <button
+          type="button"
+          onClick={() => onTabChange("exception")}
+          className={`px-3.5 sm:px-5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap ${
+            activeTab === "exception"
+              ? "bg-[#5B50EC] text-white shadow-xs"
+              : "text-[#4B5563] hover:text-[#5B50EC] hover:bg-gray-50/60"
+          }`}
+        >
+          Apply Exception
+        </button>
       </div>
     </div>
   )

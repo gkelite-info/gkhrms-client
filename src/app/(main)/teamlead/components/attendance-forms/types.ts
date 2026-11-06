@@ -1,7 +1,13 @@
 import type { ElementType } from "react"
 
-export type FormTabType = "leave" | "wfh"
+export type FormTabType = "leave" | "wfh" | "exception"
 export type DayOption = "full" | "half"
+export type ExceptionType =
+  | "Late Check-in"
+  | "Missed Check-out"
+  | "Low Working Hours"
+  | "Missed Biometric"
+  | "On Duty / Client Visit"
 export type ApplicantRole =
   | "Employee"
   | "Team Lead"
@@ -9,6 +15,8 @@ export type ApplicantRole =
   | "HR"
   | "HR Manager"
   | "Product Manager"
+  | "Finance"
+  | "Finance Manager"
 
 export interface RoleApprovalConfig {
   primaryLabel: string

@@ -33,48 +33,79 @@ export const getRoleGuidelines = (role: ApplicantRole): WfhGuidelineItem[] => {
         },
         {
           id: "delegation-plan",
-          title: "Team Delegation Plan",
+          title: "Standup & Delivery Continuity",
           description:
-            "Confirm designated team leads have authority to make operational calls during remote days.",
+            "Maintain operational oversight and ensure cross-functional team blockers are resolved remotely.",
           icon: CheckCircle,
           iconBg: "bg-[#E8FAF4]",
           iconColor: "text-[#10B981]",
         },
         {
-          id: "leadership-availability",
-          title: "Emergency Accessibility",
+          id: "exec-availability",
+          title: "Executive Availability",
           description:
-            "Remain on-call for cross-departmental and executive escalations throughout business hours.",
+            "Be available for scheduled escalations, steering committee calls, and stakeholder meetings.",
           icon: Clock,
           iconBg: "bg-[#FFF8EC]",
           iconColor: "text-[#F59E0B]",
         },
+      ]
+    case "Finance Manager":
+    case "Finance":
+      return [
         {
-          id: "secure-access",
-          title: "Secure Enterprise VPN Access",
+          id: "fin-sec",
+          title: "Financial Ledger Security",
           description:
-            "Ensure VPN encryption is utilized when accessing administrative reports and finance tooling.",
+            "Use secured VPN when accessing financial ledgers, invoice workflows, and banking portals.",
           icon: Laptop,
           iconBg: "bg-[#EEF2FF]",
           iconColor: "text-[#5B50EC]",
+        },
+        {
+          id: "fin-auth",
+          title: "Payment Authorization Compliance",
+          description:
+            "Ensure two-factor authorization and audit trails are completed for all remote disbursement requests.",
+          icon: CheckCircle,
+          iconBg: "bg-[#E8FAF4]",
+          iconColor: "text-[#10B981]",
+        },
+        {
+          id: "fin-avail",
+          title: "Core Hours Availability",
+          description:
+            "Maintain active communication on Slack/Teams for urgent purchase approvals and vendor queries.",
+          icon: Clock,
+          iconBg: "bg-[#FFF8EC]",
+          iconColor: "text-[#F59E0B]",
         },
       ]
     case "Employee":
       return [
         {
-          id: "tl-approval",
+          id: "lead-approval",
           title: "Team Lead Approval Required",
           description:
-            "Submit requests at least 24 hours in advance to receive sign-off from your direct Team Lead.",
+            "WFH requests must be approved by your direct reporting Team Lead.",
           icon: UsersThree,
           iconBg: "bg-[#EEF2FF]",
           iconColor: "text-[#5B50EC]",
         },
         {
-          id: "shift-timings",
-          title: "Adhere to Scheduled Shift Timings",
+          id: "daily-standup",
+          title: "Join Daily Standup On Time",
           description:
-            "Check in and check out within the designated shift window to ensure accurate working hours.",
+            "Attend the 10:00 AM sprint standup via Google Meet with camera on.",
+          icon: CheckCircle,
+          iconBg: "bg-[#E8FAF4]",
+          iconColor: "text-[#10B981]",
+        },
+        {
+          id: "active-hours",
+          title: "Active During Core Hours",
+          description:
+            "Be reachable on Slack/Teams from 9:30 AM to 6:30 PM for team syncs.",
           icon: Clock,
           iconBg: "bg-[#FFF8EC]",
           iconColor: "text-[#F59E0B]",

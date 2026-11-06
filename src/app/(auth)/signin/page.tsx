@@ -46,6 +46,8 @@ export default function Signin() {
 				roleForRedux = 'ProductManager';
 			} else if (apiRole === 'hrmanager' || apiRole === 'hr manager' || apiRole === 'hrm') {
 				roleForRedux = 'HrManager';
+			} else if (apiRole === 'finance' || apiRole === 'financemanager' || apiRole === 'finance manager') {
+				roleForRedux = 'FinanceManager';
 			}
 
 			if (roleForRedux) {
@@ -71,6 +73,8 @@ export default function Signin() {
 				router.push('/productmanager')
 			} else if (apiRole === 'hrmanager' || apiRole === 'hr manager' || apiRole === 'hrm') {
 				router.push('/hrmanager/attendance')
+			} else if (apiRole === 'finance' || apiRole === 'financemanager' || apiRole === 'finance manager') {
+				router.push('/financemanager/attendance')
 			} else {
 				router.push('/unauthorized')
 			}

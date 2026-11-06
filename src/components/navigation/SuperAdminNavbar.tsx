@@ -36,10 +36,9 @@ export default function SuperAdminNavbar() {
   const pathname = usePathname()
 
   return (
-    <aside className="w-60 min-w-[240px] h-screen bg-white border-r border-slate-100 flex flex-col justify-between p-4 select-none shrink-0">
-      <div className="flex flex-col gap-6">
-        {/* Brand / Logo */}
-        <div className="flex items-center gap-3 px-3 py-2">
+    <aside className="w-60 min-w-[240px] h-screen bg-white border-r border-slate-100 flex flex-col justify-between py-4 select-none shrink-0">
+      <div className="flex flex-col gap-5 flex-1 min-h-0">
+        <div className="flex items-center gap-3 px-4 py-1 shrink-0">
           <div className="w-10 h-10 rounded-xl bg-[#5B50E5] flex items-center justify-center text-white shadow-md shadow-indigo-100">
             <Building2 className="w-5 h-5 text-white" />
           </div>
@@ -53,8 +52,7 @@ export default function SuperAdminNavbar() {
           </div>
         </div>
 
-        {/* Navigation items */}
-        <nav className="flex flex-col gap-1.5">
+        <nav className="flex flex-col gap-1.5 flex-1 overflow-y-auto custom-scrollbar sidebar-scrollbar px-3 min-h-0">
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive =
@@ -84,8 +82,7 @@ export default function SuperAdminNavbar() {
         </nav>
       </div>
 
-      {/* Footer Info */}
-      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+      <div className="mx-3 p-3 bg-slate-50 rounded-xl border border-slate-100 text-center shrink-0">
         <p className="text-[11px] font-semibold text-slate-700">GK-HRMS v2.4</p>
         <p className="text-[9px] text-slate-400 mt-0.5">Cloud Multi-Tenant</p>
       </div>

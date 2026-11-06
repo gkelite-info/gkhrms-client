@@ -1,3 +1,5 @@
+"use client"
+
 import Phase2 from "./phase-2/page";
 import ProfileAndTimeline from "./profileAndBasic";
 

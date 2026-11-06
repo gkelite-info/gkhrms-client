@@ -31,6 +31,12 @@ export default function MainNavbarHeader() {
         ? "manager"
         : pathname?.startsWith("/teamlead")
         ? "teamlead"
+        : pathname?.startsWith("/finance") ||
+          pathname?.startsWith("/financemanager") ||
+          pathname?.startsWith("/financemanger")
+        ? "financemanager"
+        : pathname?.startsWith("/hrmanager")
+        ? "hrmanager"
         : "employee")
     router.push(`/${targetRole}/profile`)
   }
@@ -50,11 +56,23 @@ export default function MainNavbarHeader() {
           {(pathname?.startsWith("/teamlead") ||
             pathname?.startsWith("/manager") ||
             pathname?.startsWith("/hr") ||
-            pathname?.startsWith("/employee")) && (
+            pathname?.startsWith("/employee") ||
+            pathname?.startsWith("/finance") ||
+            pathname?.startsWith("/financemanager") ||
+            pathname?.startsWith("/financemanger") ||
+            pathname?.startsWith("/hrmanager")) && (
             <button
               type="button"
               onClick={() => {
-                if (pathname?.startsWith("/manager")) {
+                if (
+                  pathname?.startsWith("/finance") ||
+                  pathname?.startsWith("/financemanager") ||
+                  pathname?.startsWith("/financemanger")
+                ) {
+                  window.dispatchEvent(new CustomEvent("toggle-finance-sidebar"))
+                } else if (pathname?.startsWith("/hrmanager")) {
+                  window.dispatchEvent(new CustomEvent("toggle-hrmanager-sidebar"))
+                } else if (pathname?.startsWith("/manager")) {
                   window.dispatchEvent(new CustomEvent("toggle-manager-sidebar"))
                 } else if (pathname?.startsWith("/hr")) {
                   window.dispatchEvent(new CustomEvent("toggle-hr-sidebar"))

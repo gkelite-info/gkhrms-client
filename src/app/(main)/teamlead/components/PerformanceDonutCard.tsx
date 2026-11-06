@@ -1,17 +1,20 @@
 "use client"
 
-
 interface PerformanceDonutCardProps {
   score?: number
   subtitle?: string
+  className?: string
 }
 
 export default function PerformanceDonutCard({
   score = 95,
   subtitle = "This Month (OCT)",
+  className = "",
 }: PerformanceDonutCardProps) {
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between gap-3 transition-all hover:shadow-md min-h-[110px] h-auto">
+    <div
+      className={`bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between gap-3 transition-all hover:shadow-md min-h-[110px] h-auto ${className}`}
+    >
       <div className="flex flex-col justify-between h-full py-0.5">
         <div>
           <h3 className="text-sm font-bold text-[#1F2433]">Performance</h3>
@@ -22,7 +25,6 @@ export default function PerformanceDonutCard({
         </span>
       </div>
 
-      {/* Donut Gauge */}
       <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
         <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 36 36">
           <path
