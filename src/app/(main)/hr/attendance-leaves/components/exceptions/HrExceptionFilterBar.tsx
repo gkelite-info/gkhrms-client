@@ -19,6 +19,7 @@ interface HrExceptionFilterBarProps {
     toDate: DateFilterValue
   }) => void
   onResetFilters: () => void
+  hideHrDepartment?: boolean
 }
 
 export default function HrExceptionFilterBar({
@@ -28,13 +29,14 @@ export default function HrExceptionFilterBar({
   toDate,
   onApplyFilters,
   onResetFilters,
+  hideHrDepartment = false,
 }: HrExceptionFilterBarProps) {
   const [localDepartment, setLocalDepartment] = useState(department)
   const [localRoles, setLocalRoles] = useState<string[]>(selectedRoles)
   const [localFromDate, setLocalFromDate] = useState<DateFilterValue>(fromDate)
   const [localToDate, setLocalToDate] = useState<DateFilterValue>(toDate)
 
-  const departmentOptions = [
+  const rawDepartmentOptions = [
     "All Departments",
     "Technology",
     "Finance",
@@ -43,7 +45,13 @@ export default function HrExceptionFilterBar({
     "Sales",
   ]
 
-  const roleOptions = ["Team Lead", "Manager", "Employee", "HR"]
+  const departmentOptions = hideHrDepartment
+    ? rawDepartmentOptions.filter((d) => d !== "Human Resources")
+    : rawDepartmentOptions
+
+  const roleOptions = hideHrDepartment
+    ? ["Team Lead", "Manager", "Employee"]
+    : ["Team Lead", "Manager", "Employee", "HR"]
 
   const handleApply = () => {
     onApplyFilters({

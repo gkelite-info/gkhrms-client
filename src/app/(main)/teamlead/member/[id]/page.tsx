@@ -5,28 +5,55 @@ import { useParams, useRouter, usePathname } from "next/navigation"
 import { ArrowLeft, Article } from "phosphor-react"
 import {
   ReusableTable,
-  TableColumn,
   ReusablePagination,
   ReusableDateFilter,
 } from "@/components/reusableComponents"
-import { getMemberById, MemberDailyAttendance } from "../../data/teamAttendanceData"
+import { getMemberById } from "../../data/teamAttendanceData"
+import { HR_ATTENDANCE_RECORDS } from "../../../hr/attendance-leaves/data/hrAttendanceData"
 import MemberProfileBanner from "./components/MemberProfileBanner"
 import MemberStatCards from "./components/MemberStatCards"
 import MonthlyTrendChart from "./components/MonthlyTrendChart"
+import { memberHistoryColumns } from "./components/memberHistoryColumns"
 
 export default function TeamMemberDetailsPage() {
   const params = useParams()
   const router = useRouter()
   const pathname = usePathname()
+
+  const isHrManager = pathname?.startsWith("/hrmanager")
+  const isHr = !isHrManager && pathname?.startsWith("/hr")
+  const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
-  const backHref = isEmployee
+
+  const backHref = isHrManager
+    ? "/hrmanager/attendance?tab=organization-attendance"
+    : isHr
+    ? "/hr/attendance?tab=organization-attendance"
+    : isProductManager
+    ? "/productmanager/attendance?tab=team-attendance"
+    : isEmployee
     ? "/employee/attendance?tab=team-attendance"
     : "/teamlead/attendance?tab=team-attendance"
 
   const memberId = (params?.id as string) || "EMP001"
 
   const member = useMemo(() => {
-    return getMemberById(memberId) || getMemberById("EMP001")!
+    const base = getMemberById(memberId) || getMemberById("EMP001")!
+    const hrRecord = HR_ATTENDANCE_RECORDS.find(
+      (r) => r.id === memberId || r.employeeId.toLowerCase() === memberId.toLowerCase()
+    )
+    if (hrRecord) {
+      return {
+        ...base,
+        id: hrRecord.id,
+        name: hrRecord.name,
+        employeeId: hrRecord.employeeId,
+        department: hrRecord.department,
+        designation: hrRecord.designation || hrRecord.role || base.designation,
+        avatar: hrRecord.avatar || base.avatar,
+      }
+    }
+    return base
   }, [memberId])
 
   const [historyPage, setHistoryPage] = useState(1)
@@ -45,77 +72,20 @@ export default function TeamMemberDetailsPage() {
     return member.history.slice(start, start + historyPageSize)
   }, [member.history, historyPage, historyPageSize])
 
-  const historyColumns: TableColumn<MemberDailyAttendance>[] = [
-    {
-      header: "DATE",
-      accessor: "date",
-      className: "font-semibold text-gray-800 whitespace-nowrap",
-    },
-    {
-      header: "STATUS",
-      accessor: "status",
-      render: (row) => {
-        if (row.status === "Present") {
-          return (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#E8FAF4] text-[#10B981] select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-              Present
-            </span>
-          )
-        }
-        if (row.status === "On Leave") {
-          return (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFF8EC] text-[#F59E0B] select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
-              On Leave
-            </span>
-          )
-        }
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFF1EB] text-[#F97316] select-none">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F97316]" />
-            Late
-          </span>
-        )
-      },
-    },
-    {
-      header: "CHECK IN",
-      accessor: "checkIn",
-      className: "text-gray-700 font-medium whitespace-nowrap",
-    },
-    {
-      header: "CHECK OUT",
-      accessor: "checkOut",
-      className: "text-gray-700 font-medium whitespace-nowrap",
-    },
-    {
-      header: "TOTAL HOURS",
-      accessor: "grossHours",
-      className: "font-semibold text-gray-900 whitespace-nowrap",
-    },
-  ]
-
   return (
     <div className="w-full flex-1 p-3 sm:p-4 md:p-6 pb-16 sm:pb-8 flex flex-col gap-4 sm:gap-5 max-w-[1600px] mx-auto animate-in fade-in duration-200 min-w-0">
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => router.push(backHref)}
-          className="p-2 sm:p-2.5 rounded-xl bg-white border border-gray-200 text-gray-600 hover:text-[#5B50EC] hover:border-[#5B50EC] transition-all cursor-pointer shadow-2xs shrink-0 flex items-center justify-center"
-          title="Back to Team Attendance"
-          aria-label="Back to Team Attendance"
+          className="p-2 rounded-xl bg-white border border-gray-100 hover:border-gray-200 hover:bg-gray-50 text-gray-700 shadow-2xs transition-all cursor-pointer inline-flex items-center justify-center shrink-0"
+          aria-label="Back to attendance"
         >
           <ArrowLeft size={18} weight="bold" />
         </button>
-        <div className="flex flex-col min-w-0">
-          <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-tight truncate">
-            Team Member Attendance Details
-          </h1>
-          <p className="text-xs text-gray-400 font-medium mt-0.5 truncate">
-            View detailed attendance records, monthly statistics and history.
-          </p>
-        </div>
+        <span className="text-sm font-bold text-gray-800">
+          Back to Attendance
+        </span>
       </div>
 
       <MemberProfileBanner member={member} />
@@ -127,16 +97,21 @@ export default function TeamMemberDetailsPage() {
         lateDays={member.lateDays}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        <MonthlyTrendChart monthlyTrends={member.monthlyTrends} />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+        <div className="lg:col-span-5 h-full">
+          <MonthlyTrendChart
+            monthlyTrends={member.monthlyTrends}
+            trends={member.monthlyTrends}
+          />
+        </div>
 
-        <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex flex-col justify-between h-full gap-4 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-50 flex-shrink-0">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#EEF2FF] text-[#5B50EC] flex items-center justify-center flex-shrink-0">
-                <Article size={18} weight="bold" />
+        <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex flex-col justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-[#5B50EC]/10 text-[#5B50EC] flex items-center justify-center shrink-0">
+                <Article size={16} weight="bold" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900 truncate">
+              <h3 className="text-sm font-bold text-gray-900">
                 Attendance History
               </h3>
             </div>
@@ -151,7 +126,7 @@ export default function TeamMemberDetailsPage() {
 
           <div className="flex-1 w-full">
             <ReusableTable
-              columns={historyColumns}
+              columns={memberHistoryColumns}
               data={paginatedHistory}
               keyExtractor={(row) => row.id}
               headerBgColor="#F7F6FE"

@@ -3,10 +3,16 @@
 import { CircleNotch, User, Clock } from "phosphor-react"
 
 interface MemberStatCardsProps {
-  attendancePercentage: number
-  presentDays: number
-  leaveDays: number
-  lateDays: number
+  attendancePercentage?: number
+  presentDays?: number
+  leaveDays?: number
+  lateDays?: number
+  stats?: {
+    attendancePercentage?: number
+    presentDays?: number
+    leaveDays?: number
+    lateDays?: number
+  }
 }
 
 export default function MemberStatCards({
@@ -14,7 +20,13 @@ export default function MemberStatCards({
   presentDays,
   leaveDays,
   lateDays,
+  stats,
 }: MemberStatCardsProps) {
+  const percent = attendancePercentage ?? stats?.attendancePercentage ?? 95
+  const present = presentDays ?? stats?.presentDays ?? 22
+  const leave = leaveDays ?? stats?.leaveDays ?? 2
+  const late = lateDays ?? stats?.lateDays ?? 3
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex items-center gap-4">
@@ -24,7 +36,7 @@ export default function MemberStatCards({
         <div className="flex flex-col">
           <span className="text-xs text-gray-400 font-medium">Attendance %</span>
           <span className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mt-0.5">
-            {attendancePercentage}%
+            {percent}%
           </span>
         </div>
       </div>
@@ -36,7 +48,7 @@ export default function MemberStatCards({
         <div className="flex flex-col">
           <span className="text-xs text-gray-400 font-medium">Present Days</span>
           <span className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mt-0.5">
-            {presentDays}
+            {present}
           </span>
         </div>
       </div>
@@ -48,7 +60,7 @@ export default function MemberStatCards({
         <div className="flex flex-col">
           <span className="text-xs text-gray-400 font-medium">Leave Days</span>
           <span className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mt-0.5">
-            {leaveDays}
+            {leave}
           </span>
         </div>
       </div>
@@ -60,7 +72,7 @@ export default function MemberStatCards({
         <div className="flex flex-col">
           <span className="text-xs text-gray-400 font-medium">Late Days</span>
           <span className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mt-0.5">
-            {lateDays}
+            {late}
           </span>
         </div>
       </div>

@@ -88,6 +88,57 @@ export const HR_ATTENDANCE_STATS: HrAttendanceStat[] = [
   },
 ]
 
+export const HR_ATTENDANCE_STATS_FOR_HR: HrAttendanceStat[] = [
+  {
+    id: "total",
+    label: "Total Employees",
+    value: "2,256",
+    trend: "↑ +3.2%",
+    trendType: "positive",
+    iconType: "employees",
+  },
+  {
+    id: "present",
+    label: "Present Today",
+    value: "2,060",
+    trend: "↑ 91.3%",
+    trendType: "positive",
+    iconType: "present",
+  },
+  {
+    id: "absent",
+    label: "Absent Today",
+    value: "96",
+    trend: "↑ 4.2%",
+    trendType: "negative",
+    iconType: "absent",
+  },
+  {
+    id: "leave",
+    label: "On Leave",
+    value: "63",
+    trend: "↑ 2.8%",
+    trendType: "neutral",
+    iconType: "leave",
+  },
+  {
+    id: "wfh",
+    label: "Work From Home",
+    value: "58",
+    trend: "↑ 2.6%",
+    trendType: "positive",
+    iconType: "wfh",
+  },
+  {
+    id: "late",
+    label: "Late Check-ins",
+    value: "38",
+    trend: "↑ 1.7%",
+    trendType: "neutral",
+    iconType: "late",
+  },
+]
+
 export const HR_DEPARTMENT_OVERVIEWS: HrDepartmentOverview[] = [
   {
     id: "tech",

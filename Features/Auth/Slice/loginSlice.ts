@@ -40,6 +40,7 @@ const validRoles: Roles[] = [
 	"Admin",
 	"TeamLead",
 	"ProductManager",
+	"HrManager",
 ]
 
 function isValidRole(role: string): role is Roles {

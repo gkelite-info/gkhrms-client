@@ -37,11 +37,14 @@ export default function ApplyLeaveFormCard({
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
-  const isHr = pathname?.startsWith("/hr")
+  const isHrManager = pathname?.startsWith("/hrmanager")
+  const isHr = !isHrManager && pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
-  const basePath = isHr
+  const basePath = isHrManager
+    ? "/hrmanager/attendance"
+    : isHr
     ? "/hr/attendance"
     : isManager
     ? "/manager/attendance"
@@ -52,6 +55,7 @@ export default function ApplyLeaveFormCard({
     : "/teamlead/attendance"
 
   const availableRoles: ApplicantRole[] = useMemo(() => {
+    if (isHrManager) return ["HR Manager", "HR", "Manager", "Product Manager", "Team Lead", "Employee"]
     if (isHr) return ["HR", "Manager", "Product Manager", "Team Lead", "Employee"]
     if (isManager) return ["Manager", "Team Lead", "Employee"]
     if (isProductManager) return ["Product Manager", "Team Lead", "Employee"]
@@ -61,7 +65,8 @@ export default function ApplyLeaveFormCard({
 
   const resolveInitialRole = (): ApplicantRole => {
     if (currentRole && availableRoles.includes(currentRole)) return currentRole
-    if (isHr) return "HR"
+    if (isHrManager || authRole === "HrManager") return "HR Manager"
+    if (isHr || authRole === "Hr") return "HR"
     if (isManager) return "Manager"
     if (isProductManager) return "Product Manager"
     if (isEmployee) return "Employee"
@@ -160,7 +165,17 @@ export default function ApplyLeaveFormCard({
       toast.success("Leave request submitted successfully!", {
         position: "top-right",
       })
-      setTimeout(() => router.push(isHr ? "/hr/attendance-leaves?tab=attendance-requests&subtab=my-requests" : `${basePath}?tab=requests&subtab=my-requests`), 600)
+      setTimeout(
+        () =>
+          router.push(
+            isHrManager
+              ? "/hrmanager/attendance?tab=attendance-requests&subtab=my-requests"
+              : isHr
+              ? "/hr/attendance?tab=attendance-requests&subtab=my-requests"
+              : `${basePath}?tab=requests&subtab=my-requests`
+          ),
+        600
+      )
     }, 500)
   }
 
