@@ -10,7 +10,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts"
-import { Calendar, ChevronDown, ArrowUpRight } from "lucide-react"
+import { Calendar, ChevronDown } from "lucide-react"
 import { MonthlyTrendData } from "../types"
 import {
   expenseTrendLast12Months,
@@ -21,7 +21,9 @@ interface ExpenseTrendChartProps {
   onOpenDetails?: () => void
 }
 
-export default function ExpenseTrendChart({ onOpenDetails }: ExpenseTrendChartProps) {
+export default function ExpenseTrendChart({
+  onOpenDetails,
+}: ExpenseTrendChartProps = {}) {
   const [mounted, setMounted] = useState(false)
   const [selectedRange, setSelectedRange] = useState<string>("Last 12 Months")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -55,22 +57,25 @@ export default function ExpenseTrendChart({ onOpenDetails }: ExpenseTrendChartPr
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col justify-between h-[300px] xl:h-[320px] hover:border-[#4F46E5]/40 transition-colors">
+    <div
+      onClick={onOpenDetails}
+      role="button"
+      tabIndex={0}
+      title="Click to view expense trend details"
+      className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col justify-between h-[300px] xl:h-[320px] hover:border-[#4F46E5]/40 hover:shadow-md transition-all cursor-pointer group select-none"
+    >
       <div className="flex items-center justify-between mb-4">
-        <div
-          onClick={onOpenDetails}
-          className="flex items-center gap-1.5 cursor-pointer group"
-          role="button"
-          tabIndex={0}
-          title="Click to view detailed trend breakdown"
-        >
-          <h2 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight group-hover:text-[#4F46E5] transition-colors">
+        <div className="flex items-center gap-1.5 cursor-pointer">
+          <h2 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight group-hover:text-[#4F46E5] transition-colors cursor-pointer">
             Expense Trend
           </h2>
-          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#4F46E5] transition-colors" />
         </div>
 
-        <div className="relative" ref={dropdownRef}>
+        <div
+          className="relative"
+          ref={dropdownRef}
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
             type="button"
             onClick={(e) => {
@@ -109,16 +114,13 @@ export default function ExpenseTrendChart({ onOpenDetails }: ExpenseTrendChartPr
         </div>
       </div>
 
-      <div
-        className="w-full h-[225px] xl:h-[240px] cursor-pointer"
-        onClick={onOpenDetails}
-        title="Click to view full breakdown"
-      >
+      <div className="w-full h-[225px] xl:h-[240px] cursor-pointer [&_.recharts-surface]:cursor-pointer [&_.recharts-layer]:cursor-pointer [&_svg]:cursor-pointer [&_path]:cursor-pointer">
         {mounted ? (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={currentData}
               margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+              className="cursor-pointer"
             >
               <defs>
                 <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">

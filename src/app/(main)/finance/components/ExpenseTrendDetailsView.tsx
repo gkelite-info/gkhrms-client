@@ -29,7 +29,6 @@ import {
   expenseTrendCategoryDonut,
   monthWiseExpenseBreakdownTable,
 } from "../data/mockFinanceData"
-import ExpenseBreakdownDetailsModal from "./ExpenseBreakdownDetailsModal"
 
 interface ExpenseTrendDetailsViewProps {
   onBack: () => void
@@ -39,7 +38,6 @@ export default function ExpenseTrendDetailsView({
   onBack,
 }: ExpenseTrendDetailsViewProps) {
   const [mounted, setMounted] = useState(false)
-  const [isBreakdownModalOpen, setIsBreakdownModalOpen] = useState(false)
   const [categoryFilter, setCategoryFilter] = useState("All Categories")
   const [departmentFilter, setDepartmentFilter] = useState("All Departments")
   const [projectFilter, setProjectFilter] = useState("All Projects")
@@ -78,7 +76,7 @@ export default function ExpenseTrendDetailsView({
           <button
             type="button"
             onClick={onBack}
-            className="p-1.5 mt-0.5 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+            className="p-1.5 -ml-1.5 mt-0.5 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
             aria-label="Back to Finance Overview"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -298,14 +296,14 @@ export default function ExpenseTrendDetailsView({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="lg:col-span-8 bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between h-[360px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-xs flex flex-col justify-between h-[360px] overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
             <h3 className="text-sm font-bold text-slate-900 tracking-tight">
               Month-wise Expense Trend
             </h3>
 
-            <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-600">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] sm:text-[11px] text-slate-600">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]" />
                 <span>Salaries & Benefits</span>
@@ -387,12 +385,12 @@ export default function ExpenseTrendDetailsView({
                       return null
                     }}
                   />
-                  <Bar dataKey="salaries" name="Salaries" stackId="exp" fill="#3B82F6" maxBarSize={24} />
-                  <Bar dataKey="operations" name="Operations" stackId="exp" fill="#F97316" maxBarSize={24} />
-                  <Bar dataKey="technology" name="Technology" stackId="exp" fill="#EAB308" maxBarSize={24} />
-                  <Bar dataKey="travel" name="Travel" stackId="exp" fill="#10B981" maxBarSize={24} />
-                  <Bar dataKey="marketing" name="Marketing" stackId="exp" fill="#EF4444" maxBarSize={24} />
-                  <Bar dataKey="others" name="Others" stackId="exp" fill="#64748B" radius={[4, 4, 0, 0]} maxBarSize={24} />
+                  <Bar dataKey="salaries" name="Salaries" stackId="exp" fill="#3B82F6" maxBarSize={20} />
+                  <Bar dataKey="operations" name="Operations" stackId="exp" fill="#F97316" maxBarSize={20} />
+                  <Bar dataKey="technology" name="Technology" stackId="exp" fill="#EAB308" maxBarSize={20} />
+                  <Bar dataKey="travel" name="Travel" stackId="exp" fill="#10B981" maxBarSize={20} />
+                  <Bar dataKey="marketing" name="Marketing" stackId="exp" fill="#EF4444" maxBarSize={20} />
+                  <Bar dataKey="others" name="Others" stackId="exp" fill="#64748B" radius={[4, 4, 0, 0]} maxBarSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -405,22 +403,15 @@ export default function ExpenseTrendDetailsView({
           </div>
         </div>
 
-        <div
-          onClick={() => setIsBreakdownModalOpen(true)}
-          role="button"
-          tabIndex={0}
-          title="Click to view category breakdown details"
-          className="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between h-[360px] cursor-pointer hover:border-[#4F46E5]/40 hover:shadow-md transition-all group"
-        >
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-xs flex flex-col justify-between h-[360px] overflow-hidden">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-bold text-slate-900 tracking-tight group-hover:text-[#4F46E5] transition-colors">
+            <h3 className="text-sm font-bold text-slate-900 tracking-tight">
               Expense by Category
             </h3>
-            <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#4F46E5] transition-colors" />
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center">
-            <div className="relative w-40 h-40 flex items-center justify-center shrink-0">
+          <div className="flex-1 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 min-w-0">
+            <div className="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center shrink-0">
               {mounted ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -446,8 +437,8 @@ export default function ExpenseTrendDetailsView({
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={48}
-                      outerRadius={68}
+                      innerRadius={38}
+                      outerRadius={56}
                       paddingAngle={2}
                       stroke="#FFFFFF"
                       strokeWidth={2}
@@ -459,39 +450,39 @@ export default function ExpenseTrendDetailsView({
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="w-32 h-32 rounded-full border-4 border-slate-100 animate-pulse" />
+                <div className="w-28 h-28 rounded-full border-4 border-slate-100 animate-pulse" />
               )}
 
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
                 <span className="text-xs sm:text-sm font-extrabold text-slate-900 leading-none">
                   ₹ 2,18,45,300
                 </span>
-                <span className="text-[10px] font-medium text-slate-400 mt-1">
+                <span className="text-[9px] sm:text-[10px] font-medium text-slate-400 mt-1">
                   Total Expenses
                 </span>
               </div>
             </div>
 
-            <div className="w-full flex flex-col gap-1 mt-3 pt-2 border-t border-slate-50">
+            <div className="w-full min-w-0 flex-1 flex flex-col justify-center gap-1.5 pl-0 sm:pl-2">
               {expenseTrendCategoryDonut.map((item) => (
                 <div
                   key={item.name}
-                  className="flex items-center justify-between text-xs py-0.5"
+                  className="flex items-center justify-between text-xs py-0.5 min-w-0"
                 >
-                  <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
                     <span
-                      className="w-2 h-2 rounded-full shrink-0"
+                      className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="font-medium text-slate-600 whitespace-nowrap text-[11px]">
+                    <span className="font-medium text-slate-600 truncate text-[11px] sm:text-xs">
                       {item.name}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="font-bold text-slate-800 text-[11px]">
+                  <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <span className="font-bold text-slate-800 text-[11px] sm:text-xs min-w-[28px] text-right">
                       {item.percentage}%
                     </span>
-                    <span className="text-[11px] text-slate-500 font-medium">
+                    <span className="text-[11px] sm:text-xs text-slate-500 font-medium whitespace-nowrap text-right min-w-[72px]">
                       {item.amount}
                     </span>
                   </div>
@@ -598,11 +589,6 @@ export default function ExpenseTrendDetailsView({
           </table>
         </div>
       </div>
-
-      <ExpenseBreakdownDetailsModal
-        isOpen={isBreakdownModalOpen}
-        onClose={() => setIsBreakdownModalOpen(false)}
-      />
     </div>
   )
 }

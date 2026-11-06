@@ -132,19 +132,18 @@ export default function KpiCardsGrid({ cards, onCardClick }: KpiCardsGridProps) 
   return (
     <div className={`grid ${getGridColsClass()} gap-2.5 sm:gap-3 xl:gap-3.5`}>
       {cards.map((card) => {
-        const isClickable = Boolean(card.clickable || onCardClick)
+        const isClickable = Boolean(onCardClick && card.clickable)
 
         return (
           <div
             key={card.id}
-            onClick={() => onCardClick?.(card.id)}
+            onClick={isClickable ? () => onCardClick?.(card.id) : undefined}
             role={isClickable ? "button" : undefined}
             tabIndex={isClickable ? 0 : undefined}
-            className={`bg-white rounded-2xl p-3 sm:p-3.5 border border-slate-100/80 shadow-xs flex flex-col justify-between transition-all min-h-[105px] xl:min-h-[110px] ${
-              isClickable
-                ? "cursor-pointer hover:border-[#4F46E5]/40 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
-                : "hover:shadow-md"
-            }`}
+            className={`bg-white rounded-2xl p-3 sm:p-3.5 border border-slate-100/80 shadow-xs flex flex-col justify-between transition-all min-h-[105px] xl:min-h-[110px] ${isClickable
+                ? "cursor-pointer hover:border-[#4F46E5]/40 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 [&_*]:cursor-pointer select-none"
+                : "cursor-default"
+              }`}
           >
             <div className="flex items-start gap-2 sm:gap-2.5">
               {renderIcon(card.iconType)}

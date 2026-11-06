@@ -125,19 +125,10 @@ export default function BudgetsView({ onTotalSpendClick }: BudgetsViewProps) {
     <div className="space-y-5">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
         {budgetsKpiCards.map((card) => {
-          const isTotal = card.id === "budgets-total-spend"
-
           return (
             <div
               key={card.id}
-              onClick={isTotal ? onTotalSpendClick : undefined}
-              role={isTotal ? "button" : undefined}
-              tabIndex={isTotal ? 0 : undefined}
-              className={`bg-white rounded-2xl p-4 border border-slate-100/80 shadow-xs flex flex-col justify-between transition-all min-h-[105px] ${
-                isTotal
-                  ? "cursor-pointer hover:border-[#4F46E5]/40 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
-                  : "hover:shadow-md"
-              }`}
+              className="bg-white rounded-2xl p-4 border border-slate-100/80 shadow-xs flex flex-col justify-between min-h-[105px] cursor-default"
             >
               <div className="flex items-start gap-3">
                 {renderTopKpiIcon(card.iconType)}

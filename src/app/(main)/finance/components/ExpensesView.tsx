@@ -100,7 +100,7 @@ export default function ExpensesView({ onTotalExpensesClick }: ExpensesViewProps
 
   return (
     <div className="space-y-5">
-      <KpiCardsGrid cards={expensesKpiCards} onCardClick={handleCardClick} />
+      <KpiCardsGrid cards={expensesKpiCards} />
 
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
