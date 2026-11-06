@@ -49,39 +49,24 @@ export default function ReusableSidebar({
   const pathname = usePathname()
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const handleClose = useCallback(() => {
-    setDrawerOpen(false)
-  }, [])
+  const handleClose = useCallback(() => setDrawerOpen(false), [])
 
   useEffect(() => {
     const handleToggle = () => setDrawerOpen((prev) => !prev)
-
-    if (toggleEventName) {
-      window.addEventListener(toggleEventName, handleToggle)
-    }
-    window.addEventListener("toggle-sidebar", handleToggle)
-
-    if (closeEventName) {
-      window.addEventListener(closeEventName, handleClose)
-    }
-    window.addEventListener("close-sidebar", handleClose)
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setDrawerOpen(false)
-      }
+      if (e.key === "Escape") setDrawerOpen(false)
     }
+
+    if (toggleEventName) window.addEventListener(toggleEventName, handleToggle)
+    window.addEventListener("toggle-sidebar", handleToggle)
+    if (closeEventName) window.addEventListener(closeEventName, handleClose)
+    window.addEventListener("close-sidebar", handleClose)
     window.addEventListener("keydown", handleKeyDown)
 
     return () => {
-      if (toggleEventName) {
-        window.removeEventListener(toggleEventName, handleToggle)
-      }
+      if (toggleEventName) window.removeEventListener(toggleEventName, handleToggle)
       window.removeEventListener("toggle-sidebar", handleToggle)
-
-      if (closeEventName) {
-        window.removeEventListener(closeEventName, handleClose)
-      }
+      if (closeEventName) window.removeEventListener(closeEventName, handleClose)
       window.removeEventListener("close-sidebar", handleClose)
       window.removeEventListener("keydown", handleKeyDown)
     }
@@ -89,12 +74,8 @@ export default function ReusableSidebar({
 
   const checkIsActive = (item: ReusableSidebarItem): boolean => {
     if (!pathname) return false
-    if (isItemActive) {
-      return isItemActive(item, pathname)
-    }
-    if (item.exact) {
-      return pathname === item.href
-    }
+    if (isItemActive) return isItemActive(item, pathname)
+    if (item.exact) return pathname === item.href
     if (
       item.href === "/" ||
       item.href === "/employee" ||
@@ -156,7 +137,7 @@ export default function ReusableSidebar({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={handleClose}
-              className="lg:hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-xs"
+              className="lg:hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-xs cursor-pointer"
             />
 
             <motion.aside
@@ -164,10 +145,10 @@ export default function ReusableSidebar({
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 250 }}
-              className={`lg:hidden fixed top-0 left-0 bottom-0 z-50 ${drawerWidthClass} bg-white p-5 shadow-2xl flex flex-col justify-between`}
+              className={`lg:hidden fixed top-0 left-0 bottom-0 z-50 ${drawerWidthClass} bg-white py-5 shadow-2xl flex flex-col justify-between`}
             >
               <div className="flex flex-col gap-5 flex-1 min-h-0">
-                <div className="flex items-center justify-between pb-3 border-b border-gray-100 shrink-0">
+                <div className="flex items-center justify-between pb-3 px-5 border-b border-gray-100 shrink-0">
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                     {menuTitle}
                   </span>
@@ -180,12 +161,12 @@ export default function ReusableSidebar({
                     <X size={18} weight="bold" />
                   </button>
                 </div>
-                <div className="flex-1 overflow-y-auto custom-scrollbar sidebar-scrollbar pr-1 min-h-0">
+                <div className="flex-1 overflow-y-auto custom-scrollbar sidebar-scrollbar px-4 min-h-0">
                   {renderNavList()}
                 </div>
               </div>
 
-              <div className="pt-4 text-center shrink-0">
+              <div className="pt-4 px-4 text-center shrink-0">
                 <span className="text-[10px] font-semibold text-[#8C8EA6] tracking-wide">
                   {footerText}
                 </span>
@@ -196,13 +177,13 @@ export default function ReusableSidebar({
       </AnimatePresence>
 
       <aside
-        className={`hidden lg:flex ${desktopWidthClass} bg-white h-full border-r border-gray-100 p-4 flex-col justify-between select-none ${className}`}
+        className={`hidden lg:flex ${desktopWidthClass} bg-white h-full border-r border-gray-100 py-3.5 flex-col justify-between select-none ${className}`}
       >
-        <div className="flex-1 overflow-y-auto custom-scrollbar sidebar-scrollbar pr-1 flex flex-col pt-1 min-h-0">
+        <div className="flex-1 overflow-y-auto custom-scrollbar sidebar-scrollbar px-3 flex flex-col pt-1 min-h-0">
           {renderNavList()}
         </div>
 
-        <div className="pt-4 pb-1 text-center shrink-0">
+        <div className="pt-3 pb-1 px-3 text-center shrink-0">
           <span className="text-[10px] font-semibold text-[#8C8EA6] tracking-wide">
             {footerText}
           </span>

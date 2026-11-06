@@ -14,7 +14,14 @@ export default function TeamLeadExceptionHistorySection() {
   const router = useRouter()
   const pathname = usePathname()
   const isEmployee = pathname?.startsWith("/employee")
-  const basePath = pathname?.startsWith("/manager")
+  const isFinance =
+    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
+  const isEmployeeLike = isEmployee || isFinance
+  const basePath = pathname?.startsWith("/financemanager")
+    ? "/financemanager/attendance"
+    : pathname?.startsWith("/finance")
+    ? "/finance/attendance"
+    : pathname?.startsWith("/manager")
     ? "/manager/attendance"
     : isEmployee
     ? "/employee/attendance"
@@ -23,12 +30,12 @@ export default function TeamLeadExceptionHistorySection() {
   const subParam = searchParams.get("sub") as ExceptionSubTab | null
   const memberIdParam = searchParams.get("memberId")
 
-  const activeSubTab: ExceptionSubTab = isEmployee ? "me" : subParam === "team" ? "team" : "me"
+  const activeSubTab: ExceptionSubTab = isEmployeeLike ? "me" : subParam === "team" ? "team" : "me"
 
   const selectedMember = useMemo(() => {
-    if (isEmployee || !memberIdParam) return null
+    if (isEmployeeLike || !memberIdParam) return null
     return teamMembersExceptions.find((m) => m.id === memberIdParam) || teamMembersExceptions[0]
-  }, [memberIdParam, isEmployee])
+  }, [memberIdParam, isEmployeeLike])
 
   const handleSubTabChange = (tab: ExceptionSubTab) => {
     router.replace(`${basePath}?tab=exception-history&sub=${tab}`, { scroll: false })
@@ -46,7 +53,7 @@ export default function TeamLeadExceptionHistorySection() {
     <div className="flex flex-col gap-4 sm:gap-5 w-full min-w-0">
       <ExceptionHistoryHeader
         title={
-          isEmployee
+          isEmployeeLike
             ? "My Exception Details"
             : selectedMember
             ? "Employee Exception History"
@@ -55,7 +62,7 @@ export default function TeamLeadExceptionHistorySection() {
             : "Exception Details"
         }
         subtitle={
-          isEmployee
+          isEmployeeLike
             ? "Track and review your previous attendance regularization requests."
             : selectedMember
             ? "Review previous attendance regularizations and exception records before approving requests."
@@ -67,19 +74,19 @@ export default function TeamLeadExceptionHistorySection() {
       />
 
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex flex-col gap-4 min-w-0">
-        {!selectedMember && !isEmployee && (
+        {!selectedMember && !isEmployeeLike && (
           <ExceptionHistorySubTabs
             activeSubTab={activeSubTab}
             onSubTabChange={handleSubTabChange}
           />
         )}
 
-        {selectedMember && !isEmployee ? (
+        {selectedMember && !isEmployeeLike ? (
           <EmployeeExceptionHistorySection
             member={selectedMember}
             onBack={handleBackToTeam}
           />
-        ) : activeSubTab === "team" && !isEmployee ? (
+        ) : activeSubTab === "team" && !isEmployeeLike ? (
           <TeamMembersExceptionSection onSelectMember={handleSelectMember} />
         ) : (
           <MyExceptionDetailsSection />

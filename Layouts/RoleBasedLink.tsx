@@ -116,4 +116,10 @@ export const roleBasedNav: Record<
   ProductManager: [
     { label: "Attendance", href: "/productmanager/attendance", icon: UsersThree },
   ],
+  Finance: [
+    { label: "Attendance", href: "/financemanager/attendance", icon: UsersThree },
+  ],
+  FinanceManager: [
+    { label: "Attendance", href: "/financemanager/attendance", icon: UsersThree },
+  ],
 }

@@ -58,30 +58,49 @@ export const getRoleLeaveInstructions = (
         {
           icon: Clock,
           title: "Sprint Alignment Notice",
-          text: "Submit leaves in advance of sprint planning to ensure roadmap delivery is unblocked.",
+          text: "Submit planned leaves before sprint planning meetings to avoid roadmap roadblocks.",
         },
         {
           icon: ShieldCheck,
-          title: "Delegate Ownership",
-          text: "Designate an interim sprint lead for backlog grooming and stakeholder updates.",
+          title: "Feature Ownership Delegation",
+          text: "Assign release approvals and PRD queries to a designated proxy Product Lead.",
         },
       ]
     case "Manager":
       return [
         {
           icon: UsersThree,
-          title: "Executive & HR Sign-Off",
-          text: "Manager leaves require approval from Chairman / Director and Chief HR Officer.",
+          title: "Executive Approval",
+          text: "Manager leaves require approval from Executive Leadership (MD/Chairman) and CHRO.",
         },
         {
           icon: Clock,
-          title: "3 Days Advance Notice",
-          text: "Apply at least 3 working days in advance for planned personal or professional leaves.",
+          title: "Program Continuity Notice",
+          text: "Apply at least 3 business days in advance to ensure program alignment and client delivery continuity.",
         },
         {
           icon: ShieldCheck,
           title: "Interim Delegation",
           text: "Ensure secondary team leads are briefed on critical deliverables and escalation paths.",
+        },
+      ]
+    case "Finance Manager":
+    case "Finance":
+      return [
+        {
+          icon: UsersThree,
+          title: "Finance Leadership & CFO Approval",
+          text: "Finance leaves require sign-off from Chief Financial Officer / Finance Director and HRBP.",
+        },
+        {
+          icon: Clock,
+          title: "Payroll & Audit Cycle Notice",
+          text: "Submit leaves at least 3 business days in advance, avoiding critical monthly financial closing cycles.",
+        },
+        {
+          icon: ShieldCheck,
+          title: "Disbursement & Invoice Delegation",
+          text: "Ensure active reimbursement workflows, vendor payouts, and bank reconciliations are delegated.",
         },
       ]
     case "Employee":
@@ -123,4 +142,3 @@ export const getRoleLeaveInstructions = (
       ]
   }
 }
-

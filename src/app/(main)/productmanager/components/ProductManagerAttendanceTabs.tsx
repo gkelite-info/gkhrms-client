@@ -1,12 +1,16 @@
 "use client"
 
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
   User,
   UsersThree,
   Article,
   ClockCounterClockwise,
+  Plus,
+  CaretDown,
 } from "phosphor-react"
+import AttendanceActionDropdownMenu from "../../teamlead/components/attendance-forms/AttendanceActionDropdownMenu"
 
 export type ProductManagerTabKey =
   | "my-attendance"
@@ -21,6 +25,7 @@ interface ProductManagerAttendanceTabsProps {
   showActions?: boolean
   onApplyLeave?: () => void
   onRequestWfh?: () => void
+  onApplyException?: () => void
 }
 
 export default function ProductManagerAttendanceTabs({
@@ -29,25 +34,44 @@ export default function ProductManagerAttendanceTabs({
   showActions = true,
   onApplyLeave,
   onRequestWfh,
+  onApplyException,
 }: ProductManagerAttendanceTabsProps) {
   const router = useRouter()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  const handleApplyLeave = () => {
+    setIsMenuOpen(false)
+    if (onApplyLeave) onApplyLeave()
+    else router.push("/productmanager/attendance?tab=apply-leave")
+  }
+
+  const handleRequestWfh = () => {
+    setIsMenuOpen(false)
+    if (onRequestWfh) onRequestWfh()
+    else router.push("/productmanager/attendance?tab=request-wfh")
+  }
+
+  const handleApplyException = () => {
+    setIsMenuOpen(false)
+    if (onApplyException) onApplyException()
+    else router.push("/productmanager/attendance?tab=apply-exception")
+  }
 
   const tabs = [
-    {
-      key: "my-attendance" as ProductManagerTabKey,
-      label: "My Attendance",
-      icon: User,
-    },
-    {
-      key: "team-attendance" as ProductManagerTabKey,
-      label: "Team Attendance",
-      icon: UsersThree,
-    },
-    {
-      key: "requests" as ProductManagerTabKey,
-      label: "Requests",
-      icon: Article,
-    },
+    { key: "my-attendance" as ProductManagerTabKey, label: "My Attendance", icon: User },
+    { key: "team-attendance" as ProductManagerTabKey, label: "Team Attendance", icon: UsersThree },
+    { key: "requests" as ProductManagerTabKey, label: "Requests", icon: Article },
     {
       key: "exception-history" as ProductManagerTabKey,
       label: "Exception History",
@@ -56,51 +80,31 @@ export default function ProductManagerAttendanceTabs({
   ]
 
   const handleTabClick = (tabKey: ProductManagerTabKey) => {
-    if (onTabChange) {
-      onTabChange(tabKey)
-    } else {
-      router.push(`/productmanager/attendance?tab=${tabKey}`)
-    }
-  }
-
-  const handleApplyLeave = () => {
-    if (onApplyLeave) {
-      onApplyLeave()
-    } else {
-      router.push("/productmanager/attendance?tab=apply-leave")
-    }
-  }
-
-  const handleRequestWfh = () => {
-    if (onRequestWfh) {
-      onRequestWfh()
-    } else {
-      router.push("/productmanager/attendance?tab=request-wfh")
-    }
+    if (onTabChange) onTabChange(tabKey)
+    else router.push(`/productmanager/attendance?tab=${tabKey}`)
   }
 
   return (
-    <div className="w-full flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-      <div className="overflow-x-auto scrollbar-hide py-1 flex-1 min-w-0">
-        <div className="flex items-center gap-2 min-w-max">
+    <div className="w-full select-none flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+      <div className="overflow-x-auto pb-1 sm:pb-0 scrollbar-hide max-w-full">
+        <div className="bg-white rounded-full p-1 shadow-xs border border-gray-100 inline-flex items-center gap-1 sm:gap-1.5 shrink-0">
           {tabs.map((tab) => {
             const Icon = tab.icon
             const isActive =
-              activeTab === tab.key ||
-              (tab.key === "requests" && activeTab === "my-requests")
+              activeTab === tab.key || (tab.key === "requests" && activeTab === "my-requests")
 
             return (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => handleTabClick(tab.key)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs transition-all duration-150 cursor-pointer whitespace-nowrap shrink-0 ${
                   isActive
-                    ? "bg-[#5B50EC] text-white shadow-sm shadow-[#5B50EC]/30"
-                    : "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent shadow-xs"
+                    ? "bg-[#5B50EC] text-white font-semibold shadow-xs"
+                    : "text-[#4B5563] hover:text-[#5B50EC] hover:bg-gray-50/80 font-medium"
                 }`}
               >
-                <Icon size={16} weight={isActive ? "fill" : "regular"} />
+                <Icon size={16} weight={isActive ? "bold" : "regular"} className="shrink-0" />
                 <span>{tab.label}</span>
               </button>
             )
@@ -109,21 +113,28 @@ export default function ProductManagerAttendanceTabs({
       </div>
 
       {showActions && (
-        <div className="flex items-center gap-2.5 shrink-0 self-end lg:self-auto">
+        <div className="relative shrink-0 self-start sm:self-auto" ref={menuRef}>
           <button
             type="button"
-            onClick={handleApplyLeave}
-            className="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#5B50EC] hover:bg-[#4d42df] shadow-xs hover:shadow transition-all duration-150 cursor-pointer active:scale-95 whitespace-nowrap"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4.5 py-2 rounded-full bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"
           >
-            Apply Leave
+            <Plus size={15} weight="bold" />
+            <span>Apply Request</span>
+            <CaretDown
+              size={13}
+              weight="bold"
+              className={`transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`}
+            />
           </button>
-          <button
-            type="button"
-            onClick={handleRequestWfh}
-            className="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#5B50EC] hover:bg-[#4d42df] shadow-xs hover:shadow transition-all duration-150 cursor-pointer active:scale-95 whitespace-nowrap"
-          >
-            Request WFH
-          </button>
+
+          {isMenuOpen && (
+            <AttendanceActionDropdownMenu
+              onApplyLeave={handleApplyLeave}
+              onRequestWfh={handleRequestWfh}
+              onApplyException={handleApplyException}
+            />
+          )}
         </div>
       )}
     </div>

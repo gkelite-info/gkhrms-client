@@ -26,12 +26,12 @@ export default function FinanceSidebar({
       )}
 
       <aside
-        className={`fixed lg:static top-0 left-0 z-50 h-screen w-[220px] shrink-0 bg-white border-r border-[#E8EAFD] flex flex-col justify-between p-4 transition-transform duration-300 ease-in-out ${
+        className={`fixed lg:static top-0 left-0 z-50 h-screen w-[220px] shrink-0 bg-white border-r border-[#E8EAFD] flex flex-col justify-between py-4 transition-transform duration-300 ease-in-out ${
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between px-1 py-1">
+        <div className="flex flex-col gap-5 flex-1 min-h-0">
+          <div className="flex items-center justify-between px-4 py-1 shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-[#4F46E5] flex items-center justify-center text-white shadow-sm shadow-indigo-200">
                 <LayoutGrid className="w-5 h-5 fill-white/20" />
@@ -56,7 +56,7 @@ export default function FinanceSidebar({
             </button>
           </div>
 
-          <nav className="flex flex-col gap-1.5">
+          <nav className="flex flex-col gap-1.5 flex-1 overflow-y-auto custom-scrollbar sidebar-scrollbar px-3 min-h-0">
             <Link
               href="/finance"
               onClick={onCloseMobile}
@@ -75,4 +75,3 @@ export default function FinanceSidebar({
     </>
   )
 }
-

@@ -7,6 +7,8 @@ export const applicantRoles: ApplicantRole[] = [
   "HR",
   "HR Manager",
   "Product Manager",
+  "Finance",
+  "Finance Manager",
 ]
 
 export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
@@ -119,6 +121,40 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
       "Sneha Kapoor (HR Manager)",
       "Priya Mehta (Senior HRBP)",
       "Amit Verma (HR Operations Lead)",
+    ],
+  },
+  Finance: {
+    primaryLabel: "Finance Director / CFO",
+    primaryPlaceholder: "Select Finance Director / CFO",
+    primaryOptions: [
+      "Rajesh Varma (Chief Financial Officer)",
+      "Alok Gupta (Director of Finance & Accounts)",
+      "Meenakshi Sundaram (Chief Executive Officer)",
+    ],
+    secondaryLabel: "HR Manager / Operations Head",
+    secondaryPlaceholder: "Select HRBP / HR Manager",
+    secondaryOptions: [
+      "Sneha Kapoor (HR Manager)",
+      "Priya Mehta (Lead HRBP)",
+      "Amit Verma (HR Operations Lead)",
+      "Dr. Priya Mehta (CHRO)",
+    ],
+  },
+  "Finance Manager": {
+    primaryLabel: "Finance Director / CFO",
+    primaryPlaceholder: "Select Finance Director / CFO",
+    primaryOptions: [
+      "Rajesh Varma (Chief Financial Officer)",
+      "Alok Gupta (Director of Finance & Accounts)",
+      "Meenakshi Sundaram (Chief Executive Officer)",
+    ],
+    secondaryLabel: "HR Manager / Operations Head",
+    secondaryPlaceholder: "Select HRBP / HR Manager",
+    secondaryOptions: [
+      "Sneha Kapoor (HR Manager)",
+      "Priya Mehta (Lead HRBP)",
+      "Amit Verma (HR Operations Lead)",
+      "Dr. Priya Mehta (CHRO)",
     ],
   },
 }

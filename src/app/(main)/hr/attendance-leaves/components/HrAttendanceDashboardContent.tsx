@@ -24,12 +24,12 @@ export default function HrAttendanceDashboardContent({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const tabParam = searchParams.get("tab") as HrAttendanceTab | null
+  const tabParam = searchParams.get("tab")
 
   const isEffectiveHrManager = isHrManager || Boolean(pathname?.startsWith("/hrmanager"))
   const basePath = isEffectiveHrManager ? "/hrmanager/attendance" : "/hr/attendance"
 
-  const validTabs: HrAttendanceTab[] = [
+  const validTabs: string[] = [
     "my-attendance", "organization-attendance", "attendance-requests", "exception-history"
   ]
 
@@ -37,7 +37,7 @@ export default function HrAttendanceDashboardContent({
     tabParam === "my-requests"
       ? "attendance-requests"
       : tabParam && validTabs.includes(tabParam)
-      ? tabParam
+      ? (tabParam as HrAttendanceTab)
       : "my-attendance"
 
   const [fromDate, setFromDate] = useState<DateFilterValue>(new Date(2025, 7, 26))
@@ -127,6 +127,10 @@ export default function HrAttendanceDashboardContent({
 
   if (tabParam === "request-wfh") {
     return <TeamLeadAttendanceFormContainer initialFormType="wfh" />
+  }
+
+  if (tabParam === "apply-exception" || tabParam === "regularize") {
+    return <TeamLeadAttendanceFormContainer initialFormType="exception" />
   }
 
   return (

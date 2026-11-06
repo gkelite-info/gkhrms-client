@@ -20,19 +20,25 @@ export default function TeamMemberDetailsPage() {
   const router = useRouter()
   const pathname = usePathname()
 
+  const isFinance =
+    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
   const isHrManager = pathname?.startsWith("/hrmanager")
   const isHr = !isHrManager && pathname?.startsWith("/hr")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
 
-  const backHref = isHrManager
+  const backHref = pathname?.startsWith("/financemanager")
+    ? "/financemanager/attendance?tab=my-attendance"
+    : isFinance
+    ? "/finance/attendance?tab=my-attendance"
+    : isHrManager
     ? "/hrmanager/attendance?tab=organization-attendance"
     : isHr
     ? "/hr/attendance?tab=organization-attendance"
     : isProductManager
     ? "/productmanager/attendance?tab=team-attendance"
     : isEmployee
-    ? "/employee/attendance?tab=team-attendance"
+    ? "/employee/attendance?tab=my-attendance"
     : "/teamlead/attendance?tab=team-attendance"
 
   const memberId = (params?.id as string) || "EMP001"

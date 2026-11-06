@@ -34,6 +34,10 @@ function ProductManagerAttendanceContent() {
     return <TeamLeadAttendanceFormContainer initialFormType="wfh" />
   }
 
+  if (tabParam === "apply-exception" || tabParam === "regularize") {
+    return <TeamLeadAttendanceFormContainer initialFormType="exception" />
+  }
+
   const activeTab: ProductManagerTabKey =
     tabParam === "my-requests"
       ? "requests"

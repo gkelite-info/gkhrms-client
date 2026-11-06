@@ -31,6 +31,10 @@ function ManagerAttendanceContent() {
     return <TeamLeadAttendanceFormContainer initialFormType="wfh" />
   }
 
+  if (tabParam === "apply-exception" || tabParam === "regularize") {
+    return <TeamLeadAttendanceFormContainer initialFormType="exception" />
+  }
+
   const validTabs: ManagerTabKey[] = [
     "my-attendance",
     "team-attendance",

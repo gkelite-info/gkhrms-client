@@ -1,11 +1,12 @@
 "use client"
 
-import { UsersThree } from "phosphor-react"
+import { Users, UsersThree } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
 } from "../reusableComponents/ReusableSidebar"
 
 export const hrManagerNavItems: ReusableSidebarItem[] = [
+  { label: "User Management", href: "/hrmanager", icon: Users },
   { label: "Attendance", href: "/hrmanager/attendance", icon: UsersThree },
 ]
 
@@ -16,13 +17,24 @@ export default function HrManagerSidebar() {
   ): boolean => {
     if (item.href === "/hrmanager/attendance") {
       return (
-        currentPath === "/hrmanager" ||
         currentPath.startsWith("/hrmanager/attendance") ||
         currentPath.startsWith("/hrmanager/apply-leave") ||
         currentPath.startsWith("/hrmanager/request-wfh") ||
         currentPath.startsWith("/hrmanager/requests") ||
         currentPath.startsWith("/hrmanager/exception-history") ||
         currentPath.startsWith("/hrmanager/member")
+      )
+    }
+    if (item.href === "/hrmanager") {
+      return (
+        currentPath === "/hrmanager" ||
+        (currentPath.startsWith("/hrmanager") &&
+          !currentPath.includes("/attendance") &&
+          !currentPath.includes("/apply-leave") &&
+          !currentPath.includes("/request-wfh") &&
+          !currentPath.includes("/requests") &&
+          !currentPath.includes("/exception-history") &&
+          !currentPath.includes("/member"))
       )
     }
     return currentPath === item.href || currentPath.startsWith(`${item.href}/`)

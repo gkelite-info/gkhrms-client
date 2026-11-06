@@ -77,7 +77,7 @@ body {
 
 .sidebar-scrollbar::-webkit-scrollbar {
   display: block !important;
-  width: 5px;
+  width: 4px;
 }
 
 .sidebar-scrollbar::-webkit-scrollbar-track {

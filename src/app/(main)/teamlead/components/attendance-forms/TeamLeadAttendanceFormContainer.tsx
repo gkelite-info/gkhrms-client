@@ -12,6 +12,8 @@ import ApplyLeaveFormCard from "./ApplyLeaveFormCard"
 import CurrentLeaveBalanceCard from "./CurrentLeaveBalanceCard"
 import RequestWfhFormCard from "./RequestWfhFormCard"
 import WfhGuidelinesCard from "./WfhGuidelinesCard"
+import ApplyExceptionFormCard from "./ApplyExceptionFormCard"
+import ExceptionGuidelinesCard from "./ExceptionGuidelinesCard"
 
 interface TeamLeadAttendanceFormContainerProps {
   initialFormType?: FormTabType
@@ -26,12 +28,18 @@ export default function TeamLeadAttendanceFormContainer({
   const urlType = searchParams.get("type")
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isFinance =
+    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
   const isHrManager = pathname?.startsWith("/hrmanager")
   const isHr = !isHrManager && pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
-  const basePath = isHrManager
+  const basePath = pathname?.startsWith("/financemanager")
+    ? "/financemanager/attendance"
+    : isFinance
+    ? "/finance/attendance"
+    : isHrManager
     ? "/hrmanager/attendance"
     : isHr
     ? "/hr/attendance"
@@ -44,25 +52,30 @@ export default function TeamLeadAttendanceFormContainer({
     : "/teamlead/attendance"
 
   const [selectedRole, setSelectedRole] = useState<ApplicantRole>(() => {
+    if (
+      isFinance ||
+      (authRole as string) === "Finance" ||
+      (authRole as string) === "FinanceManager"
+    )
+      return "Finance Manager"
     if (isHrManager || authRole === "HrManager") return "HR Manager"
     if (isHr || authRole === "Hr") return "HR"
-    if (isManager) return "Manager"
-    if (isProductManager) return "Product Manager"
-    if (isEmployee) return "Employee"
-    if (authRole === "Hr" || authRole === "HrManager") return "HR"
-    if (authRole === "Manager") return "Manager"
-    if (authRole === "ProductManager") return "Product Manager"
-    if (authRole === "Employee") return "Employee"
+    if (isManager || authRole === "Manager") return "Manager"
+    if (isProductManager || authRole === "ProductManager") return "Product Manager"
+    if (isEmployee || authRole === "Employee") return "Employee"
     return "Team Lead"
   })
 
   const [activeTab, setActiveTab] = useState<FormTabType>(() => {
+    if (urlType === "exception" || initialFormType === "exception") return "exception"
     if (urlType === "wfh" || initialFormType === "wfh") return "wfh"
     return "leave"
   })
 
   useEffect(() => {
-    if (urlType === "wfh") {
+    if (urlType === "exception") {
+      setActiveTab("exception")
+    } else if (urlType === "wfh") {
       setActiveTab("wfh")
     } else if (urlType === "leave") {
       setActiveTab("leave")
@@ -71,7 +84,13 @@ export default function TeamLeadAttendanceFormContainer({
 
   const handleTabChange = (tab: FormTabType) => {
     setActiveTab(tab)
-    router.replace(`${basePath}?tab=${tab === "wfh" ? "request-wfh" : "apply-leave"}`, { scroll: false })
+    const tabQuery =
+      tab === "exception"
+        ? "apply-exception"
+        : tab === "wfh"
+        ? "request-wfh"
+        : "apply-leave"
+    router.replace(`${basePath}?tab=${tabQuery}`, { scroll: false })
   }
 
   return (
@@ -98,7 +117,7 @@ export default function TeamLeadAttendanceFormContainer({
               <CurrentLeaveBalanceCard role={selectedRole} />
             </div>
           </>
-        ) : (
+        ) : activeTab === "wfh" ? (
           <>
             <div className="lg:col-span-2">
               <RequestWfhFormCard
@@ -108,6 +127,18 @@ export default function TeamLeadAttendanceFormContainer({
             </div>
             <div className="lg:col-span-1">
               <WfhGuidelinesCard role={selectedRole} />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="lg:col-span-2">
+              <ApplyExceptionFormCard
+                currentRole={selectedRole}
+                onRoleChange={setSelectedRole}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <ExceptionGuidelinesCard role={selectedRole} />
             </div>
           </>
         )}
