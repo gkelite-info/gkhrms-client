@@ -37,6 +37,8 @@ export default function MainNavbarHeader() {
         ? "financemanager"
         : pathname?.startsWith("/hrmanager")
         ? "hrmanager"
+        : pathname?.startsWith("/accountant")
+        ? "accountant"
         : "employee")
     router.push(`/${targetRole}/profile`)
   }
@@ -60,11 +62,14 @@ export default function MainNavbarHeader() {
             pathname?.startsWith("/finance") ||
             pathname?.startsWith("/financemanager") ||
             pathname?.startsWith("/financemanger") ||
-            pathname?.startsWith("/hrmanager")) && (
+            pathname?.startsWith("/hrmanager") ||
+            pathname?.startsWith("/accountant")) && (
             <button
               type="button"
               onClick={() => {
-                if (
+                if (pathname?.startsWith("/accountant")) {
+                  window.dispatchEvent(new CustomEvent("toggle-accountant-sidebar"))
+                } else if (
                   pathname?.startsWith("/finance") ||
                   pathname?.startsWith("/financemanager") ||
                   pathname?.startsWith("/financemanger")

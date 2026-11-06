@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Calendar, ChevronDown, Plus, ChevronLeft, ChevronRight } from "lucide-react"
 import { ReimbursementClaim, ReimbursementStatus, ReimbursementPaymentStatus } from "../types"
 import { reimbursementsKpiCards, mockReimbursementClaims } from "../data/mockFinanceData"
@@ -13,15 +14,37 @@ interface ReimbursementsViewProps {
 }
 
 export default function ReimbursementsView({ onTotalAmountClick }: ReimbursementsViewProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [claims, setClaims] = useState<ReimbursementClaim[]>(mockReimbursementClaims)
   const [paymentStatusFilter, setPaymentStatusFilter] = useState("All")
   const [dateRange, setDateRange] = useState("Last 30 Days")
   const [claimTypeFilter, setClaimTypeFilter] = useState("All")
   const [statusFilter, setStatusFilter] = useState("All")
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [selectedClaim, setSelectedClaim] = useState<ReimbursementClaim | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 8
+
+  const isAddModalOpen =
+    searchParams.get("modal") === "add-claim" ||
+    searchParams.get("action") === "add-claim" ||
+    searchParams.get("view") === "add-claim"
+
+  const handleOpenAddModal = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("modal", "add-claim")
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
+  const handleCloseAddModal = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("modal")
+    params.delete("action")
+    params.delete("view")
+    const query = params.toString()
+    router.push(query ? `?${query}` : window.location.pathname, { scroll: false })
+  }
 
   const handleCardClick = (cardId: string) => {
     if (cardId === "reimbursements-total-amount" && onTotalAmountClick) {
@@ -123,7 +146,7 @@ export default function ReimbursementsView({ onTotalAmountClick }: Reimbursement
 
   return (
     <div className="space-y-5">
-      <KpiCardsGrid cards={reimbursementsKpiCards} onCardClick={handleCardClick} />
+      <KpiCardsGrid cards={reimbursementsKpiCards} />
 
       <div className="flex flex-col xl:flex-row items-stretch xl:items-end justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100/80 shadow-xs">
         <div className="flex flex-wrap items-end gap-3 flex-1">
@@ -220,7 +243,7 @@ export default function ReimbursementsView({ onTotalAmountClick }: Reimbursement
 
         <button
           type="button"
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={handleOpenAddModal}
           className="h-10 px-5 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-xl text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 mt-2 xl:mt-0"
         >
           <Plus className="w-4 h-4" />
@@ -339,7 +362,7 @@ export default function ReimbursementsView({ onTotalAmountClick }: Reimbursement
 
       <AddClaimModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={handleCloseAddModal}
         onAdd={handleAddClaim}
       />
 

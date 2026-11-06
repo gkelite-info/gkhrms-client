@@ -2,34 +2,32 @@
 
 import {
   BarChart3,
-  BadgeDollarSign,
   Receipt,
+  FileSpreadsheet,
   RotateCcw,
   CreditCard,
-  PieChart,
-  FileSpreadsheet,
+  FileBarChart,
 } from "lucide-react"
-import { FinanceTab } from "../types"
+import { AccountantTab } from "../types"
 
-interface FinanceTabsProps {
-  activeTab: FinanceTab
-  onTabChange: (tab: FinanceTab) => void
+interface AccountantTabsProps {
+  activeTab: AccountantTab
+  onTabChange: (tab: AccountantTab) => void
 }
 
-const tabs: { name: FinanceTab; icon: React.ElementType }[] = [
+const tabs: { name: AccountantTab; icon: React.ElementType }[] = [
   { name: "Finance Overview", icon: BarChart3 },
-  { name: "Revenue", icon: BadgeDollarSign },
-  { name: "Expenses", icon: Receipt },
+  { name: "Transactions", icon: Receipt },
+  { name: "Expense Entries", icon: FileSpreadsheet },
   { name: "Reimbursements", icon: RotateCcw },
   { name: "Payments", icon: CreditCard },
-  { name: "Budgets", icon: PieChart },
-  { name: "Reports", icon: FileSpreadsheet },
+  { name: "Reports", icon: FileBarChart },
 ]
 
-export default function FinanceTabs({
+export default function AccountantTabs({
   activeTab,
   onTabChange,
-}: FinanceTabsProps) {
+}: AccountantTabsProps) {
   return (
     <div className="w-full flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
       {tabs.map((tab) => {
@@ -44,10 +42,14 @@ export default function FinanceTabs({
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               isActive
                 ? "bg-[#4F46E5] text-white shadow-sm shadow-indigo-200"
-                : "text-slate-600 bg-white/40 hover:bg-white hover:text-slate-900 border border-transparent hover:border-slate-200/60"
+                : "text-slate-600 bg-white/60 hover:bg-white hover:text-slate-900 border border-slate-200/60"
             }`}
           >
-            <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-500"}`} />
+            <Icon
+              className={`w-3.5 h-3.5 ${
+                isActive ? "text-white" : "text-slate-500"
+              }`}
+            />
             <span>{tab.name}</span>
           </button>
         )
@@ -55,3 +57,4 @@ export default function FinanceTabs({
     </div>
   )
 }
+

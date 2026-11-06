@@ -6,7 +6,7 @@ import ReusableSidebar, {
 } from "../../../../../reusableComponents/ReusableSidebar"
 
 export const financeNavItems: ReusableSidebarItem[] = [
-  { label: "Finance", href: "/financemanager", icon: CurrencyCircleDollar },
+  { label: "Finance", href: "/financemanager/finance", icon: CurrencyCircleDollar },
   { label: "Attendance", href: "/financemanager/attendance", icon: UsersThree },
 ]
 
@@ -53,3 +53,4 @@ export default function FinanceSidebar() {
     />
   )
 }
+
