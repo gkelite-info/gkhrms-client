@@ -123,7 +123,7 @@ export default function ReimbursementsView({ onTotalAmountClick }: Reimbursement
 
   return (
     <div className="space-y-5">
-      <KpiCardsGrid cards={reimbursementsKpiCards} onCardClick={handleCardClick} />
+      <KpiCardsGrid cards={reimbursementsKpiCards} />
 
       <div className="flex flex-col xl:flex-row items-stretch xl:items-end justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100/80 shadow-xs">
         <div className="flex flex-wrap items-end gap-3 flex-1">

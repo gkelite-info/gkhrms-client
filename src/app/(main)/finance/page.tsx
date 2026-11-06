@@ -18,6 +18,8 @@ import BudgetsView from "./components/BudgetsView"
 import ReportsView from "./components/ReportsView"
 import ExpenseTrendDetailsView from "./components/ExpenseTrendDetailsView"
 import TransactionDetailsView from "./components/TransactionDetailsView"
+import PendingPaymentsView from "./components/PendingPaymentsView"
+import OverduePaymentsView from "./components/OverduePaymentsView"
 
 const tabToSlug: Record<FinanceTab, string> = {
   "Finance Overview": "overview",
@@ -43,6 +45,18 @@ function FinanceContent() {
     viewParam === "expense-trend" ||
     tabParam === "expense-trend-details" ||
     tabParam === "expense-trend"
+
+  const isBreakdownModal =
+    viewParam === "expense-breakdown" ||
+    tabParam === "expense-breakdown"
+
+  const isPendingPayments =
+    viewParam === "pending-payments" ||
+    tabParam === "pending-payments"
+
+  const isOverduePayments =
+    viewParam === "overdue-payments" ||
+    tabParam === "overdue-payments"
 
   const isTransactionDetails =
     viewParam === "transaction-details" ||
@@ -96,7 +110,11 @@ function FinanceContent() {
     } else if (cardId === "budget-utilization") {
       router.push("/finance?tab=budgets")
     } else if (cardId === "overdue-payments") {
-      router.push("/finance?tab=revenue")
+      router.push("/finance?view=overdue-payments")
+    } else if (cardId === "pending-payments") {
+      router.push("/finance?view=pending-payments")
+    } else if (cardId === "approved-this-month") {
+      router.push("/finance?tab=payments")
     }
   }
 
@@ -110,6 +128,14 @@ function FinanceContent() {
 
   const handleTransactionClick = (tx: Transaction) => {
     router.push(`/finance?view=transaction-details&id=${tx.id}`)
+  }
+
+  if (isOverduePayments) {
+    return <OverduePaymentsView onBack={handleBackToOverview} />
+  }
+
+  if (isPendingPayments) {
+    return <PendingPaymentsView onBack={handleBackToOverview} />
   }
 
   if (isTransactionDetails) {
@@ -155,13 +181,13 @@ function FinanceContent() {
         return {
           title: "Payments",
           subtitle:
-            "Schedule and manage accounts payable, vendor disbursements, and banking transfers.",
+            "Track approved outgoing payments including reimbursements.",
         }
       case "Reports":
         return {
           title: "Reports",
           subtitle:
-            "Generate and export financial analytics, audit filings, and transaction summaries.",
+            "View revenue and expense reports with simple insights.",
         }
       default:
         return {
@@ -196,7 +222,14 @@ function FinanceContent() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 xl:gap-4">
             <ExpenseTrendChart onOpenDetails={handleOpenTrendDetails} />
-            <ExpenseBreakdownChart />
+            <ExpenseBreakdownChart
+              initialModalOpen={isBreakdownModal}
+              onModalClose={() => {
+                if (isBreakdownModal) {
+                  router.push("/finance")
+                }
+              }}
+            />
           </div>
 
           <RecentTransactionsTable
@@ -207,18 +240,10 @@ function FinanceContent() {
         </div>
       )}
 
-      {activeTab === "Revenue" && (
-        <RevenueView onTotalRevenueClick={handleBackToOverview} />
-      )}
-      {activeTab === "Expenses" && (
-        <ExpensesView onTotalExpensesClick={handleBackToOverview} />
-      )}
-      {activeTab === "Reimbursements" && (
-        <ReimbursementsView onTotalAmountClick={handleBackToOverview} />
-      )}
-      {activeTab === "Budgets" && (
-        <BudgetsView onTotalSpendClick={handleBackToOverview} />
-      )}
+      {activeTab === "Revenue" && <RevenueView />}
+      {activeTab === "Expenses" && <ExpensesView />}
+      {activeTab === "Reimbursements" && <ReimbursementsView />}
+      {activeTab === "Budgets" && <BudgetsView />}
       {activeTab === "Payments" && <PaymentsView />}
       {activeTab === "Reports" && <ReportsView />}
     </div>

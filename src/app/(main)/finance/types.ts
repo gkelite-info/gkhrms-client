@@ -203,3 +203,116 @@ export interface RevenueStatusMetric {
   percentage: number
   color: string
 }
+
+export type PaymentStatus = "Paid" | "Scheduled" | "Processing" | "Overdue" | "Pending"
+export type PaymentType = "Reimbursement" | "Vendor Invoice" | "Salary" | "Operations"
+export type PayeeType = "Employee" | "Vendor" | "Contractor"
+
+export interface PaymentItem {
+  id: string
+  paymentId: string
+  payee: string
+  payeeType: PayeeType
+  paymentType: PaymentType
+  category: string
+  amount: number
+  formattedAmount: string
+  dueDate: string
+  paymentDate: string
+  status: PaymentStatus
+  description?: string
+  paymentMethod?: string
+}
+
+export interface PaymentKpiData {
+  id: string
+  title: string
+  value: string
+  trend?: string
+  trendDirection?: "up" | "down" | "neutral"
+  trendLabel?: string
+  badgeText?: string
+  badgeColor?: string
+  iconType: "users" | "clock" | "check" | "alert" | "coins"
+}
+
+export interface ReportKpiCard {
+  id: string
+  title: string
+  value: string
+  iconType: "revenue" | "expenses" | "profit" | "receivables" | "payments"
+}
+
+export interface RevenueExpenseTrendItem {
+  [key: string]: string | number | undefined
+  month: string
+  revenue: number
+  expenses: number
+  netProfit: number
+  formattedRevenue: string
+  formattedExpenses: string
+  formattedNetProfit: string
+}
+
+export interface ReportDonutItem {
+  [key: string]: string | number | undefined
+  name: string
+  percentage: number
+  color: string
+  value?: number
+}
+
+export interface MonthlySummaryRow {
+  month: string
+  revenue: string
+  expenses: string
+}
+
+export type PendingPaymentType = "Reimbursement" | "Expense Claim" | "Travel Expense" | "Subscription"
+
+export interface PendingPaymentItem {
+  id: string
+  dueDate: string
+  type: PendingPaymentType
+  reference: string
+  employee: string
+  department: string
+  amount: number
+  formattedAmount: string
+  status: "Pending" | "Overdue" | "Processing" | "Approved"
+  description?: string
+  paymentMethod?: string
+}
+
+export interface PendingPaymentKpiData {
+  id: string
+  title: string
+  amount: string
+  subtext: string
+  iconType: "clock" | "alert" | "calendar" | "users"
+}
+
+export interface OverduePaymentItem {
+  id: string
+  paymentId: string
+  payee: string
+  paymentType: string
+  department: string
+  amount: number
+  formattedAmount: string
+  dueDate: string
+  daysDue: string | number
+  status: "Pending" | "Overdue"
+  description?: string
+  paymentMethod?: string
+}
+
+export interface OverduePaymentKpi {
+  id: string
+  title: string
+  value: string
+  trend: string
+  trendDirection: "up" | "down"
+  trendColor: "green" | "red"
+  iconType: "file" | "alert" | "currency"
+}
