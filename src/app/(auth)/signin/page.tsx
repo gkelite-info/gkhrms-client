@@ -44,6 +44,8 @@ export default function Signin() {
 				roleForRedux = 'TeamLead';
 			} else if (apiRole === 'productmanager' || apiRole === 'product manager' || apiRole === 'pm') {
 				roleForRedux = 'ProductManager';
+			} else if (apiRole === 'hrmanager' || apiRole === 'hr manager' || apiRole === 'hrm') {
+				roleForRedux = 'HrManager';
 			}
 
 			if (roleForRedux) {
@@ -67,6 +69,8 @@ export default function Signin() {
 				router.push('/teamlead')
 			} else if (apiRole === 'productmanager' || apiRole === 'product manager' || apiRole === 'pm') {
 				router.push('/productmanager')
+			} else if (apiRole === 'hrmanager' || apiRole === 'hr manager' || apiRole === 'hrm') {
+				router.push('/hrmanager/attendance')
 			} else {
 				router.push('/unauthorized')
 			}

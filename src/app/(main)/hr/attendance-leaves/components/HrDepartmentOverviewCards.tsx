@@ -15,6 +15,7 @@ import {
 interface HrDepartmentOverviewCardsProps {
   selectedDepartment?: string | null
   onSelectDepartment?: (deptName: string) => void
+  hideHrDepartment?: boolean
 }
 
 function CircularProgress({ percentage }: { percentage: number }) {
@@ -60,8 +61,19 @@ function CircularProgress({ percentage }: { percentage: number }) {
 export default function HrDepartmentOverviewCards({
   selectedDepartment,
   onSelectDepartment,
+  hideHrDepartment = false,
 }: HrDepartmentOverviewCardsProps) {
-  const activeDept = selectedDepartment || HR_DEPARTMENT_OVERVIEWS[0]?.name || "Technology"
+  const departments = hideHrDepartment
+    ? HR_DEPARTMENT_OVERVIEWS.filter(
+        (dept) => dept.id !== "hr" && dept.iconType !== "hr"
+      )
+    : HR_DEPARTMENT_OVERVIEWS
+
+  const defaultDept = departments[0]?.name || "Technology"
+  const activeDept =
+    hideHrDepartment && selectedDepartment === "Human Resources"
+      ? defaultDept
+      : selectedDepartment || defaultDept
 
   const getDeptIcon = (iconType: HrDepartmentOverview["iconType"]) => {
     switch (iconType) {
@@ -104,8 +116,12 @@ export default function HrDepartmentOverviewCards({
         Department-wise Attendance Overview
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-3.5">
-        {HR_DEPARTMENT_OVERVIEWS.map((dept) => {
+      <div
+        className={`grid grid-cols-1 sm:grid-cols-2 ${
+          hideHrDepartment ? "lg:grid-cols-4" : "lg:grid-cols-5"
+        } gap-3 sm:gap-3.5`}
+      >
+        {departments.map((dept) => {
           const config = getDeptIcon(dept.iconType)
           const Icon = config.icon
           const isSelected = activeDept === dept.name

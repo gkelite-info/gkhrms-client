@@ -8,6 +8,7 @@ import EmployeeSidebar from "./EmployeeSidebar"
 import TeamLeadSidebar from "./TeamLeadSidebar"
 import ManagerSidebar from "./ManagerSidebar"
 import HrSidebar from "./HrSidebar"
+import HrManagerSidebar from "./HrManagerSidebar"
 import ProductManagerSidebar from "./ProductManagerSidebar"
 import ReusableSidebar from "../reusableComponents/ReusableSidebar"
 
@@ -15,31 +16,57 @@ export default function Sidebar() {
   const pathname = usePathname()
   const { role } = useSelector((state: RootState) => state.auth)
 
-  if (pathname?.startsWith("/teamlead") || role === "TeamLead") {
-    return <TeamLeadSidebar />
+  if (pathname?.startsWith("/hrmanager")) {
+    return <HrManagerSidebar />
   }
 
-  if (pathname?.startsWith("/manager") || role === "Manager") {
-    return <ManagerSidebar />
-  }
-
-  if (pathname?.startsWith("/hr") || role === "Hr") {
+  if (pathname?.startsWith("/hr")) {
     return <HrSidebar />
   }
 
-  if (pathname?.startsWith("/productmanager") || role === "ProductManager") {
+  if (pathname?.startsWith("/teamlead")) {
+    return <TeamLeadSidebar />
+  }
+
+  if (pathname?.startsWith("/manager")) {
+    return <ManagerSidebar />
+  }
+
+  if (pathname?.startsWith("/productmanager")) {
     return <ProductManagerSidebar />
   }
 
-  if (pathname?.startsWith("/employee") || role === "Employee") {
+  if (pathname?.startsWith("/employee")) {
+    return <EmployeeSidebar />
+  }
+
+  if (role === "HrManager") {
+    return <HrManagerSidebar />
+  }
+
+  if (role === "Hr") {
+    return <HrSidebar />
+  }
+
+  if (role === "TeamLead") {
+    return <TeamLeadSidebar />
+  }
+
+  if (role === "Manager") {
+    return <ManagerSidebar />
+  }
+
+  if (role === "ProductManager") {
+    return <ProductManagerSidebar />
+  }
+
+  if (role === "Employee") {
     return <EmployeeSidebar />
   }
 
   const activeRole =
     pathname?.startsWith("/admin") || role === "Admin"
       ? "Admin"
-      : pathname?.startsWith("/hr") || role === "Hr"
-      ? "Hr"
       : role ?? "Employee"
 
   const navItems = roleBasedNav[activeRole] || []

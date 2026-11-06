@@ -57,7 +57,12 @@ export default function HrSidebar() {
       return (
         currentPath === "/hr/attendance" ||
         currentPath.startsWith("/hr/attendance") ||
-        currentPath.startsWith("/hr/attendance-leaves")
+        currentPath.startsWith("/hr/attendance-leaves") ||
+        currentPath.startsWith("/hr/member") ||
+        currentPath.startsWith("/hr/apply-leave") ||
+        currentPath.startsWith("/hr/request-wfh") ||
+        currentPath.startsWith("/hr/requests") ||
+        currentPath.startsWith("/hr/exception-history")
       )
     }
     if (item.href === "/hr/finance") {

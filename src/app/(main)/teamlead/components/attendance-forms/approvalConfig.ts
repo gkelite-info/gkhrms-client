@@ -5,6 +5,7 @@ export const applicantRoles: ApplicantRole[] = [
   "Employee",
   "Manager",
   "HR",
+  "HR Manager",
   "Product Manager",
 ]
 
@@ -71,12 +72,28 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
   },
   HR: {
-    primaryLabel: "HR Director",
+    primaryLabel: "HR Manager",
+    primaryPlaceholder: "Select HR Manager",
+    primaryOptions: [
+      "Sneha Kapoor (HR Manager)",
+      "Priya Mehta (Lead HRBP)",
+      "Amit Verma (HR Operations Lead)",
+    ],
+    secondaryLabel: "HR Director / CHRO",
+    secondaryPlaceholder: "Select HR Director / CHRO",
+    secondaryOptions: [
+      "Dr. Priya Mehta (Chief Human Resources Officer)",
+      "Amit Verma (Global HR Director)",
+      "Dr. G. Krishna (Chairman & MD)",
+    ],
+  },
+  "HR Manager": {
+    primaryLabel: "HR Director / CHRO",
     primaryPlaceholder: "Select HR Director / CHRO",
     primaryOptions: [
       "Dr. Priya Mehta (Chief Human Resources Officer)",
       "Amit Verma (Global HR Director)",
-      "Sneha Kapoor (Head of People & Culture)",
+      "Dr. G. Krishna (Chairman & MD)",
     ],
     secondaryLabel: "Executive Authority",
     secondaryPlaceholder: "Select Chairman / Managing Director",

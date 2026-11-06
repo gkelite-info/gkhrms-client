@@ -7,6 +7,7 @@ export type ApplicantRole =
   | "Team Lead"
   | "Manager"
   | "HR"
+  | "HR Manager"
   | "Product Manager"
 
 export interface RoleApprovalConfig {

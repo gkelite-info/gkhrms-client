@@ -10,7 +10,13 @@ import {
 } from "phosphor-react"
 import { HR_ATTENDANCE_STATS, HrAttendanceStat } from "../data/hrAttendanceData"
 
-export default function HrAttendanceStatsCards() {
+interface HrAttendanceStatsCardsProps {
+  stats?: HrAttendanceStat[]
+}
+
+export default function HrAttendanceStatsCards({
+  stats = HR_ATTENDANCE_STATS,
+}: HrAttendanceStatsCardsProps = {}) {
   const getIconAndColors = (iconType: HrAttendanceStat["iconType"]) => {
     switch (iconType) {
       case "employees":
@@ -60,7 +66,7 @@ export default function HrAttendanceStatsCards() {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
-      {HR_ATTENDANCE_STATS.map((stat) => {
+      {stats.map((stat) => {
         const config = getIconAndColors(stat.iconType)
         const Icon = config.icon
 

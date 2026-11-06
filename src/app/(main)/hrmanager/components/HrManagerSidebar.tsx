@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutGrid, Users, X } from "lucide-react"
+import { LayoutGrid, Users, X, CalendarCheck } from "lucide-react"
 
 interface HrManagerSidebarProps {
   mobileOpen: boolean
@@ -14,8 +14,17 @@ export default function HrManagerSidebar({
   onCloseMobile,
 }: HrManagerSidebarProps) {
   const pathname = usePathname()
-  const isUserManagementActive =
+  const isAttendanceActive = Boolean(
+    pathname?.startsWith("/hrmanager/attendance") ||
+    pathname?.startsWith("/hrmanager/apply-leave") ||
+    pathname?.startsWith("/hrmanager/request-wfh") ||
+    pathname?.startsWith("/hrmanager/requests") ||
+    pathname?.startsWith("/hrmanager/exception-history") ||
+    pathname?.startsWith("/hrmanager/member")
+  )
+  const isUserManagementActive = !isAttendanceActive && Boolean(
     pathname === "/hrmanager" || pathname?.startsWith("/hrmanager")
+  )
 
   return (
     <>
@@ -69,6 +78,19 @@ export default function HrManagerSidebar({
             >
               <Users className="w-4 h-4 shrink-0" />
               <span>User Management</span>
+            </Link>
+
+            <Link
+              href="/hrmanager/attendance"
+              onClick={onCloseMobile}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-xs transition-all cursor-pointer ${
+                isAttendanceActive
+                  ? "bg-[#4F46E5] text-white shadow-sm shadow-indigo-200"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <CalendarCheck className="w-4 h-4 shrink-0" />
+              <span>Attendance</span>
             </Link>
           </nav>
         </div>

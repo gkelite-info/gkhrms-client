@@ -8,6 +8,7 @@ import {
   DateFilterStructuredValue,
   DateRangeValue,
   QuickRangeOption,
+  ReusableDateFilterProps,
   MONTH_NAMES,
   DATE_FILTER_PRESETS,
 } from "./dateFilter/types"
@@ -20,35 +21,10 @@ export type {
   DateFilterStructuredValue,
   DateRangeValue,
   QuickRangeOption,
+  ReusableDateFilterProps,
 }
 export { DATE_FILTER_PRESETS }
-
 export type DateFilterCompatibleValue = DateFilterValue
-
-export interface ReusableDateFilterProps<T = DateFilterValue> {
-  value?: T
-  onChange?:
-    | ((val: T) => void)
-    | ((val: DateFilterStructuredValue) => void)
-    | ((val: Date | DateRangeValue | null) => void)
-    | React.Dispatch<React.SetStateAction<T>>
-    | React.Dispatch<React.SetStateAction<Date | DateRangeValue | null>>
-    | React.Dispatch<React.SetStateAction<DateFilterValue>>
-    | React.Dispatch<React.SetStateAction<DateFilterStructuredValue>>
-    | React.Dispatch<React.SetStateAction<Date | null>>
-    | ((val: any) => void)
-  modes?: DateFilterMode[]
-  title?: string
-  subtitle?: string
-  hideTabsIfSingle?: boolean
-  tabLabels?: Partial<Record<DateFilterMode, string>>
-  quickRangeOptions?: QuickRangeOption[]
-  className?: string
-  buttonClassName?: string
-  backdropClassName?: string
-  minYear?: number
-  showCaret?: boolean
-}
 
 export default function ReusableDateFilter<T = DateFilterValue>({
   value,
@@ -181,13 +157,15 @@ export default function ReusableDateFilter<T = DateFilterValue>({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={
+        className={`inline-flex items-center gap-2 cursor-pointer select-none transition-all ${
           buttonClassName ||
-          "flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1F2433] hover:border-[#5B50EC] hover:bg-[#F9F8FE] transition-all shadow-xs cursor-pointer select-none"
-        }
+          "px-3 py-1.5 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1F2433] hover:border-[#5B50EC] hover:bg-[#F9F8FE] shadow-xs"
+        }`}
       >
         <CalendarBlank size={16} weight="bold" className="text-[#5B50EC] shrink-0" />
-        <span className="whitespace-nowrap">{normalizedValue.label}</span>
+        <span className="whitespace-nowrap text-xs font-semibold text-gray-800">
+          {normalizedValue.label}
+        </span>
         {showCaret && <CaretDown size={12} weight="bold" className="text-gray-400 shrink-0" />}
       </button>
 

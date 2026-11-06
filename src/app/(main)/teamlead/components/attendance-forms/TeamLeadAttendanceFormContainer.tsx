@@ -26,11 +26,14 @@ export default function TeamLeadAttendanceFormContainer({
   const urlType = searchParams.get("type")
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
-  const isHr = pathname?.startsWith("/hr")
+  const isHrManager = pathname?.startsWith("/hrmanager")
+  const isHr = !isHrManager && pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
-  const basePath = isHr
+  const basePath = isHrManager
+    ? "/hrmanager/attendance"
+    : isHr
     ? "/hr/attendance"
     : isManager
     ? "/manager/attendance"
@@ -41,11 +44,12 @@ export default function TeamLeadAttendanceFormContainer({
     : "/teamlead/attendance"
 
   const [selectedRole, setSelectedRole] = useState<ApplicantRole>(() => {
-    if (isHr) return "HR"
+    if (isHrManager || authRole === "HrManager") return "HR Manager"
+    if (isHr || authRole === "Hr") return "HR"
     if (isManager) return "Manager"
     if (isProductManager) return "Product Manager"
     if (isEmployee) return "Employee"
-    if (authRole === "Hr") return "HR"
+    if (authRole === "Hr" || authRole === "HrManager") return "HR"
     if (authRole === "Manager") return "Manager"
     if (authRole === "ProductManager") return "Product Manager"
     if (authRole === "Employee") return "Employee"

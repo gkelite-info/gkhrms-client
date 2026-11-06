@@ -110,6 +110,9 @@ export const roleBasedNav: Record<
     { label: "Performance", href: "/teamlead/performance", icon: ChartLineUp },
     { label: "Profile", href: "/teamlead/profile", icon: User },
   ],
+  HrManager: [
+    { label: "Attendance", href: "/hrmanager/attendance", icon: UsersThree },
+  ],
   ProductManager: [
     { label: "Attendance", href: "/productmanager/attendance", icon: UsersThree },
   ],

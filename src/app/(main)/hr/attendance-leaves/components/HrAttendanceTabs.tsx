@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import {
   User,
   UsersThree,
@@ -23,6 +23,7 @@ interface HrAttendanceTabsProps {
   showActions?: boolean
   onApplyLeave?: () => void
   onRequestWfh?: () => void
+  basePath?: string
 }
 
 export default function HrAttendanceTabs({
@@ -31,8 +32,15 @@ export default function HrAttendanceTabs({
   showActions = true,
   onApplyLeave,
   onRequestWfh,
+  basePath,
 }: HrAttendanceTabsProps) {
   const router = useRouter()
+  const pathname = usePathname()
+  const effectiveBasePath =
+    basePath ||
+    (pathname?.startsWith("/hrmanager")
+      ? "/hrmanager/attendance"
+      : "/hr/attendance")
 
   const tabs = [
     {
@@ -98,7 +106,7 @@ export default function HrAttendanceTabs({
               if (onApplyLeave) {
                 onApplyLeave()
               } else {
-                router.push("/hr/attendance?tab=apply-leave")
+                router.push(`${effectiveBasePath}?tab=apply-leave`)
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"
@@ -111,7 +119,7 @@ export default function HrAttendanceTabs({
               if (onRequestWfh) {
                 onRequestWfh()
               } else {
-                router.push("/hr/attendance?tab=request-wfh")
+                router.push(`${effectiveBasePath}?tab=request-wfh`)
               }
             }}
             className="px-4 sm:px-5 py-2 rounded-xl bg-[#5B50EC] hover:bg-[#4d42e0] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all duration-150 active:scale-95 whitespace-nowrap"

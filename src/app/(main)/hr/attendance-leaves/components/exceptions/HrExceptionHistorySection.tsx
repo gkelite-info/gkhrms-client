@@ -17,7 +17,13 @@ import HrExceptionSubtabs, { HrExceptionSubtabKey } from "./HrExceptionSubtabs"
 import HrExceptionCardItem from "./HrExceptionCardItem"
 import HrExceptionDetailsModal from "./HrExceptionDetailsModal"
 
-export default function HrExceptionHistorySection() {
+interface HrExceptionHistorySectionProps {
+  hideHrDepartment?: boolean
+}
+
+export default function HrExceptionHistorySection({
+  hideHrDepartment = false,
+}: HrExceptionHistorySectionProps = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -30,7 +36,14 @@ export default function HrExceptionHistorySection() {
       ? subtabParam
       : "all"
 
-  const [exceptions, setExceptions] = useState<HrExceptionItem[]>(INITIAL_HR_EXCEPTIONS)
+  const [exceptions, setExceptions] = useState<HrExceptionItem[]>(() =>
+    hideHrDepartment
+      ? INITIAL_HR_EXCEPTIONS.filter(
+          (e) =>
+            e.department !== "Human Resources" && getExceptionRole(e) !== "HR"
+        )
+      : INITIAL_HR_EXCEPTIONS
+  )
   const [appliedFilters, setAppliedFilters] = useState<{
     department: string
     selectedRoles: string[]
@@ -193,6 +206,7 @@ export default function HrExceptionHistorySection() {
       />
 
       <HrExceptionFilterBar
+        hideHrDepartment={hideHrDepartment}
         department={appliedFilters.department}
         selectedRoles={appliedFilters.selectedRoles}
         fromDate={appliedFilters.fromDate}
