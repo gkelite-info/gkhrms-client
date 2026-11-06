@@ -17,6 +17,7 @@ import {
   Laptop,
   CalendarBlank,
   ArrowsLeftRight,
+  CreditCard,
 } from "phosphor-react"
 import { Roles } from "../Features/Auth/Slice/loginType"
 
@@ -117,9 +118,14 @@ export const roleBasedNav: Record<
     { label: "Attendance", href: "/productmanager/attendance", icon: UsersThree },
   ],
   Finance: [
+    { label: "Finance", href: "/financemanager/finance", icon: CurrencyCircleDollar },
     { label: "Attendance", href: "/financemanager/attendance", icon: UsersThree },
   ],
   FinanceManager: [
+    { label: "Finance", href: "/financemanager/finance", icon: CurrencyCircleDollar },
     { label: "Attendance", href: "/financemanager/attendance", icon: UsersThree },
+  ],
+  Accountant: [
+    { label: "Finance", href: "/accountant", icon: CreditCard },
   ],
 }

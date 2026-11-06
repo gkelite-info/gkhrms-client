@@ -2,7 +2,7 @@
 
 import { useMemo, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useFinance } from "./context/FinanceContext"
+import { useFinance } from "../context/FinanceContext"
 import { FinanceTab, Transaction } from "./types"
 import { initialKpiCards, mockTransactions } from "./data/mockFinanceData"
 import FinanceTabs from "./components/FinanceTabs"
@@ -30,6 +30,8 @@ const tabToSlug: Record<FinanceTab, string> = {
   Budgets: "budgets",
   Reports: "reports",
 }
+
+const basePath = "/financemanager/finance"
 
 function FinanceContent() {
   const router = useRouter()
@@ -89,45 +91,63 @@ function FinanceContent() {
       case "reports":
         return "Reports"
       default:
+        if (
+          searchParams.get("modal") === "add-expense" ||
+          searchParams.get("action") === "add-expense"
+        ) {
+          return "Expenses"
+        }
+        if (
+          searchParams.get("modal") === "add-claim" ||
+          searchParams.get("action") === "add-claim"
+        ) {
+          return "Reimbursements"
+        }
+        if (
+          searchParams.get("modal") === "add-payment" ||
+          searchParams.get("action") === "add-payment"
+        ) {
+          return "Payments"
+        }
         return "Finance Overview"
     }
-  }, [tabParam])
+  }, [tabParam, searchParams])
 
   const handleTabChange = (tab: FinanceTab) => {
     const slug = tabToSlug[tab]
     if (slug === "overview") {
-      router.push("/finance")
+      router.push(basePath)
     } else {
-      router.push(`/finance?tab=${slug}`)
+      router.push(`${basePath}?tab=${slug}`)
     }
   }
 
   const handleOverviewKpiClick = (cardId: string) => {
     if (cardId === "total-expenses") {
-      router.push("/finance?tab=expenses")
+      router.push(`${basePath}?tab=expenses`)
     } else if (cardId === "pending-reimbursements") {
-      router.push("/finance?tab=reimbursements")
+      router.push(`${basePath}?tab=reimbursements`)
     } else if (cardId === "budget-utilization") {
-      router.push("/finance?tab=budgets")
+      router.push(`${basePath}?tab=budgets`)
     } else if (cardId === "overdue-payments") {
-      router.push("/finance?view=overdue-payments")
+      router.push(`${basePath}?view=overdue-payments`)
     } else if (cardId === "pending-payments") {
-      router.push("/finance?view=pending-payments")
+      router.push(`${basePath}?view=pending-payments`)
     } else if (cardId === "approved-this-month") {
-      router.push("/finance?tab=payments")
+      router.push(`${basePath}?tab=expenses`)
     }
   }
 
   const handleBackToOverview = () => {
-    router.push("/finance")
+    router.push(basePath)
   }
 
   const handleOpenTrendDetails = () => {
-    router.push("/finance?view=expense-trend-details")
+    router.push(`${basePath}?view=expense-trend-details`)
   }
 
   const handleTransactionClick = (tx: Transaction) => {
-    router.push(`/finance?view=transaction-details&id=${tx.id}`)
+    router.push(`${basePath}?view=transaction-details&id=${tx.id}`)
   }
 
   if (isOverduePayments) {
@@ -226,7 +246,7 @@ function FinanceContent() {
               initialModalOpen={isBreakdownModal}
               onModalClose={() => {
                 if (isBreakdownModal) {
-                  router.push("/finance")
+                  router.push(basePath)
                 }
               }}
             />
@@ -263,3 +283,4 @@ export default function FinancePage() {
     </Suspense>
   )
 }
+

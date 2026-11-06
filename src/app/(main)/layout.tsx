@@ -17,7 +17,9 @@ export default function MainLayout({
     pathname?.startsWith("/financemanager") ||
     pathname?.startsWith("/financemanger")
 
-  if (isSuperAdmin || isHrManager || isFinance) {
+  const isAccountant = pathname?.startsWith("/accountant")
+
+  if (isSuperAdmin || isHrManager || isFinance || isAccountant) {
     return <div className="w-full h-screen overflow-hidden">{children}</div>
   }
 

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
   Users,
   Clock,
@@ -15,7 +16,7 @@ import {
 } from "lucide-react"
 import { PaymentItem, PaymentStatus, PaymentType, PayeeType } from "../types"
 import { paymentsKpiCards, mockPayments } from "../data/mockFinanceData"
-import { useFinance } from "../context/FinanceContext"
+import { useFinance } from "../../context/FinanceContext"
 import AddPaymentModal from "./AddPaymentModal"
 import ViewPaymentModal from "./ViewPaymentModal"
 import ReusablePagination from "@/../reusableComponents/ReusablePagination"
@@ -29,16 +30,38 @@ export default function PaymentsView({
   onTotalPaymentsClick,
   onOverduePaymentsClick,
 }: PaymentsViewProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const { searchQuery } = useFinance()
+
   const [payments, setPayments] = useState<PaymentItem[]>(mockPayments)
   const [paymentTypeFilter, setPaymentTypeFilter] = useState<string>("All")
   const [payeeTypeFilter, setPayeeTypeFilter] = useState<string>("All")
   const [statusFilter, setStatusFilter] = useState<string>("All")
   const [dateRangeFilter, setDateRangeFilter] = useState<string>("Last 30 Days")
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(null)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(8)
+
+  const isAddModalOpen =
+    searchParams.get("modal") === "add-payment" ||
+    searchParams.get("action") === "add-payment" ||
+    searchParams.get("view") === "add-payment"
+
+  const handleOpenAddModal = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("modal", "add-payment")
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
+  const handleCloseAddModal = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("modal")
+    params.delete("action")
+    params.delete("view")
+    const query = params.toString()
+    router.push(query ? `?${query}` : window.location.pathname, { scroll: false })
+  }
 
   const handleAddPayment = (newPayment: PaymentItem) => {
     setPayments((prev) => [newPayment, ...prev])
@@ -319,7 +342,7 @@ export default function PaymentsView({
 
         <button
           type="button"
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={handleOpenAddModal}
           className="h-9 px-4 bg-[#4F46E5] hover:bg-[#4338CA] active:scale-98 text-white text-xs font-semibold rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer ml-auto shrink-0"
         >
           <Plus className="w-4 h-4" />
@@ -333,72 +356,63 @@ export default function PaymentsView({
         </h3>
 
         <div className="overflow-x-auto -mx-5 sm:-mx-6 px-5 sm:px-6">
-          <table className="w-full text-left border-collapse min-w-[800px]">
+          <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
               <tr className="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                <th className="pb-3 pt-1">Payment ID</th>
-                <th className="pb-3 pt-1">Payee</th>
-                <th className="pb-3 pt-1">Payment Type</th>
-                <th className="pb-3 pt-1">Category</th>
-                <th className="pb-3 pt-1">Amount</th>
-                <th className="pb-3 pt-1">Due Date</th>
-                <th className="pb-3 pt-1">Payment Date</th>
-                <th className="pb-3 pt-1">Status</th>
-                <th className="pb-3 pt-1 text-right">Action</th>
+                <th className="pb-3 pt-1 font-semibold">Payment ID</th>
+                <th className="pb-3 pt-1 font-semibold">Payee</th>
+                <th className="pb-3 pt-1 font-semibold">Payment Type</th>
+                <th className="pb-3 pt-1 font-semibold">Category</th>
+                <th className="pb-3 pt-1 font-semibold">Amount</th>
+                <th className="pb-3 pt-1 font-semibold">Due Date</th>
+                <th className="pb-3 pt-1 font-semibold">Payment Date</th>
+                <th className="pb-3 pt-1 font-semibold">Status</th>
+                <th className="pb-3 pt-1 font-semibold text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 text-xs">
-              {paginatedPayments.length > 0 ? (
-                paginatedPayments.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-slate-50/70 transition-colors"
-                  >
-                    <td className="py-3.5 font-medium text-slate-700">
-                      {item.paymentId}
-                    </td>
-                    <td className="py-3.5 font-medium text-slate-800">
-                      {item.payee}
-                    </td>
-                    <td className="py-3.5 text-slate-500">
-                      {item.paymentType}
-                    </td>
-                    <td className="py-3.5 text-slate-500">
-                      {item.category}
-                    </td>
-                    <td className="py-3.5 font-bold text-slate-900">
-                      {item.formattedAmount}
-                    </td>
-                    <td className="py-3.5 whitespace-nowrap">
-                      {renderDateCell(item.dueDate)}
-                    </td>
-                    <td className="py-3.5 whitespace-nowrap">
-                      {renderDateCell(item.paymentDate)}
-                    </td>
-                    <td className="py-3.5 whitespace-nowrap">
-                      {renderStatusBadge(item.status)}
-                    </td>
-                    <td className="py-3.5 text-right whitespace-nowrap">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedPayment(item)}
-                        className="text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] hover:underline cursor-pointer"
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={9}
-                    className="py-10 text-center text-slate-400 text-xs"
-                  >
-                    No outgoing payments found matching current filters.
+            <tbody className="divide-y divide-slate-100/80 text-xs">
+              {paginatedPayments.map((item) => (
+                <tr key={item.id} className="hover:bg-slate-50/60 transition-colors">
+                  <td className="py-3.5 font-medium text-slate-900">
+                    {item.paymentId}
+                  </td>
+                  <td className="py-3.5 font-semibold text-slate-900">
+                    <div>
+                      <span>{item.payee}</span>
+                      <span className="block text-[10px] font-normal text-slate-400">
+                        {item.payeeType}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-3.5 text-slate-600">
+                    {item.paymentType}
+                  </td>
+                  <td className="py-3.5 text-slate-600">
+                    {item.category}
+                  </td>
+                  <td className="py-3.5 font-bold text-slate-900">
+                    {item.formattedAmount}
+                  </td>
+                  <td className="py-3.5">
+                    {renderDateCell(item.dueDate)}
+                  </td>
+                  <td className="py-3.5">
+                    {renderDateCell(item.paymentDate)}
+                  </td>
+                  <td className="py-3.5">
+                    {renderStatusBadge(item.status)}
+                  </td>
+                  <td className="py-3.5 text-right">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPayment(item)}
+                      className="text-xs font-semibold text-[#4F46E5] hover:underline cursor-pointer"
+                    >
+                      View
+                    </button>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
@@ -408,9 +422,9 @@ export default function PaymentsView({
           totalPages={totalPages}
           totalItems={filteredPayments.length}
           pageSize={pageSize}
-          onPageChange={(page) => setCurrentPage(page)}
-          onPageSizeChange={(size) => {
-            setPageSize(size)
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize)
             setCurrentPage(1)
           }}
           pageSizeOptions={[5, 8, 10, 20]}
@@ -423,7 +437,7 @@ export default function PaymentsView({
 
       <AddPaymentModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={handleCloseAddModal}
         onAdd={handleAddPayment}
       />
 

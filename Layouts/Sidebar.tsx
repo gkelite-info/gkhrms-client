@@ -11,6 +11,7 @@ import HrSidebar from "./HrSidebar"
 import HrManagerSidebar from "./HrManagerSidebar"
 import ProductManagerSidebar from "./ProductManagerSidebar"
 import FinanceSidebar from "./FinanceSidebar"
+import AccountantSidebar from "./AccountantSidebar"
 import ReusableSidebar from "../reusableComponents/ReusableSidebar"
 
 export default function Sidebar() {
@@ -23,6 +24,10 @@ export default function Sidebar() {
     pathname?.startsWith("/finance")
   ) {
     return <FinanceSidebar />
+  }
+
+  if (pathname?.startsWith("/accountant")) {
+    return <AccountantSidebar />
   }
 
   if (pathname?.startsWith("/hrmanager")) {
@@ -55,6 +60,10 @@ export default function Sidebar() {
 
   if (role === "Finance" || (role as string) === "FinanceManager") {
     return <FinanceSidebar />
+  }
+
+  if ((role as string) === "Accountant") {
+    return <AccountantSidebar />
   }
 
   if (role === "Hr") {

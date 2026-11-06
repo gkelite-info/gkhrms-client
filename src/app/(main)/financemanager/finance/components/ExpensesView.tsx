@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Search, ChevronDown, Plus, ChevronLeft, ChevronRight } from "lucide-react"
 import { ExpenseRecord, ExpenseType, ExpenseStatus } from "../types"
 import { expensesKpiCards, mockExpenseRecords } from "../data/mockFinanceData"
@@ -13,15 +14,37 @@ interface ExpensesViewProps {
 }
 
 export default function ExpensesView({ onTotalExpensesClick }: ExpensesViewProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [expenses, setExpenses] = useState<ExpenseRecord[]>(mockExpenseRecords)
   const [search, setSearch] = useState("")
   const [typeFilter, setTypeFilter] = useState<string>("All")
   const [categoryFilter, setCategoryFilter] = useState<string>("All")
   const [statusFilter, setStatusFilter] = useState<string>("All")
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [selectedExpense, setSelectedExpense] = useState<ExpenseRecord | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 8
+
+  const isAddModalOpen =
+    searchParams.get("modal") === "add-expense" ||
+    searchParams.get("action") === "add-expense" ||
+    searchParams.get("view") === "add-expense"
+
+  const handleOpenAddModal = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("modal", "add-expense")
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
+  const handleCloseAddModal = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("modal")
+    params.delete("action")
+    params.delete("view")
+    const query = params.toString()
+    router.push(query ? `?${query}` : window.location.pathname, { scroll: false })
+  }
 
   const handleCardClick = (cardId: string) => {
     if (cardId === "expenses-total" && onTotalExpensesClick) {
@@ -174,7 +197,7 @@ export default function ExpensesView({ onTotalExpensesClick }: ExpensesViewProps
 
           <button
             type="button"
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={handleOpenAddModal}
             className="h-10 px-4 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-xl text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer ml-auto sm:ml-0"
           >
             <Plus className="w-4 h-4" />
@@ -202,61 +225,47 @@ export default function ExpensesView({ onTotalExpensesClick }: ExpensesViewProps
                 <th className="pb-3 pt-1 font-semibold text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 text-xs">
-              {paginatedExpenses.length > 0 ? (
-                paginatedExpenses.map((expense) => (
-                  <tr
-                    key={expense.id}
-                    className="hover:bg-slate-50/60 transition-colors"
-                  >
-                    <td className="py-3.5 font-medium text-slate-700 whitespace-nowrap">
-                      {expense.expenseId}
-                    </td>
-                    <td className="py-3.5 text-slate-800 font-semibold whitespace-nowrap">
-                      {expense.submittedBy}
-                    </td>
-                    <td className="py-3.5 whitespace-nowrap">
-                      {renderTypeBadge(expense.expenseType)}
-                    </td>
-                    <td className="py-3.5 text-slate-600 whitespace-nowrap">
-                      {expense.category}
-                    </td>
-                    <td className="py-3.5 text-slate-900 font-bold whitespace-nowrap">
-                      {expense.formattedAmount}
-                    </td>
-                    <td className="py-3.5 text-slate-500 whitespace-nowrap">
-                      {expense.submittedOn}
-                    </td>
-                    <td className="py-3.5 whitespace-nowrap">
-                      {renderStatusBadge(expense.status)}
-                    </td>
-                    <td className="py-3.5 text-right whitespace-nowrap">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedExpense(expense)}
-                        className="text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] hover:underline cursor-pointer"
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="py-8 text-center text-slate-400 text-xs"
-                  >
-                    No expense records found matching current criteria.
+            <tbody className="divide-y divide-slate-100/80 text-xs">
+              {paginatedExpenses.map((expense) => (
+                <tr key={expense.id} className="hover:bg-slate-50/60 transition-colors">
+                  <td className="py-3.5 font-medium text-slate-900">
+                    {expense.expenseId}
+                  </td>
+                  <td className="py-3.5 font-semibold text-slate-900">
+                    {expense.submittedBy}
+                  </td>
+                  <td className="py-3.5">
+                    {renderTypeBadge(expense.expenseType)}
+                  </td>
+                  <td className="py-3.5 text-slate-600">
+                    {expense.category}
+                  </td>
+                  <td className="py-3.5 font-bold text-slate-900">
+                    {expense.formattedAmount}
+                  </td>
+                  <td className="py-3.5 text-slate-500">
+                    {expense.submittedOn}
+                  </td>
+                  <td className="py-3.5">
+                    {renderStatusBadge(expense.status)}
+                  </td>
+                  <td className="py-3.5 text-right">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedExpense(expense)}
+                      className="text-xs font-semibold text-[#4F46E5] hover:underline cursor-pointer"
+                    >
+                      View
+                    </button>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
 
-        <div className="pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500">
-          <span>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100/80">
+          <span className="text-xs text-slate-400 font-medium">
             Showing 1 to {paginatedExpenses.length} of {filteredExpenses.length} expenses
           </span>
 
@@ -290,7 +299,7 @@ export default function ExpensesView({ onTotalExpensesClick }: ExpensesViewProps
 
       <AddExpenseModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={handleCloseAddModal}
         onAdd={handleAddExpense}
       />
 
