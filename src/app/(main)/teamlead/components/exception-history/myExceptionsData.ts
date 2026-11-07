@@ -20,7 +20,7 @@ export const initialMyExceptions: MyExceptionItem[] = [
     originalValue: "—",
     correctedValue: "06:10 PM",
     reviewedBy: { name: "Sneha Kapoor", role: "HR Manager" },
-    status: "Approved",
+    status: "Pending",
     reason: "Biometric device offline during shift departure.",
   },
   {
@@ -42,7 +42,7 @@ export const initialMyExceptions: MyExceptionItem[] = [
     originalValue: "10:40 AM",
     correctedValue: "09:30 AM",
     reviewedBy: { name: "Rohit Mehta", role: "Manager" },
-    status: "Approved",
+    status: "Rejected",
     reason: "Severe traffic congestion due to road repairs.",
   },
   {
@@ -64,7 +64,7 @@ export const initialMyExceptions: MyExceptionItem[] = [
     originalValue: "—",
     correctedValue: "09:20 AM",
     reviewedBy: { name: "Amit Verma", role: "Manager" },
-    status: "Approved",
+    status: "Pending",
     reason: "Card reader not scanning RFID badge.",
   },
   {
@@ -86,7 +86,7 @@ export const initialMyExceptions: MyExceptionItem[] = [
     originalValue: "10:15 AM",
     correctedValue: "09:30 AM",
     reviewedBy: { name: "Rohit Mehta", role: "Manager" },
-    status: "Approved",
+    status: "Rejected",
     reason: "Attended emergency hospital checkup.",
   },
   {

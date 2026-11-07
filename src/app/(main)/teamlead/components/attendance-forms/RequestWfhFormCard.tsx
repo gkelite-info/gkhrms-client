@@ -28,17 +28,21 @@ export default function RequestWfhFormCard({
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isFinanceExecutive = pathname?.startsWith("/financeexecutive")
   const isFinance =
-    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
+    !isFinanceExecutive &&
+    (pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance"))
   const isHrManager = pathname?.startsWith("/hrmanager")
   const isHr = !isHrManager && pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
-  const basePath = pathname?.startsWith("/financemanager")
+  const basePath = isFinanceExecutive
+    ? "/financeexecutive/attendance"
+    : pathname?.startsWith("/financemanager")
     ? "/financemanager/attendance"
     : isFinance
-    ? "/finance/attendance"
+    ? "/financemanager/attendance"
     : isHrManager
     ? "/hrmanager/attendance"
     : isHr
@@ -52,6 +56,7 @@ export default function RequestWfhFormCard({
     : "/teamlead/attendance"
 
   const availableRoles: ApplicantRole[] = useMemo(() => {
+    if (isFinanceExecutive) return ["Finance Executive"]
     if (isFinance) return ["Finance Manager"]
     if (isHrManager) return ["HR Manager"]
     if (isHr) return ["HR"]
@@ -59,10 +64,11 @@ export default function RequestWfhFormCard({
     if (isProductManager) return ["Product Manager"]
     if (isEmployee) return ["Employee"]
     return ["Team Lead"]
-  }, [isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
+  }, [isFinanceExecutive, isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
 
   const resolveInitialRole = (): ApplicantRole => {
     if (currentRole && availableRoles.includes(currentRole)) return currentRole
+    if (isFinanceExecutive || authRole === "FinanceExecutive") return "Finance Executive"
     if (
       isFinance ||
       (authRole as string) === "Finance" ||

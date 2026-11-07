@@ -51,6 +51,7 @@ export const getRoleGuidelines = (role: ApplicantRole): WfhGuidelineItem[] => {
         },
       ]
     case "Finance Manager":
+    case "Finance Executive":
     case "Finance":
       return [
         {

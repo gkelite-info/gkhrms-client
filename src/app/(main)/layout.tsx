@@ -16,10 +16,10 @@ export default function MainLayout({
     pathname?.startsWith("/finance") ||
     pathname?.startsWith("/financemanager") ||
     pathname?.startsWith("/financemanger")
-
+  const isFinanceExecutive = pathname?.startsWith("/financeexecutive")
   const isAccountant = pathname?.startsWith("/accountant")
 
-  if (isSuperAdmin || isHrManager || isFinance || isAccountant) {
+  if (isSuperAdmin || isHrManager || isFinance || isFinanceExecutive || isAccountant) {
     return <div className="w-full h-screen overflow-hidden">{children}</div>
   }
 

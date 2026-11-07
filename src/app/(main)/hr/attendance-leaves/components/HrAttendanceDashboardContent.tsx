@@ -7,7 +7,7 @@ import HrAttendanceTabs, { HrAttendanceTab } from "./HrAttendanceTabs"
 import HrOrganizationAttendanceTab from "./HrOrganizationAttendanceTab"
 import HrMyAttendanceTab from "./HrMyAttendanceTab"
 import HrAttendanceRequestsSection from "./requests/HrAttendanceRequestsSection"
-import HrExceptionHistorySection from "./exceptions/HrExceptionHistorySection"
+import HrExceptionHistoryContainer from "./exceptions/HrExceptionHistoryContainer"
 import TeamLeadAttendanceFormContainer from "@/app/(main)/teamlead/components/attendance-forms/TeamLeadAttendanceFormContainer"
 import {
   HR_ATTENDANCE_RECORDS,
@@ -187,7 +187,7 @@ export default function HrAttendanceDashboardContent({
       {activeTab === "attendance-requests" && <HrAttendanceRequestsSection />}
 
       {activeTab === "exception-history" && (
-        <HrExceptionHistorySection hideHrDepartment={!isEffectiveHrManager} />
+        <HrExceptionHistoryContainer hideHrDepartment={!isEffectiveHrManager} />
       )}
 
 

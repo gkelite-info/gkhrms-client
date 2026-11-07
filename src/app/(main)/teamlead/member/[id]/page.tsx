@@ -21,16 +21,20 @@ export default function TeamMemberDetailsPage() {
   const pathname = usePathname()
 
   const isFinance =
-    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
+    pathname?.startsWith("/financeexecutive") ||
+    pathname?.startsWith("/financemanager") ||
+    pathname?.startsWith("/finance")
   const isHrManager = pathname?.startsWith("/hrmanager")
   const isHr = !isHrManager && pathname?.startsWith("/hr")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
 
-  const backHref = pathname?.startsWith("/financemanager")
+  const backHref = pathname?.startsWith("/financeexecutive")
+    ? "/financeexecutive/attendance?tab=my-attendance"
+    : pathname?.startsWith("/financemanager")
     ? "/financemanager/attendance?tab=my-attendance"
     : isFinance
-    ? "/finance/attendance?tab=my-attendance"
+    ? "/financemanager/attendance?tab=my-attendance"
     : isHrManager
     ? "/hrmanager/attendance?tab=organization-attendance"
     : isHr

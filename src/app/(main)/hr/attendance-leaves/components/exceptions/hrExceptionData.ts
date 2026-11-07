@@ -78,7 +78,9 @@ export const INITIAL_HR_EXCEPTIONS: HrExceptionItem[] = [
     workingHours: "--",
     date: "25 Aug 2025",
     day: "Mon",
-    status: "Pending",
+    status: "Regularized",
+    correctedCheckInTime: "06:30 PM",
+    regularizationReason: "Biometric exit gate timeout confirmed by security supervisor log.",
     reason: "Deployed a critical hotfix release to the production customer portal late in the evening.\nPost-deployment verification and sanity testing continued beyond normal operating hours.\nDue to an unexpected staging database sync issue, our QA team remained in the war room until 09:30 PM.\nWhile leaving the premises after resolving the deployment blocker, the biometric terminal at exit gate B was unresponsive.\nI attempted facial recognition scanning twice, but the terminal display showed a network timeout error.\nSecurity personnel on duty noted my exit in the physical visitor register at 09:35 PM.\nMy team lead Neha Reddy was present during the late release testing and can confirm my continuous presence throughout the evening.\nAll release test execution reports were signed off and published to the release channel.\nRequesting attendance regularization for the missed biometric checkout.",
   },
   {
@@ -120,7 +122,9 @@ export const INITIAL_HR_EXCEPTIONS: HrExceptionItem[] = [
     workingHours: "5h 15m",
     date: "25 Aug 2025",
     day: "Mon",
-    status: "Pending",
+    status: "Regularized",
+    correctedCheckInTime: "06:30 PM",
+    regularizationReason: "Emergency leave verified and regularized by HR.",
     reason: "I had to leave the office early at 03:15 PM due to an urgent family medical situation involving my elderly mother.\nShe experienced sudden acute hypertension symptoms and required immediate accompaniment to the nearest medical clinic.\nPrior to leaving, I informed my manager Rajesh Kumar and delegated the evening financial reconciliation tasks to Suresh.\nAll pending daily ledger entries and scheduled accounts payable summaries were completed before departure.\nI logged in remotely from home later in the evening at 08:00 PM to finalize the quarterly audit checklist and respond to critical finance emails.\nRemote access logs and client communication timestamps are available for review.\nDoctor's prescription and consultation receipt can be furnished if needed.\nRequesting consideration for attendance regularization for the shortfall in office hours.",
   },
   {

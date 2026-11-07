@@ -10,11 +10,13 @@ import {
 interface HrExceptionFilterBarProps {
   department: string
   selectedRoles: string[]
+  status?: string
   fromDate: DateFilterValue
   toDate: DateFilterValue
   onApplyFilters: (filters: {
     department: string
     selectedRoles: string[]
+    status: string
     fromDate: DateFilterValue
     toDate: DateFilterValue
   }) => void
@@ -25,6 +27,7 @@ interface HrExceptionFilterBarProps {
 export default function HrExceptionFilterBar({
   department,
   selectedRoles,
+  status = "All",
   fromDate,
   toDate,
   onApplyFilters,
@@ -33,6 +36,7 @@ export default function HrExceptionFilterBar({
 }: HrExceptionFilterBarProps) {
   const [localDepartment, setLocalDepartment] = useState(department)
   const [localRoles, setLocalRoles] = useState<string[]>(selectedRoles)
+  const [localStatus, setLocalStatus] = useState<string>(status)
   const [localFromDate, setLocalFromDate] = useState<DateFilterValue>(fromDate)
   const [localToDate, setLocalToDate] = useState<DateFilterValue>(toDate)
 
@@ -57,6 +61,7 @@ export default function HrExceptionFilterBar({
     onApplyFilters({
       department: localDepartment,
       selectedRoles: localRoles,
+      status: localStatus,
       fromDate: localFromDate,
       toDate: localToDate,
     })
@@ -65,6 +70,7 @@ export default function HrExceptionFilterBar({
   const handleReset = () => {
     setLocalDepartment("All Departments")
     setLocalRoles([])
+    setLocalStatus("All")
     setLocalFromDate(new Date(2025, 7, 25))
     setLocalToDate(new Date(2025, 7, 25))
     onResetFilters()
@@ -72,7 +78,7 @@ export default function HrExceptionFilterBar({
 
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-xs flex flex-col gap-3 min-w-0">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] items-end gap-3 sm:gap-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1fr_1fr_1fr_1fr_1fr_auto] items-end gap-3 sm:gap-3.5">
         <div className="flex flex-col gap-1.5 min-w-0">
           <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
             Department
@@ -108,6 +114,21 @@ export default function HrExceptionFilterBar({
 
         <div className="flex flex-col gap-1.5 min-w-0">
           <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+            Status
+          </label>
+          <ReusableDropdown
+            value={localStatus}
+            options={["All", "Pending", "Regularized"]}
+            onChange={(val) => setLocalStatus(String(val))}
+            align="left"
+            placeholder="All"
+            className="w-full"
+            buttonClassName="w-full h-10 px-3.5 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white hover:bg-gray-50 flex items-center justify-between"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5 min-w-0">
+          <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
             From Date
           </label>
           <ReusableDateFilter
@@ -136,7 +157,7 @@ export default function HrExceptionFilterBar({
           />
         </div>
 
-        <div className="flex items-center gap-2.5 sm:col-span-2 lg:col-span-1 justify-end pt-1 lg:pt-0 shrink-0">
+        <div className="flex items-center gap-2.5 sm:col-span-2 lg:col-span-3 xl:col-span-1 justify-end pt-1 xl:pt-0 shrink-0">
           <button
             type="button"
             onClick={handleReset}

@@ -15,12 +15,16 @@ export default function TeamLeadExceptionHistorySection() {
   const pathname = usePathname()
   const isEmployee = pathname?.startsWith("/employee")
   const isFinance =
-    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
+    pathname?.startsWith("/financeexecutive") ||
+    pathname?.startsWith("/financemanager") ||
+    pathname?.startsWith("/finance")
   const isEmployeeLike = isEmployee || isFinance
-  const basePath = pathname?.startsWith("/financemanager")
+  const basePath = pathname?.startsWith("/financeexecutive")
+    ? "/financeexecutive/attendance"
+    : pathname?.startsWith("/financemanager")
     ? "/financemanager/attendance"
     : pathname?.startsWith("/finance")
-    ? "/finance/attendance"
+    ? "/financemanager/attendance"
     : pathname?.startsWith("/manager")
     ? "/manager/attendance"
     : isEmployee

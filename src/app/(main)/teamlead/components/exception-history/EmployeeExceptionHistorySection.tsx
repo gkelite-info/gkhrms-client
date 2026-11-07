@@ -14,7 +14,7 @@ interface EmployeeExceptionHistorySectionProps {
 }
 
 const issueTypeOptions = [
-  "All Issue Types",
+  "All",
   "Late Check-in",
   "Missed Check-out",
   "Low Working Hours",
@@ -22,12 +22,15 @@ const issueTypeOptions = [
   "Missed Check-in",
 ]
 
+const statusOptions = ["All", "Approved", "Pending", "Rejected"]
+
 export default function EmployeeExceptionHistorySection({
   member,
   onBack,
 }: EmployeeExceptionHistorySectionProps) {
   const [searchQuery, setSearchQuery] = useState("")
-  const [issueFilter, setIssueFilter] = useState("All Issue Types")
+  const [issueFilter, setIssueFilter] = useState("All")
+  const [statusFilter, setStatusFilter] = useState("All")
   const [fromDate, setFromDate] = useState<Date | null>(null)
   const [toDate, setToDate] = useState<Date | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -36,13 +39,15 @@ export default function EmployeeExceptionHistorySection({
 
   const filtered = useMemo(() => {
     return member.records.filter((rec) => {
-      if (issueFilter !== "All Issue Types" && rec.issueType !== issueFilter) return false
+      if (issueFilter !== "All" && rec.issueType !== issueFilter) return false
+      if (statusFilter !== "All" && rec.status !== statusFilter) return false
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase()
         const matchIssue = rec.issueType.toLowerCase().includes(q)
         const matchApprover = rec.approvedBy.toLowerCase().includes(q)
         const matchDate = rec.date.toLowerCase().includes(q)
-        if (!matchIssue && !matchApprover && !matchDate) return false
+        const matchStatus = rec.status.toLowerCase().includes(q)
+        if (!matchIssue && !matchApprover && !matchDate && !matchStatus) return false
       }
       if (fromDate || toDate) {
         const itemTime = new Date(rec.date).getTime()
@@ -57,7 +62,7 @@ export default function EmployeeExceptionHistorySection({
       }
       return true
     })
-  }, [member.records, issueFilter, searchQuery, fromDate, toDate])
+  }, [member.records, issueFilter, statusFilter, searchQuery, fromDate, toDate])
 
   const totalItems = filtered.length
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
@@ -65,6 +70,15 @@ export default function EmployeeExceptionHistorySection({
     const start = (currentPage - 1) * pageSize
     return filtered.slice(start, start + pageSize)
   }, [filtered, currentPage, pageSize])
+
+  const handleResetFilters = () => {
+    setSearchQuery("")
+    setIssueFilter("All")
+    setStatusFilter("All")
+    setFromDate(null)
+    setToDate(null)
+    setCurrentPage(1)
+  }
 
   return (
     <div className="flex flex-col gap-4 w-full min-w-0">
@@ -83,6 +97,12 @@ export default function EmployeeExceptionHistorySection({
           setCurrentPage(1)
         }}
         issueTypeOptions={issueTypeOptions}
+        statusFilter={statusFilter}
+        onStatusFilterChange={(status) => {
+          setStatusFilter(status)
+          setCurrentPage(1)
+        }}
+        statusOptions={statusOptions}
         fromDate={fromDate}
         onFromDateChange={(d) => {
           setFromDate(d)
@@ -93,6 +113,7 @@ export default function EmployeeExceptionHistorySection({
           setToDate(d)
           setCurrentPage(1)
         }}
+        onClearAll={handleResetFilters}
       />
 
       <EmployeeExceptionTable

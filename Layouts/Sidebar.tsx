@@ -12,11 +12,16 @@ import HrManagerSidebar from "./HrManagerSidebar"
 import ProductManagerSidebar from "./ProductManagerSidebar"
 import FinanceSidebar from "./FinanceSidebar"
 import AccountantSidebar from "./AccountantSidebar"
+import FinanceExecutiveSidebar from "./FinanceExecutiveSidebar"
 import ReusableSidebar from "../reusableComponents/ReusableSidebar"
 
 export default function Sidebar() {
   const pathname = usePathname()
   const { role } = useSelector((state: RootState) => state.auth)
+
+  if (pathname?.startsWith("/financeexecutive")) {
+    return <FinanceExecutiveSidebar />
+  }
 
   if (
     pathname?.startsWith("/financemanager") ||
@@ -62,8 +67,12 @@ export default function Sidebar() {
     return <FinanceSidebar />
   }
 
-  if ((role as string) === "Accountant") {
+  if (role === "Accountant" || (role as string) === "Accountant") {
     return <AccountantSidebar />
+  }
+
+  if (role === "FinanceExecutive" || (role as string) === "FinanceExecutive") {
+    return <FinanceExecutiveSidebar />
   }
 
   if (role === "Hr") {

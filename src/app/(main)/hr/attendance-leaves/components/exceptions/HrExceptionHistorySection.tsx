@@ -47,11 +47,13 @@ export default function HrExceptionHistorySection({
   const [appliedFilters, setAppliedFilters] = useState<{
     department: string
     selectedRoles: string[]
+    status: string
     fromDate: DateFilterValue
     toDate: DateFilterValue
   }>({
     department: "All Departments",
     selectedRoles: [],
+    status: "All",
     fromDate: new Date(2025, 7, 25),
     toDate: new Date(2025, 7, 25),
   })
@@ -99,6 +101,14 @@ export default function HrExceptionHistorySection({
         return false
       }
 
+      if (
+        appliedFilters.status &&
+        appliedFilters.status !== "All" &&
+        item.status !== appliedFilters.status
+      ) {
+        return false
+      }
+
       return true
     })
   }, [exceptions, activeSubtab, appliedFilters])
@@ -112,6 +122,7 @@ export default function HrExceptionHistorySection({
   const handleApplyFilters = (filters: {
     department: string
     selectedRoles: string[]
+    status: string
     fromDate: DateFilterValue
     toDate: DateFilterValue
   }) => {
@@ -123,6 +134,7 @@ export default function HrExceptionHistorySection({
     setAppliedFilters({
       department: "All Departments",
       selectedRoles: [],
+      status: "All",
       fromDate: new Date(2025, 7, 25),
       toDate: new Date(2025, 7, 25),
     })
@@ -209,6 +221,7 @@ export default function HrExceptionHistorySection({
         hideHrDepartment={hideHrDepartment}
         department={appliedFilters.department}
         selectedRoles={appliedFilters.selectedRoles}
+        status={appliedFilters.status}
         fromDate={appliedFilters.fromDate}
         toDate={appliedFilters.toDate}
         onApplyFilters={handleApplyFilters}

@@ -9,6 +9,7 @@ export const applicantRoles: ApplicantRole[] = [
   "Product Manager",
   "Finance",
   "Finance Manager",
+  "Finance Executive",
 ]
 
 export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
@@ -147,6 +148,23 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
       "Rajesh Varma (Chief Financial Officer)",
       "Alok Gupta (Director of Finance & Accounts)",
       "Meenakshi Sundaram (Chief Executive Officer)",
+    ],
+    secondaryLabel: "HR Manager / Operations Head",
+    secondaryPlaceholder: "Select HRBP / HR Manager",
+    secondaryOptions: [
+      "Sneha Kapoor (HR Manager)",
+      "Priya Mehta (Lead HRBP)",
+      "Amit Verma (HR Operations Lead)",
+      "Dr. Priya Mehta (CHRO)",
+    ],
+  },
+  "Finance Executive": {
+    primaryLabel: "Finance Manager / Lead",
+    primaryPlaceholder: "Select Finance Manager / Lead",
+    primaryOptions: [
+      "Rohan Verma (Finance Manager)",
+      "Rajesh Varma (Chief Financial Officer)",
+      "Alok Gupta (Director of Finance & Accounts)",
     ],
     secondaryLabel: "HR Manager / Operations Head",
     secondaryPlaceholder: "Select HRBP / HR Manager",
