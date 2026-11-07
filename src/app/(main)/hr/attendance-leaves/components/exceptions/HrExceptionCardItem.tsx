@@ -15,6 +15,13 @@ interface HrExceptionCardItemProps {
   onViewDetails: (item: HrExceptionItem) => void
 }
 
+const BADGE_MAP: Record<ExceptionType, { icon: any; bg: string; text: string; border: string }> = {
+  "Late Check-in": { icon: Clock, bg: "bg-[#FFF1F2]", text: "text-[#EF4444]", border: "border-rose-100" },
+  "Missed Check-out": { icon: SignOut, bg: "bg-[#FFFBEB]", text: "text-[#F59E0B]", border: "border-amber-100" },
+  "Low Working Hours": { icon: ChartBar, bg: "bg-[#EFF6FF]", text: "text-[#3B82F6]", border: "border-blue-100" },
+  "Repeated Absences": { icon: CalendarBlank, bg: "bg-[#FAF5FF]", text: "text-[#A855F7]", border: "border-purple-100" },
+}
+
 export default function HrExceptionCardItem({
   item,
   onViewDetails,
@@ -24,40 +31,7 @@ export default function HrExceptionCardItem({
     item.reason && (item.reason.length > 100 || item.reason.includes("\n"))
   )
 
-  const getBadgeConfig = (type: ExceptionType) => {
-    switch (type) {
-      case "Late Check-in":
-        return {
-          icon: Clock,
-          bg: "bg-[#FFF1F2]",
-          text: "text-[#EF4444]",
-          border: "border-rose-100",
-        }
-      case "Missed Check-out":
-        return {
-          icon: SignOut,
-          bg: "bg-[#FFFBEB]",
-          text: "text-[#F59E0B]",
-          border: "border-amber-100",
-        }
-      case "Low Working Hours":
-        return {
-          icon: ChartBar,
-          bg: "bg-[#EFF6FF]",
-          text: "text-[#3B82F6]",
-          border: "border-blue-100",
-        }
-      case "Repeated Absences":
-        return {
-          icon: CalendarBlank,
-          bg: "bg-[#FAF5FF]",
-          text: "text-[#A855F7]",
-          border: "border-purple-100",
-        }
-    }
-  }
-
-  const badge = getBadgeConfig(item.exceptionType)
+  const badge = BADGE_MAP[item.exceptionType] || BADGE_MAP["Late Check-in"]
   const BadgeIcon = badge.icon
 
   return (
@@ -86,12 +60,27 @@ export default function HrExceptionCardItem({
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 self-start sm:self-auto">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 self-start sm:self-auto flex-wrap">
           <span
             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${badge.bg} ${badge.text} ${badge.border}`}
           >
             <BadgeIcon size={13} weight="bold" />
             <span>{item.exceptionType}</span>
+          </span>
+
+          <span
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border shadow-2xs ${
+              item.status === "Regularized"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "bg-amber-50 text-amber-700 border-amber-200"
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                item.status === "Regularized" ? "bg-emerald-500" : "bg-amber-500"
+              }`}
+            />
+            {item.status}
           </span>
 
           <button

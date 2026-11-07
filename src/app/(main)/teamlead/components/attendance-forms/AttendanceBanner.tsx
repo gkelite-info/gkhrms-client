@@ -10,10 +10,12 @@ interface AttendanceBannerProps {
 export default function AttendanceBanner({ onBack }: AttendanceBannerProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const defaultBack = pathname?.startsWith("/financemanager")
+  const defaultBack = pathname?.startsWith("/financeexecutive")
+    ? "/financeexecutive/attendance"
+    : pathname?.startsWith("/financemanager")
     ? "/financemanager/attendance"
     : pathname?.startsWith("/finance")
-    ? "/finance/attendance"
+    ? "/financemanager/attendance"
     : pathname?.startsWith("/hrmanager")
     ? "/hrmanager/attendance"
     : pathname?.startsWith("/hr")

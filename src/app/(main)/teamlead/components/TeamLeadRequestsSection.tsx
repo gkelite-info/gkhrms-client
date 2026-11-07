@@ -26,8 +26,7 @@ export default function TeamLeadRequestsSection({ canApprove: canApproveProp }: 
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isEmployee = pathname?.startsWith("/employee")
-  const isFinance =
-    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
+  const isFinance = pathname?.startsWith("/financeexecutive") || pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
   const isEmployeeLike = isEmployee || isFinance
   const canApprove = canApproveProp ?? !isEmployeeLike
 

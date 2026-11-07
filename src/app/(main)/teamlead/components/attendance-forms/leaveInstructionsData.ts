@@ -85,6 +85,7 @@ export const getRoleLeaveInstructions = (
         },
       ]
     case "Finance Manager":
+    case "Finance Executive":
     case "Finance":
       return [
         {

@@ -44,13 +44,17 @@ export default function AttendanceTabs({
   const menuRef = useRef<HTMLDivElement>(null)
 
   const isFinance =
-    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
+    pathname?.startsWith("/financeexecutive") ||
+    pathname?.startsWith("/financemanager") ||
+    pathname?.startsWith("/finance")
   const isEmployee = pathname?.startsWith("/employee")
   const isEmployeeLike = isEmployee || isFinance
-  const defaultBasePath = pathname?.startsWith("/financemanager")
+  const defaultBasePath = pathname?.startsWith("/financeexecutive")
+    ? "/financeexecutive/attendance"
+    : pathname?.startsWith("/financemanager")
     ? "/financemanager/attendance"
     : isFinance
-    ? "/finance/attendance"
+    ? "/financemanager/attendance"
     : isEmployee
     ? "/employee/attendance"
     : pathname?.startsWith("/manager")

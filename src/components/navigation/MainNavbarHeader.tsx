@@ -39,6 +39,8 @@ export default function MainNavbarHeader() {
         ? "hrmanager"
         : pathname?.startsWith("/accountant")
         ? "accountant"
+        : pathname?.startsWith("/financeexecutive")
+        ? "financeexecutive"
         : "employee")
     router.push(`/${targetRole}/profile`)
   }
@@ -62,13 +64,20 @@ export default function MainNavbarHeader() {
             pathname?.startsWith("/finance") ||
             pathname?.startsWith("/financemanager") ||
             pathname?.startsWith("/financemanger") ||
+            pathname?.startsWith("/financeexecutive") ||
             pathname?.startsWith("/hrmanager") ||
             pathname?.startsWith("/accountant")) && (
             <button
               type="button"
               onClick={() => {
-                if (pathname?.startsWith("/accountant")) {
-                  window.dispatchEvent(new CustomEvent("toggle-accountant-sidebar"))
+                if (pathname?.startsWith("/financeexecutive")) {
+                  window.dispatchEvent(
+                    new CustomEvent("toggle-financeexecutive-sidebar")
+                  )
+                } else if (pathname?.startsWith("/accountant")) {
+                  window.dispatchEvent(
+                    new CustomEvent("toggle-accountant-sidebar")
+                  )
                 } else if (
                   pathname?.startsWith("/finance") ||
                   pathname?.startsWith("/financemanager") ||

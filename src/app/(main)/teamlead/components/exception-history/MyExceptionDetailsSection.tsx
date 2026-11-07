@@ -17,10 +17,13 @@ const issueTypeOptions = [
   "Missed Check-in",
 ]
 
+const statusOptions = ["All", "Approved", "Pending", "Rejected"]
+
 export default function MyExceptionDetailsSection() {
   const [exceptions] = useState<MyExceptionItem[]>(initialMyExceptions)
   const [searchQuery, setSearchQuery] = useState("")
   const [issueFilter, setIssueFilter] = useState("All")
+  const [statusFilter, setStatusFilter] = useState("All")
   const [fromDate, setFromDate] = useState<Date | null>(null)
   const [toDate, setToDate] = useState<Date | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -30,13 +33,15 @@ export default function MyExceptionDetailsSection() {
   const filtered = useMemo(() => {
     return exceptions.filter((item) => {
       if (issueFilter !== "All" && item.issueType !== issueFilter) return false
+      if (statusFilter !== "All" && item.status !== statusFilter) return false
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase()
         const matchIssue = item.issueType.toLowerCase().includes(q)
         const matchCorrection = item.requestedCorrection.toLowerCase().includes(q)
         const matchReviewer = item.reviewedBy.name.toLowerCase().includes(q)
         const matchDate = item.date.toLowerCase().includes(q)
-        if (!matchIssue && !matchCorrection && !matchReviewer && !matchDate) return false
+        const matchStatus = item.status.toLowerCase().includes(q)
+        if (!matchIssue && !matchCorrection && !matchReviewer && !matchDate && !matchStatus) return false
       }
       if (fromDate || toDate) {
         const itemTime = new Date(item.date).getTime()
@@ -51,7 +56,7 @@ export default function MyExceptionDetailsSection() {
       }
       return true
     })
-  }, [exceptions, issueFilter, searchQuery, fromDate, toDate])
+  }, [exceptions, issueFilter, statusFilter, searchQuery, fromDate, toDate])
 
   const totalItems = filtered.length
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
@@ -59,6 +64,15 @@ export default function MyExceptionDetailsSection() {
     const start = (currentPage - 1) * pageSize
     return filtered.slice(start, start + pageSize)
   }, [filtered, currentPage, pageSize])
+
+  const handleResetFilters = () => {
+    setSearchQuery("")
+    setIssueFilter("All")
+    setStatusFilter("All")
+    setFromDate(null)
+    setToDate(null)
+    setCurrentPage(1)
+  }
 
   return (
     <div className="flex flex-col gap-4 w-full min-w-0">
@@ -68,13 +82,19 @@ export default function MyExceptionDetailsSection() {
           setSearchQuery(q)
           setCurrentPage(1)
         }}
-        searchPlaceholder="Search by issue, correction, or reviewer..."
+        searchPlaceholder="Search by issue, reviewer, or date..."
         issueFilter={issueFilter}
         onIssueFilterChange={(issue) => {
           setIssueFilter(issue)
           setCurrentPage(1)
         }}
         issueTypeOptions={issueTypeOptions}
+        statusFilter={statusFilter}
+        onStatusFilterChange={(status) => {
+          setStatusFilter(status)
+          setCurrentPage(1)
+        }}
+        statusOptions={statusOptions}
         fromDate={fromDate}
         onFromDateChange={(d) => {
           setFromDate(d)
@@ -85,6 +105,7 @@ export default function MyExceptionDetailsSection() {
           setToDate(d)
           setCurrentPage(1)
         }}
+        onClearAll={handleResetFilters}
       />
 
       <MyExceptionTable records={paginated} onSelectRecord={(item) => setSelectedRecord(item)} />

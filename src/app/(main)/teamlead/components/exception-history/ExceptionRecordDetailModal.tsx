@@ -1,6 +1,13 @@
 "use client"
 
-import { X, CalendarBlank, Clock, User } from "phosphor-react"
+import {
+  X,
+  CalendarBlank,
+  Clock,
+  User,
+  CheckCircle,
+  XCircle,
+} from "phosphor-react"
 
 interface ExceptionRecordDetailModalProps {
   isOpen: boolean
@@ -18,6 +25,41 @@ interface ExceptionRecordDetailModalProps {
   } | null
 }
 
+const getStatusConfig = (status?: string) => {
+  const norm = status?.toLowerCase()
+  if (norm === "approved" || norm === "accepted") {
+    return {
+      label: "Approved",
+      icon: CheckCircle,
+      badge: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
+      dot: "bg-emerald-500",
+      card: "bg-emerald-50/60 border-emerald-100",
+      iconBox: "bg-emerald-100 text-emerald-700",
+      textColor: "text-emerald-700",
+    }
+  }
+  if (norm === "rejected") {
+    return {
+      label: "Rejected",
+      icon: XCircle,
+      badge: "bg-rose-50 text-rose-700 border-rose-200/80",
+      dot: "bg-rose-500",
+      card: "bg-rose-50/60 border-rose-100",
+      iconBox: "bg-rose-100 text-rose-700",
+      textColor: "text-rose-700",
+    }
+  }
+  return {
+    label: "Pending",
+    icon: Clock,
+    badge: "bg-amber-50 text-amber-700 border-amber-200/80",
+    dot: "bg-amber-500",
+    card: "bg-amber-50/60 border-amber-100",
+    iconBox: "bg-amber-100 text-amber-700",
+    textColor: "text-amber-700",
+  }
+}
+
 export default function ExceptionRecordDetailModal({
   isOpen,
   onClose,
@@ -25,18 +67,25 @@ export default function ExceptionRecordDetailModal({
 }: ExceptionRecordDetailModalProps) {
   if (!isOpen || !record) return null
 
+  const statusConfig = getStatusConfig(record.status)
+  const StatusIcon = statusConfig.icon
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="bg-white rounded-3xl w-full max-w-lg max-h-[85vh] sm:max-h-[90vh] shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
         <div className="bg-white px-5 sm:px-6 py-4 border-b border-gray-100 flex items-start justify-between shrink-0">
           <div className="flex flex-col min-w-0 pr-3">
-            <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-tight">
-              Exception Regularization Details
-            </h2>
-            <p className="text-xs text-gray-400 font-medium mt-0.5 truncate">
-              {record.employeeName
-                ? `Reviewing request for ${record.employeeName}`
-                : "View details of this attendance regularization."}
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-tight">
+                Exception Regularization Details
+              </h2>
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${statusConfig.badge} shadow-2xs`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
+                {statusConfig.label}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 font-medium mt-1 truncate">
+              {record.employeeName ? `Reviewing request for ${record.employeeName}` : "View details of this attendance regularization."}
             </p>
           </div>
           <button
@@ -70,6 +119,18 @@ export default function ExceptionRecordDetailModal({
               </div>
             </div>
 
+            <div className={`flex items-center gap-3 p-3 rounded-xl ${statusConfig.card} border min-w-0`}>
+              <div className={`w-8 h-8 rounded-lg ${statusConfig.iconBox} flex items-center justify-center shrink-0`}>
+                <StatusIcon size={16} weight="bold" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] text-gray-500 font-semibold">Status</span>
+                <span className={`text-xs font-bold ${statusConfig.textColor} break-words`}>
+                  {statusConfig.label}
+                </span>
+              </div>
+            </div>
+
             <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/80 min-w-0">
               <div className="w-8 h-8 rounded-lg bg-[#FFFBEB] text-[#D97706] flex items-center justify-center shrink-0">
                 <CalendarBlank size={16} weight="bold" />
@@ -89,17 +150,17 @@ export default function ExceptionRecordDetailModal({
                 <span className="text-xs font-bold text-emerald-700 break-words">{record.correctedValue}</span>
               </div>
             </div>
-          </div>
 
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/80 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#5B50EC] flex items-center justify-center shrink-0 mt-0.5">
-              <User size={16} weight="bold" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[10px] text-gray-400 font-semibold">Reviewed / Approved By</span>
-              <span className="text-xs font-bold text-gray-900 break-words">
-                {record.reviewerOrApprover} {record.reviewerRole ? `(${record.reviewerRole})` : ""}
-              </span>
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/80 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#5B50EC] flex items-center justify-center shrink-0">
+                <User size={16} weight="bold" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] text-gray-400 font-semibold">Reviewed / Approved By</span>
+                <span className="text-xs font-bold text-gray-900 break-words truncate">
+                  {record.reviewerOrApprover} {record.reviewerRole ? `(${record.reviewerRole})` : ""}
+                </span>
+              </div>
             </div>
           </div>
 

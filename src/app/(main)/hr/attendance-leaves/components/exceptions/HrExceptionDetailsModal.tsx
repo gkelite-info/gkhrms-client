@@ -148,11 +148,25 @@ export default function HrExceptionDetailsModal({
                 </div>
               </div>
 
-              <div className="self-start sm:self-auto shrink-0 pl-[60px] sm:pl-0">
+              <div className="self-start sm:self-auto shrink-0 pl-[60px] sm:pl-0 flex items-center gap-2 flex-wrap">
                 <span
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${badge.bg} ${badge.text} ${badge.border}`}
                 >
                   <span>{item.exceptionType}</span>
+                </span>
+                <span
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border shadow-2xs ${
+                    item.status === "Regularized"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-amber-50 text-amber-700 border-amber-200"
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      item.status === "Regularized" ? "bg-emerald-500" : "bg-amber-500"
+                    }`}
+                  />
+                  <span>{item.status}</span>
                 </span>
               </div>
             </div>

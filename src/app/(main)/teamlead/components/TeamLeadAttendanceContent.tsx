@@ -22,14 +22,19 @@ export default function TeamLeadAttendanceContent() {
   const searchParams = useSearchParams()
   const tabParam = searchParams.get("tab")
 
+  const isFinanceExecutive = pathname?.startsWith("/financeexecutive")
   const isFinance =
-    pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance")
+    isFinanceExecutive ||
+    pathname?.startsWith("/financemanager") ||
+    pathname?.startsWith("/finance")
   const isEmployee = pathname?.startsWith("/employee")
   const isEmployeeLike = isEmployee || isFinance
-  const basePath = pathname?.startsWith("/financemanager")
+  const basePath = isFinanceExecutive
+    ? "/financeexecutive/attendance"
+    : pathname?.startsWith("/financemanager")
     ? "/financemanager/attendance"
     : isFinance
-    ? "/finance/attendance"
+    ? "/financemanager/attendance"
     : isEmployee
     ? "/employee/attendance"
     : "/teamlead/attendance"
@@ -80,8 +85,24 @@ export default function TeamLeadAttendanceContent() {
             }`}
           >
             <ProfileSummaryCard
-              name={isFinance ? "Rohan Verma" : isEmployee ? "John Doe" : "Alexander"}
-              employeeId={isFinance ? "FIN1004" : isEmployee ? "154380" : "154356"}
+              name={
+                isFinanceExecutive
+                  ? "Aakash Sharma"
+                  : isFinance
+                  ? "Rohan Verma"
+                  : isEmployee
+                  ? "John Doe"
+                  : "Alexander"
+              }
+              employeeId={
+                isFinanceExecutive
+                  ? "FIN2045"
+                  : isFinance
+                  ? "FIN1004"
+                  : isEmployee
+                  ? "154380"
+                  : "154356"
+              }
             />
             <AttendanceDonutCard />
             {!isEmployeeLike && (
