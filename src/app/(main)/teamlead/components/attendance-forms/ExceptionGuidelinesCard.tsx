@@ -55,10 +55,12 @@ export default function ExceptionGuidelinesCard({ role }: ExceptionGuidelinesCar
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isAccountantExecutive =
+    pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
   const isFinanceExecutive =
     pathname?.startsWith("/financeexecutive") || authRole === "FinanceExecutive"
   const isFinance =
-    !isFinanceExecutive &&
+    !isFinanceExecutive && !isAccountantExecutive &&
     (pathname?.startsWith("/financemanager") ||
       pathname?.startsWith("/finance") ||
       (authRole as string) === "Finance" ||
@@ -74,7 +76,9 @@ export default function ExceptionGuidelinesCard({ role }: ExceptionGuidelinesCar
 
   const activeRole: ApplicantRole =
     role ||
-    (isFinanceExecutive
+    (isAccountantExecutive
+      ? "Accountant Executive"
+      : isFinanceExecutive
       ? "Finance Executive"
       : isFinance
       ? "Finance Manager"

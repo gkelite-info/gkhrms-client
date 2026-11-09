@@ -13,6 +13,7 @@ import ProductManagerSidebar from "./ProductManagerSidebar"
 import FinanceSidebar from "./FinanceSidebar"
 import AccountantSidebar from "./AccountantSidebar"
 import FinanceExecutiveSidebar from "./FinanceExecutiveSidebar"
+import AccountantExecutiveSidebar from "./AccountantExecutiveSidebar"
 import ReusableSidebar from "../reusableComponents/ReusableSidebar"
 
 export default function Sidebar() {
@@ -29,6 +30,10 @@ export default function Sidebar() {
     pathname?.startsWith("/finance")
   ) {
     return <FinanceSidebar />
+  }
+
+  if (pathname?.startsWith("/accountantexecutive")) {
+    return <AccountantExecutiveSidebar />
   }
 
   if (pathname?.startsWith("/accountant")) {
@@ -73,6 +78,10 @@ export default function Sidebar() {
 
   if (role === "FinanceExecutive" || (role as string) === "FinanceExecutive") {
     return <FinanceExecutiveSidebar />
+  }
+
+  if (role === "AccountantExecutive" || (role as string) === "AccountantExecutive") {
+    return <AccountantExecutiveSidebar />
   }
 
   if (role === "Hr") {

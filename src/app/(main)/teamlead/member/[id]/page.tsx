@@ -29,7 +29,9 @@ export default function TeamMemberDetailsPage() {
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
 
-  const backHref = pathname?.startsWith("/financeexecutive")
+  const backHref = pathname?.startsWith("/accountantexecutive")
+    ? "/accountantexecutive/attendance?tab=my-attendance"
+    : pathname?.startsWith("/financeexecutive")
     ? "/financeexecutive/attendance?tab=my-attendance"
     : pathname?.startsWith("/financemanager")
     ? "/financemanager/attendance?tab=my-attendance"

@@ -28,16 +28,19 @@ export default function TeamLeadAttendanceFormContainer({
   const urlType = searchParams.get("type")
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isAccountantExecutive = pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
   const isFinanceExecutive = pathname?.startsWith("/financeexecutive")
   const isFinance =
-    !isFinanceExecutive &&
+    !isFinanceExecutive && !isAccountantExecutive &&
     (pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance"))
   const isHrManager = pathname?.startsWith("/hrmanager")
   const isHr = !isHrManager && pathname?.startsWith("/hr")
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
-  const basePath = isFinanceExecutive
+  const basePath = isAccountantExecutive
+    ? "/accountantexecutive/attendance"
+    : isFinanceExecutive
     ? "/financeexecutive/attendance"
     : pathname?.startsWith("/financemanager")
     ? "/financemanager/attendance"
@@ -56,6 +59,8 @@ export default function TeamLeadAttendanceFormContainer({
     : "/teamlead/attendance"
 
   const [selectedRole, setSelectedRole] = useState<ApplicantRole>(() => {
+    if (isAccountantExecutive || (authRole as string) === "AccountantExecutive")
+      return "Accountant Executive"
     if (isFinanceExecutive || authRole === "FinanceExecutive")
       return "Finance Executive"
     if (

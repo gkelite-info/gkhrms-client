@@ -52,6 +52,8 @@ export default function Signin() {
 				roleForRedux = 'FinanceExecutive';
 			} else if (apiRole === 'accountant' || apiRole === 'account' || apiRole === 'accounts') {
 				roleForRedux = 'Accountant';
+			} else if (apiRole === 'accountantexecutive' || apiRole === 'accountant executive' || apiRole === 'ae') {
+				roleForRedux = 'AccountantExecutive';
 			}
 
 			if (roleForRedux) {
@@ -83,6 +85,8 @@ export default function Signin() {
 				router.push('/financeexecutive/attendance')
 			} else if (apiRole === 'accountant' || apiRole === 'account' || apiRole === 'accounts') {
 				router.push('/accountant')
+			} else if (apiRole === 'accountantexecutive' || apiRole === 'accountant executive' || apiRole === 'ae') {
+				router.push('/accountantexecutive/attendance')
 			} else {
 				router.push('/unauthorized')
 			}
