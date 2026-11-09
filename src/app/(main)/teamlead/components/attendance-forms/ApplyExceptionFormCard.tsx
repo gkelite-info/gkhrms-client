@@ -35,9 +35,10 @@ export default function ApplyExceptionFormCard({ currentRole }: ApplyExceptionFo
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isAccountantExecutive = pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
   const isFinanceExecutive = pathname?.startsWith("/financeexecutive") || authRole === "FinanceExecutive"
   const isFinance =
-    !isFinanceExecutive && (
+    !isFinanceExecutive && !isAccountantExecutive && (
       pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance") ||
       (authRole as string) === "Finance" || (authRole as string) === "FinanceManager"
     )
@@ -47,7 +48,8 @@ export default function ApplyExceptionFormCard({ currentRole }: ApplyExceptionFo
   const isProductManager = pathname?.startsWith("/productmanager") || authRole === "ProductManager"
   const isEmployee = pathname?.startsWith("/employee") || authRole === "Employee"
 
-  const basePath = isFinanceExecutive ? "/financeexecutive/attendance"
+  const basePath = isAccountantExecutive ? "/accountantexecutive/attendance"
+    : isFinanceExecutive ? "/financeexecutive/attendance"
     : pathname?.startsWith("/financemanager") ? "/financemanager/attendance"
     : isFinance ? "/financemanager/attendance"
     : isHrManager ? "/hrmanager/attendance"
@@ -59,6 +61,7 @@ export default function ApplyExceptionFormCard({ currentRole }: ApplyExceptionFo
 
   const applicantRole: ApplicantRole = useMemo(() => {
     if (currentRole) return currentRole
+    if (isAccountantExecutive) return "Accountant Executive"
     if (isFinanceExecutive) return "Finance Executive"
     if (isFinance) return "Finance Manager"
     if (isHrManager) return "HR Manager"
@@ -67,7 +70,7 @@ export default function ApplyExceptionFormCard({ currentRole }: ApplyExceptionFo
     if (isProductManager) return "Product Manager"
     if (isEmployee) return "Employee"
     return "Team Lead"
-  }, [currentRole, isFinanceExecutive, isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
+  }, [currentRole, isAccountantExecutive, isFinanceExecutive, isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
 
   const [hrApprover, setHrApprover] = useState("")
   const [exceptionType, setExceptionType] = useState<ExceptionType>("Late Check-in")

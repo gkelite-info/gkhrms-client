@@ -18,6 +18,7 @@ export type ApplicantRole =
   | "Finance"
   | "Finance Manager"
   | "Finance Executive"
+  | "Accountant Executive"
 
 export interface RoleApprovalConfig {
   primaryLabel: string

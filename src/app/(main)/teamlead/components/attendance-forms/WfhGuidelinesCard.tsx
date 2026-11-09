@@ -14,10 +14,12 @@ export default function WfhGuidelinesCard({ role }: WfhGuidelinesCardProps) {
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isAccountantExecutive =
+    pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
   const isFinanceExecutive =
     pathname?.startsWith("/financeexecutive") || authRole === "FinanceExecutive"
   const isFinance =
-    !isFinanceExecutive &&
+    !isFinanceExecutive && !isAccountantExecutive &&
     (pathname?.startsWith("/financemanager") ||
       pathname?.startsWith("/finance") ||
       (authRole as string) === "Finance" ||
@@ -33,7 +35,9 @@ export default function WfhGuidelinesCard({ role }: WfhGuidelinesCardProps) {
 
   const activeRole: ApplicantRole =
     role ||
-    (isFinanceExecutive
+    (isAccountantExecutive
+      ? "Accountant Executive"
+      : isFinanceExecutive
       ? "Finance Executive"
       : isFinance
       ? "Finance Manager"
