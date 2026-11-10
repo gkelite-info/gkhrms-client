@@ -126,7 +126,7 @@ export const roleBasedNav: Record<
     { label: "Attendance", href: "/financemanager/attendance", icon: UsersThree },
   ],
   Accountant: [
-    { label: "Finance", href: "/accountant", icon: CreditCard },
+    { label: "Finance", href: "/accountantmanager", icon: CreditCard },
   ],
   FinanceExecutive: [
     { label: "Attendance", href: "/financeexecutive/attendance", icon: UsersThree },

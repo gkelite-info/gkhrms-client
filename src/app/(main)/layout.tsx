@@ -17,7 +17,9 @@ export default function MainLayout({
     pathname?.startsWith("/financemanager") ||
     pathname?.startsWith("/financemanger")
   const isFinanceExecutive = pathname?.startsWith("/financeexecutive")
-  const isAccountant = pathname?.startsWith("/accountant")
+  const isAccountant =
+    pathname?.startsWith("/accountant") ||
+    pathname?.startsWith("/accountantmanager")
   const isAccountantExecutive = pathname?.startsWith("/accountantexecutive")
 
   if (isSuperAdmin || isHrManager || isFinance || isFinanceExecutive || isAccountant || isAccountantExecutive) {

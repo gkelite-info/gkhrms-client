@@ -36,7 +36,10 @@ export default function Sidebar() {
     return <AccountantExecutiveSidebar />
   }
 
-  if (pathname?.startsWith("/accountant")) {
+  if (
+    pathname?.startsWith("/accountant") ||
+    pathname?.startsWith("/accountantmanager")
+  ) {
     return <AccountantSidebar />
   }
 

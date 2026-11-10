@@ -25,11 +25,22 @@ export default function ExpensesByCategoryDonut({
               <Tooltip
                 formatter={(val: any, name: any) => [`${val}%`, name]}
                 contentStyle={{
-                  backgroundColor: "#1E293B",
+                  backgroundColor: "#0F172A",
                   borderRadius: "12px",
-                  border: "none",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
                   fontSize: "12px",
                   color: "#FFFFFF",
+                  boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.3)",
+                }}
+                itemStyle={{
+                  color: "#FFFFFF",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                }}
+                labelStyle={{
+                  color: "#94A3B8",
+                  fontSize: "11px",
+                  fontWeight: 600,
                 }}
               />
               <Pie

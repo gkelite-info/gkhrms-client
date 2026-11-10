@@ -52,6 +52,53 @@ const nextConfig: NextConfig = {
         destination: "/financemanager/finance",
         permanent: true,
       },
+      {
+        source: "/accountant",
+        destination: "/accountantmanager",
+        permanent: true,
+      },
+      {
+        source: "/accountant/:path*",
+        destination: "/accountantmanager/:path*",
+        permanent: true,
+      },
+      {
+        source: "/accountantmanager/transaction",
+        destination: "/accountantmanager/transactions",
+        permanent: true,
+      },
+      {
+        source: "/accountantmanager/expense",
+        destination: "/accountantmanager/expenses",
+        permanent: true,
+      },
+      {
+        source: "/accountantmanager/payment",
+        destination: "/accountantmanager/payments",
+        permanent: true,
+      },
+      {
+        source: "/accountantmanager/reimbursement",
+        destination: "/accountantmanager/reimbursements",
+        permanent: true,
+      },
+      {
+        source: "/accountantmanager/report",
+        destination: "/accountantmanager/reports",
+        permanent: true,
+      },
+    ]
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/accountant%20manager/:path*",
+        destination: "/accountantmanager/:path*",
+      },
+      {
+        source: "/accountant-manager/:path*",
+        destination: "/accountantmanager/:path*",
+      },
     ]
   },
 }
