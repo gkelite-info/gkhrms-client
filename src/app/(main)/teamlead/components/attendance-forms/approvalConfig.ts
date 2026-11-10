@@ -10,7 +10,23 @@ export const applicantRoles: ApplicantRole[] = [
   "Finance",
   "Finance Manager",
   "Finance Executive",
+  "Accountant Manager",
   "Accountant Executive",
+  "Tech Admin",
+]
+
+const hrApprovers = [
+  "Sneha Kapoor (HR Manager)",
+  "Priya Mehta (Lead HRBP)",
+  "Amit Verma (HR Operations Lead)",
+  "Dr. Priya Mehta (CHRO)",
+]
+
+const executiveApprovers = [
+  "Dr. G. Krishna (Chairman & MD)",
+  "Sunil Gavaskar (Executive Vice Chairman)",
+  "Venkatesh Rao (Board Member & Director)",
+  "Meenakshi Sundaram (Chief Executive Officer)",
 ]
 
 export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
@@ -22,7 +38,6 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
       "Ananya Sen (Frontend Team Lead)",
       "Vikram Malhotra (Backend Team Lead)",
       "Siddharth Rao (QA Lead)",
-      "Pooja Hegde (UI/UX Lead)",
       "Rajesh Kumar (Senior Project Manager)",
       "Anjali Mehta (Product Manager)",
       "Deepak Reddy (Technical Delivery Manager)",
@@ -30,14 +45,7 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
     secondaryLabel: "HR Business Partner / Manager",
     secondaryPlaceholder: "Select HRBP / HR Manager",
-    secondaryOptions: [
-      "Sneha Kapoor (HR Manager)",
-      "Priya Mehta (Senior HRBP)",
-      "Amit Verma (HR Operations Lead)",
-      "Neha Singh (People Operations)",
-      "Kavita Nair (Enterprise Project Manager)",
-      "Dr. Priya Mehta (CHRO)",
-    ],
+    secondaryOptions: hrApprovers,
   },
   "Team Lead": {
     primaryLabel: "Project Manager",
@@ -51,22 +59,12 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
     secondaryLabel: "HR Manager",
     secondaryPlaceholder: "Select HR Manager",
-    secondaryOptions: [
-      "Sneha Kapoor (HR Manager)",
-      "Priya Mehta (Senior HRBP)",
-      "Amit Verma (HR Operations Lead)",
-      "Neha Singh (People Operations)",
-    ],
+    secondaryOptions: hrApprovers,
   },
   Manager: {
     primaryLabel: "Executive Authority",
     primaryPlaceholder: "Select Chairman / Executive",
-    primaryOptions: [
-      "Dr. G. Krishna (Chairman & MD)",
-      "Sunil Gavaskar (Executive Vice Chairman)",
-      "Venkatesh Rao (Board Member & Director)",
-      "Meenakshi Sundaram (Chief Executive Officer)",
-    ],
+    primaryOptions: executiveApprovers,
     secondaryLabel: "HR Head / CHRO",
     secondaryPlaceholder: "Select HR Head",
     secondaryOptions: [
@@ -101,12 +99,7 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
     secondaryLabel: "Executive Authority",
     secondaryPlaceholder: "Select Chairman / Managing Director",
-    secondaryOptions: [
-      "Dr. G. Krishna (Chairman & MD)",
-      "Sunil Gavaskar (Executive Vice Chairman)",
-      "Venkatesh Rao (Board Member & Director)",
-      "Meenakshi Sundaram (Chief Executive Officer)",
-    ],
+    secondaryOptions: executiveApprovers,
   },
   "Product Manager": {
     primaryLabel: "Head of Product / Director",
@@ -119,11 +112,7 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
     secondaryLabel: "HR Manager",
     secondaryPlaceholder: "Select HR Manager",
-    secondaryOptions: [
-      "Sneha Kapoor (HR Manager)",
-      "Priya Mehta (Senior HRBP)",
-      "Amit Verma (HR Operations Lead)",
-    ],
+    secondaryOptions: hrApprovers,
   },
   Finance: {
     primaryLabel: "Finance Director / CFO",
@@ -135,12 +124,7 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
     secondaryLabel: "HR Manager / Operations Head",
     secondaryPlaceholder: "Select HRBP / HR Manager",
-    secondaryOptions: [
-      "Sneha Kapoor (HR Manager)",
-      "Priya Mehta (Lead HRBP)",
-      "Amit Verma (HR Operations Lead)",
-      "Dr. Priya Mehta (CHRO)",
-    ],
+    secondaryOptions: hrApprovers,
   },
   "Finance Manager": {
     primaryLabel: "Finance Director / CFO",
@@ -152,12 +136,7 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
     secondaryLabel: "HR Manager / Operations Head",
     secondaryPlaceholder: "Select HRBP / HR Manager",
-    secondaryOptions: [
-      "Sneha Kapoor (HR Manager)",
-      "Priya Mehta (Lead HRBP)",
-      "Amit Verma (HR Operations Lead)",
-      "Dr. Priya Mehta (CHRO)",
-    ],
+    secondaryOptions: hrApprovers,
   },
   "Finance Executive": {
     primaryLabel: "Finance Manager / Lead",
@@ -169,12 +148,19 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
     secondaryLabel: "HR Manager / Operations Head",
     secondaryPlaceholder: "Select HRBP / HR Manager",
-    secondaryOptions: [
-      "Sneha Kapoor (HR Manager)",
-      "Priya Mehta (Lead HRBP)",
-      "Amit Verma (HR Operations Lead)",
-      "Dr. Priya Mehta (CHRO)",
+    secondaryOptions: hrApprovers,
+  },
+  "Accountant Manager": {
+    primaryLabel: "Chief Financial Officer / Director",
+    primaryPlaceholder: "Select CFO / Director of Finance",
+    primaryOptions: [
+      "Rajesh Varma (Chief Financial Officer)",
+      "Alok Gupta (Director of Finance & Accounts)",
+      "Suresh Iyer (Executive Director)",
     ],
+    secondaryLabel: "HR Manager / Operations Head",
+    secondaryPlaceholder: "Select HRBP / HR Manager",
+    secondaryOptions: hrApprovers,
   },
   "Accountant Executive": {
     primaryLabel: "Accountant Manager / Lead",
@@ -186,11 +172,18 @@ export const ROLE_APPROVAL_CONFIG: Record<ApplicantRole, RoleApprovalConfig> = {
     ],
     secondaryLabel: "HR Manager / Operations Head",
     secondaryPlaceholder: "Select HRBP / HR Manager",
-    secondaryOptions: [
-      "Sneha Kapoor (HR Manager)",
-      "Priya Mehta (Lead HRBP)",
-      "Amit Verma (HR Operations Lead)",
-      "Dr. Priya Mehta (CHRO)",
+    secondaryOptions: hrApprovers,
+  },
+  "Tech Admin": {
+    primaryLabel: "Engineering Director / VP",
+    primaryPlaceholder: "Select Engineering Director / VP",
+    primaryOptions: [
+      "Deepak Reddy (Technical Delivery Manager)",
+      "Suresh N (Engineering Manager)",
+      "Dr. G. Krishna (Chairman & MD)",
     ],
+    secondaryLabel: "HR Manager / Operations Head",
+    secondaryPlaceholder: "Select HRBP / HR Manager",
+    secondaryOptions: hrApprovers,
   },
 }

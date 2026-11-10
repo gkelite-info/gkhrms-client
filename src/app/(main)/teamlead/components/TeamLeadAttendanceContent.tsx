@@ -22,6 +22,8 @@ export default function TeamLeadAttendanceContent() {
   const searchParams = useSearchParams()
   const tabParam = searchParams.get("tab")
 
+  const isTechAdmin = pathname?.startsWith("/techadmin")
+  const isAccountantManager = pathname?.startsWith("/accountantmanager")
   const isAccountantExecutive = pathname?.startsWith("/accountantexecutive")
   const isFinanceExecutive = pathname?.startsWith("/financeexecutive")
   const isFinance =
@@ -29,8 +31,12 @@ export default function TeamLeadAttendanceContent() {
     pathname?.startsWith("/financemanager") ||
     pathname?.startsWith("/finance")
   const isEmployee = pathname?.startsWith("/employee")
-  const isEmployeeLike = isEmployee || isFinance || isAccountantExecutive
-  const basePath = isAccountantExecutive
+  const isEmployeeLike = isEmployee || isFinance || isAccountantExecutive || isAccountantManager || isTechAdmin
+  const basePath = isTechAdmin
+    ? "/techadmin/attendance"
+    : isAccountantManager
+    ? "/accountantmanager/attendance"
+    : isAccountantExecutive
     ? "/accountantexecutive/attendance"
     : isFinanceExecutive
     ? "/financeexecutive/attendance"
@@ -89,7 +95,11 @@ export default function TeamLeadAttendanceContent() {
           >
             <ProfileSummaryCard
               name={
-                isAccountantExecutive
+                isTechAdmin
+                  ? "Karthik Raman"
+                  : isAccountantManager
+                  ? "Suresh Iyer"
+                  : isAccountantExecutive
                   ? "Vikram Sen"
                   : isFinanceExecutive
                   ? "Aakash Sharma"
@@ -100,7 +110,11 @@ export default function TeamLeadAttendanceContent() {
                   : "Alexander"
               }
               employeeId={
-                isAccountantExecutive
+                isTechAdmin
+                  ? "TECH1001"
+                  : isAccountantManager
+                  ? "ACC1002"
+                  : isAccountantExecutive
                   ? "ACC2048"
                   : isFinanceExecutive
                   ? "FIN2045"

@@ -86,6 +86,7 @@ export const getRoleLeaveInstructions = (
       ]
     case "Finance Manager":
     case "Finance Executive":
+    case "Accountant Manager":
     case "Accountant Executive":
     case "Finance":
       return [
@@ -103,6 +104,24 @@ export const getRoleLeaveInstructions = (
           icon: ShieldCheck,
           title: "Disbursement & Invoice Delegation",
           text: "Ensure active reimbursement workflows, vendor payouts, and bank reconciliations are delegated.",
+        },
+      ]
+    case "Tech Admin":
+      return [
+        {
+          icon: UsersThree,
+          title: "Technical Leadership Approval",
+          text: "Tech Admin leaves require approval from Engineering Director / VP and HRBP.",
+        },
+        {
+          icon: Clock,
+          title: "Deployment & Maintenance Window Notice",
+          text: "Submit leaves in advance, avoiding critical infrastructure release schedules.",
+        },
+        {
+          icon: ShieldCheck,
+          title: "System Access Delegation",
+          text: "Designate a standby systems administrator for high-priority server incident response.",
         },
       ]
     case "Employee":

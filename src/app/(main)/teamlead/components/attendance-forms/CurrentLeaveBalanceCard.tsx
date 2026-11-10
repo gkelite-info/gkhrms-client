@@ -60,12 +60,16 @@ export default function CurrentLeaveBalanceCard({ role }: CurrentLeaveBalanceCar
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isTechAdmin =
+    pathname?.startsWith("/techadmin") || (authRole as string) === "TechAdmin"
+  const isAccountantManager =
+    pathname?.startsWith("/accountantmanager") || (authRole as string) === "AccountantManager" || (authRole as string) === "Accountant"
   const isAccountantExecutive =
     pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
   const isFinanceExecutive =
     pathname?.startsWith("/financeexecutive") || authRole === "FinanceExecutive"
   const isFinance =
-    !isFinanceExecutive && !isAccountantExecutive &&
+    !isFinanceExecutive && !isAccountantExecutive && !isAccountantManager && !isTechAdmin &&
     (pathname?.startsWith("/financemanager") ||
       pathname?.startsWith("/finance") ||
       (authRole as string) === "Finance" ||
@@ -81,7 +85,11 @@ export default function CurrentLeaveBalanceCard({ role }: CurrentLeaveBalanceCar
 
   const activeRole: ApplicantRole =
     role ||
-    (isAccountantExecutive
+    (isTechAdmin
+      ? "Tech Admin"
+      : isAccountantManager
+      ? "Accountant Manager"
+      : isAccountantExecutive
       ? "Accountant Executive"
       : isFinanceExecutive
       ? "Finance Executive"
