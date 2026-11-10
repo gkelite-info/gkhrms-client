@@ -3,34 +3,48 @@
 import {
   BarChart3,
   Receipt,
-  FileSpreadsheet,
+  Folder,
   RotateCcw,
-  CreditCard,
-  FileBarChart,
+  CircleDollarSign,
+  TrendingUp,
+  Users,
 } from "lucide-react"
 import { AccountantTab } from "../types"
+import { useAccountant } from "../context/AccountantContext"
 
 interface AccountantTabsProps {
   activeTab: AccountantTab
   onTabChange: (tab: AccountantTab) => void
 }
 
-const tabs: { name: AccountantTab; icon: React.ElementType }[] = [
+const myFinanceTabs: { name: AccountantTab; icon: React.ElementType }[] = [
   { name: "Finance Overview", icon: BarChart3 },
   { name: "Transactions", icon: Receipt },
-  { name: "Expense Entries", icon: FileSpreadsheet },
+  { name: "Expense Entries", icon: Folder },
   { name: "Reimbursements", icon: RotateCcw },
-  { name: "Payments", icon: CreditCard },
-  { name: "Reports", icon: FileBarChart },
+  { name: "Payments", icon: CircleDollarSign },
+  { name: "Reports", icon: TrendingUp },
+]
+
+const executiveFinanceTabs: { name: AccountantTab; icon: React.ElementType }[] = [
+  { name: "Executives Overview", icon: Users },
+  { name: "Transactions", icon: Receipt },
+  { name: "Expense Entries", icon: Folder },
+  { name: "Reimbursements", icon: RotateCcw },
+  { name: "Reports", icon: TrendingUp },
 ]
 
 export default function AccountantTabs({
   activeTab,
   onTabChange,
 }: AccountantTabsProps) {
+  const { financeMode } = useAccountant()
+  const currentTabs =
+    financeMode === "Executive Finance" ? executiveFinanceTabs : myFinanceTabs
+
   return (
     <div className="w-full flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-      {tabs.map((tab) => {
+      {currentTabs.map((tab) => {
         const Icon = tab.icon
         const isActive = activeTab === tab.name
 
@@ -57,4 +71,3 @@ export default function AccountantTabs({
     </div>
   )
 }
-

@@ -46,8 +46,8 @@ export default function ViewActivityModal({
         onClick={onClose}
       />
 
-      <div className="relative bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden z-10 animate-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+      <div className="relative bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 flex flex-col max-h-[88vh] overflow-hidden z-10 animate-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50 shrink-0">
           <div>
             <h3 className="text-sm font-bold text-slate-900">Activity Details</h3>
             <p className="text-[11px] text-slate-400">Transaction ID: {activity.id}</p>
@@ -61,7 +61,7 @@ export default function ViewActivityModal({
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto modal-scrollbar p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <span className="text-xs text-slate-500 font-medium">Activity Type</span>
             {renderBadge(activity.type)}
@@ -95,7 +95,7 @@ export default function ViewActivityModal({
           </div>
         </div>
 
-        <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
           <button
             type="button"
             onClick={onClose}

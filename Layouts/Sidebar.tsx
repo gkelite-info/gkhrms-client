@@ -32,11 +32,18 @@ export default function Sidebar() {
     return <FinanceSidebar />
   }
 
+<<<<<<< Updated upstream
   if (pathname?.startsWith("/accountantexecutive")) {
     return <AccountantExecutiveSidebar />
   }
 
   if (pathname?.startsWith("/accountant")) {
+=======
+  if (
+    pathname?.startsWith("/accountant") ||
+    pathname?.startsWith("/accountantmanager")
+  ) {
+>>>>>>> Stashed changes
     return <AccountantSidebar />
   }
 

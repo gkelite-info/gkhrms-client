@@ -6,7 +6,7 @@ import ReusableSidebar, {
 } from "../reusableComponents/ReusableSidebar"
 
 export const accountantNavItems: ReusableSidebarItem[] = [
-  { label: "Finance", href: "/accountant", icon: CreditCard },
+  { label: "Finance", href: "/accountantmanager", icon: CreditCard },
 ]
 
 export default function AccountantSidebar() {
@@ -14,7 +14,12 @@ export default function AccountantSidebar() {
     item: ReusableSidebarItem,
     currentPath: string
   ): boolean => {
-    return currentPath === "/accountant" || currentPath.startsWith("/accountant")
+    return (
+      currentPath === "/accountantmanager" ||
+      currentPath.startsWith("/accountantmanager") ||
+      currentPath === "/accountant" ||
+      currentPath.startsWith("/accountant")
+    )
   }
 
   return (
