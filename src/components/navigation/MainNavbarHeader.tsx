@@ -37,18 +37,13 @@ export default function MainNavbarHeader() {
         ? "financemanager"
         : pathname?.startsWith("/hrmanager")
         ? "hrmanager"
-<<<<<<< Updated upstream
-        : pathname?.startsWith("/accountant")
-        ? "accountant"
         : pathname?.startsWith("/accountantexecutive")
         ? "accountantexecutive"
         : pathname?.startsWith("/financeexecutive")
         ? "financeexecutive"
-=======
         : pathname?.startsWith("/accountant") ||
           pathname?.startsWith("/accountantmanager")
         ? "accountantmanager"
->>>>>>> Stashed changes
         : "employee")
     router.push(`/${targetRole}/profile`)
   }
@@ -75,7 +70,7 @@ export default function MainNavbarHeader() {
             pathname?.startsWith("/financeexecutive") ||
             pathname?.startsWith("/hrmanager") ||
             pathname?.startsWith("/accountant") ||
-<<<<<<< Updated upstream
+            pathname?.startsWith("/accountantmanager") ||
             pathname?.startsWith("/accountantexecutive")) && (
             <button
               type="button"
@@ -88,21 +83,13 @@ export default function MainNavbarHeader() {
                   window.dispatchEvent(
                     new CustomEvent("toggle-financeexecutive-sidebar")
                   )
-                } else if (pathname?.startsWith("/accountant")) {
-                  window.dispatchEvent(
-                    new CustomEvent("toggle-accountant-sidebar")
-                  )
-=======
-            pathname?.startsWith("/accountantmanager")) && (
-            <button
-              type="button"
-              onClick={() => {
-                if (
+                } else if (
                   pathname?.startsWith("/accountant") ||
                   pathname?.startsWith("/accountantmanager")
                 ) {
-                  window.dispatchEvent(new CustomEvent("toggle-accountant-sidebar"))
->>>>>>> Stashed changes
+                  window.dispatchEvent(
+                    new CustomEvent("toggle-accountant-sidebar")
+                  )
                 } else if (
                   pathname?.startsWith("/finance") ||
                   pathname?.startsWith("/financemanager") ||

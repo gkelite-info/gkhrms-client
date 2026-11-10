@@ -16,16 +16,11 @@ export default function MainLayout({
     pathname?.startsWith("/finance") ||
     pathname?.startsWith("/financemanager") ||
     pathname?.startsWith("/financemanger")
-<<<<<<< Updated upstream
   const isFinanceExecutive = pathname?.startsWith("/financeexecutive")
-  const isAccountant = pathname?.startsWith("/accountant")
-  const isAccountantExecutive = pathname?.startsWith("/accountantexecutive")
-=======
-
   const isAccountant =
     pathname?.startsWith("/accountant") ||
     pathname?.startsWith("/accountantmanager")
->>>>>>> Stashed changes
+  const isAccountantExecutive = pathname?.startsWith("/accountantexecutive")
 
   if (isSuperAdmin || isHrManager || isFinance || isFinanceExecutive || isAccountant || isAccountantExecutive) {
     return <div className="w-full h-screen overflow-hidden">{children}</div>

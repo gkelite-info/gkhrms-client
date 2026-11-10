@@ -18,7 +18,6 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-<<<<<<< Updated upstream
         source: "/financemanger/:path*",
         destination: "/financemanager/:path*",
         permanent: true,
@@ -51,7 +50,9 @@ const nextConfig: NextConfig = {
       {
         source: "/finance",
         destination: "/financemanager/finance",
-=======
+        permanent: true,
+      },
+      {
         source: "/accountant",
         destination: "/accountantmanager",
         permanent: true,
@@ -84,13 +85,10 @@ const nextConfig: NextConfig = {
       {
         source: "/accountantmanager/report",
         destination: "/accountantmanager/reports",
->>>>>>> Stashed changes
         permanent: true,
       },
     ]
   },
-<<<<<<< Updated upstream
-=======
   async rewrites() {
     return [
       {
@@ -103,7 +101,6 @@ const nextConfig: NextConfig = {
       },
     ]
   },
->>>>>>> Stashed changes
 }
 
 export default nextConfig
