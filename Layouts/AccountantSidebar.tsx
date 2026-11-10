@@ -1,12 +1,13 @@
 "use client"
 
-import { CreditCard } from "phosphor-react"
+import { CreditCard, UsersThree } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
 } from "../reusableComponents/ReusableSidebar"
 
 export const accountantNavItems: ReusableSidebarItem[] = [
   { label: "Finance", href: "/accountantmanager", icon: CreditCard },
+  { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
 ]
 
 export default function AccountantSidebar() {
@@ -14,11 +15,28 @@ export default function AccountantSidebar() {
     item: ReusableSidebarItem,
     currentPath: string
   ): boolean => {
+    if (item.href === "/accountantmanager/attendance") {
+      return (
+        currentPath.includes("/attendance") ||
+        currentPath.includes("/apply-leave") ||
+        currentPath.includes("/request-wfh") ||
+        currentPath.includes("/apply-exception") ||
+        currentPath.includes("/requests") ||
+        currentPath.includes("/exception-history") ||
+        currentPath.includes("/member")
+      )
+    }
     return (
-      currentPath === "/accountantmanager" ||
-      currentPath.startsWith("/accountantmanager") ||
-      currentPath === "/accountant" ||
-      currentPath.startsWith("/accountant")
+      (currentPath === "/accountantmanager" ||
+        currentPath === "/accountant") ||
+      ((currentPath.startsWith("/accountantmanager") || currentPath.startsWith("/accountant")) &&
+        !currentPath.includes("/attendance") &&
+        !currentPath.includes("/apply-leave") &&
+        !currentPath.includes("/request-wfh") &&
+        !currentPath.includes("/apply-exception") &&
+        !currentPath.includes("/requests") &&
+        !currentPath.includes("/exception-history") &&
+        !currentPath.includes("/member"))
     )
   }
 

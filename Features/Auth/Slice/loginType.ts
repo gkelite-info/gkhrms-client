@@ -10,7 +10,9 @@ export type Roles =
   | "FinanceManager"
   | "FinanceExecutive"
   | "Accountant"
+  | "AccountantManager"
   | "AccountantExecutive"
+  | "TechAdmin"
 
 export interface LoginUserData {
   email: string

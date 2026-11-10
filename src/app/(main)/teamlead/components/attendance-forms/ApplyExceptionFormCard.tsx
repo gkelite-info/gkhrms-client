@@ -35,10 +35,12 @@ export default function ApplyExceptionFormCard({ currentRole }: ApplyExceptionFo
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isTechAdmin = pathname?.startsWith("/techadmin") || (authRole as string) === "TechAdmin"
+  const isAccountantManager = pathname?.startsWith("/accountantmanager") || (authRole as string) === "AccountantManager" || (authRole as string) === "Accountant"
   const isAccountantExecutive = pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
   const isFinanceExecutive = pathname?.startsWith("/financeexecutive") || authRole === "FinanceExecutive"
   const isFinance =
-    !isFinanceExecutive && !isAccountantExecutive && (
+    !isFinanceExecutive && !isAccountantExecutive && !isAccountantManager && !isTechAdmin && (
       pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance") ||
       (authRole as string) === "Finance" || (authRole as string) === "FinanceManager"
     )
@@ -48,7 +50,9 @@ export default function ApplyExceptionFormCard({ currentRole }: ApplyExceptionFo
   const isProductManager = pathname?.startsWith("/productmanager") || authRole === "ProductManager"
   const isEmployee = pathname?.startsWith("/employee") || authRole === "Employee"
 
-  const basePath = isAccountantExecutive ? "/accountantexecutive/attendance"
+  const basePath = isTechAdmin ? "/techadmin/attendance"
+    : isAccountantManager ? "/accountantmanager/attendance"
+    : isAccountantExecutive ? "/accountantexecutive/attendance"
     : isFinanceExecutive ? "/financeexecutive/attendance"
     : pathname?.startsWith("/financemanager") ? "/financemanager/attendance"
     : isFinance ? "/financemanager/attendance"
@@ -61,6 +65,8 @@ export default function ApplyExceptionFormCard({ currentRole }: ApplyExceptionFo
 
   const applicantRole: ApplicantRole = useMemo(() => {
     if (currentRole) return currentRole
+    if (isTechAdmin) return "Tech Admin"
+    if (isAccountantManager) return "Accountant Manager"
     if (isAccountantExecutive) return "Accountant Executive"
     if (isFinanceExecutive) return "Finance Executive"
     if (isFinance) return "Finance Manager"
@@ -70,7 +76,7 @@ export default function ApplyExceptionFormCard({ currentRole }: ApplyExceptionFo
     if (isProductManager) return "Product Manager"
     if (isEmployee) return "Employee"
     return "Team Lead"
-  }, [currentRole, isAccountantExecutive, isFinanceExecutive, isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
+  }, [currentRole, isTechAdmin, isAccountantManager, isAccountantExecutive, isFinanceExecutive, isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
 
   const [hrApprover, setHrApprover] = useState("")
   const [exceptionType, setExceptionType] = useState<ExceptionType>("Late Check-in")

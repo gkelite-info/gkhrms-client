@@ -39,6 +39,8 @@ export default function MainNavbarHeader() {
         ? "hrmanager"
         : pathname?.startsWith("/accountantexecutive")
         ? "accountantexecutive"
+        : pathname?.startsWith("/techadmin")
+        ? "techadmin"
         : pathname?.startsWith("/financeexecutive")
         ? "financeexecutive"
         : pathname?.startsWith("/accountant") ||
@@ -71,11 +73,16 @@ export default function MainNavbarHeader() {
             pathname?.startsWith("/hrmanager") ||
             pathname?.startsWith("/accountant") ||
             pathname?.startsWith("/accountantmanager") ||
-            pathname?.startsWith("/accountantexecutive")) && (
+            pathname?.startsWith("/accountantexecutive") ||
+            pathname?.startsWith("/techadmin")) && (
             <button
               type="button"
               onClick={() => {
-                if (pathname?.startsWith("/accountantexecutive")) {
+                if (pathname?.startsWith("/techadmin")) {
+                  window.dispatchEvent(
+                    new CustomEvent("toggle-techadmin-sidebar")
+                  )
+                } else if (pathname?.startsWith("/accountantexecutive")) {
                   window.dispatchEvent(
                     new CustomEvent("toggle-accountantexecutive-sidebar")
                   )

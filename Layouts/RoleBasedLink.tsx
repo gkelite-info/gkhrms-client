@@ -127,11 +127,19 @@ export const roleBasedNav: Record<
   ],
   Accountant: [
     { label: "Finance", href: "/accountantmanager", icon: CreditCard },
+    { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
+  ],
+  AccountantManager: [
+    { label: "Finance", href: "/accountantmanager", icon: CreditCard },
+    { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
   ],
   FinanceExecutive: [
     { label: "Attendance", href: "/financeexecutive/attendance", icon: UsersThree },
   ],
   AccountantExecutive: [
     { label: "Attendance", href: "/accountantexecutive/attendance", icon: UsersThree },
+  ],
+  TechAdmin: [
+    { label: "Attendance", href: "/techadmin/attendance", icon: UsersThree },
   ],
 }
