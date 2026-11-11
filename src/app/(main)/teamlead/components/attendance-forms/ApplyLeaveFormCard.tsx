@@ -37,6 +37,9 @@ export default function ApplyLeaveFormCard({
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
+  const isSuperAdmin = pathname?.startsWith("/superadmin") || authRole === "SuperAdmin"
+  const isChairman = pathname?.startsWith("/chairman") || authRole === "Chairman"
+  const isAsstManager = pathname?.startsWith("/asstmanager") || authRole === "AssistantManager"
   const isTechAdmin = pathname?.startsWith("/techadmin") || (authRole as string) === "TechAdmin"
   const isAccountantManager = pathname?.startsWith("/accountantmanager") || (authRole as string) === "AccountantManager" || (authRole as string) === "Accountant"
   const isAccountantExecutive = pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
@@ -49,7 +52,13 @@ export default function ApplyLeaveFormCard({
   const isManager = pathname?.startsWith("/manager")
   const isProductManager = pathname?.startsWith("/productmanager")
   const isEmployee = pathname?.startsWith("/employee")
-  const basePath = isTechAdmin
+  const basePath = isSuperAdmin
+    ? "/superadmin/attendance"
+    : isChairman
+    ? "/chairman/attendance"
+    : isAsstManager
+    ? "/asstmanager/attendance"
+    : isTechAdmin
     ? "/techadmin/attendance"
     : isAccountantManager
     ? "/accountantmanager/attendance"
@@ -74,6 +83,9 @@ export default function ApplyLeaveFormCard({
     : "/teamlead/attendance"
 
   const availableRoles: ApplicantRole[] = useMemo(() => {
+    if (isSuperAdmin) return ["Super Admin"]
+    if (isChairman) return ["Chairman"]
+    if (isAsstManager) return ["Assistant Manager"]
     if (isTechAdmin) return ["Tech Admin"]
     if (isAccountantManager) return ["Accountant Manager"]
     if (isAccountantExecutive) return ["Accountant Executive"]
@@ -85,10 +97,13 @@ export default function ApplyLeaveFormCard({
     if (isProductManager) return ["Product Manager"]
     if (isEmployee) return ["Employee"]
     return ["Team Lead"]
-  }, [isTechAdmin, isAccountantManager, isAccountantExecutive, isFinanceExecutive, isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
+  }, [isSuperAdmin, isChairman, isAsstManager, isTechAdmin, isAccountantManager, isAccountantExecutive, isFinanceExecutive, isFinance, isHrManager, isHr, isManager, isProductManager, isEmployee])
 
   const resolveInitialRole = (): ApplicantRole => {
     if (currentRole && availableRoles.includes(currentRole)) return currentRole
+    if (isSuperAdmin) return "Super Admin"
+    if (isChairman) return "Chairman"
+    if (isAsstManager) return "Assistant Manager"
     if (isTechAdmin || (authRole as string) === "TechAdmin") return "Tech Admin"
     if (isAccountantManager || (authRole as string) === "AccountantManager" || (authRole as string) === "Accountant") return "Accountant Manager"
     if (isAccountantExecutive || (authRole as string) === "AccountantExecutive") return "Accountant Executive"

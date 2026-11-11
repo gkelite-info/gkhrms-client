@@ -87,10 +87,38 @@ const nextConfig: NextConfig = {
         destination: "/accountantmanager/reports",
         permanent: true,
       },
+      {
+        source: "/assistantmanager/:path*",
+        destination: "/asstmanager/:path*",
+        permanent: true,
+      },
+      {
+        source: "/assistantmanager",
+        destination: "/asstmanager/attendance",
+        permanent: true,
+      },
+      {
+        source: "/chairperson/:path*",
+        destination: "/chairman/:path*",
+        permanent: true,
+      },
+      {
+        source: "/chairperson",
+        destination: "/chairman/attendance",
+        permanent: true,
+      },
     ]
   },
   async rewrites() {
     return [
+      {
+        source: "/assistant-manager/:path*",
+        destination: "/asstmanager/:path*",
+      },
+      {
+        source: "/assistant%20manager/:path*",
+        destination: "/asstmanager/:path*",
+      },
       {
         source: "/accountant%20manager/:path*",
         destination: "/accountantmanager/:path*",

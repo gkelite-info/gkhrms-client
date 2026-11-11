@@ -60,50 +60,33 @@ export default function CurrentLeaveBalanceCard({ role }: CurrentLeaveBalanceCar
   const pathname = usePathname()
   const authRole = useSelector((state: RootState) => state.auth?.role)
 
-  const isTechAdmin =
-    pathname?.startsWith("/techadmin") || (authRole as string) === "TechAdmin"
-  const isAccountantManager =
-    pathname?.startsWith("/accountantmanager") || (authRole as string) === "AccountantManager" || (authRole as string) === "Accountant"
-  const isAccountantExecutive =
-    pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
-  const isFinanceExecutive =
-    pathname?.startsWith("/financeexecutive") || authRole === "FinanceExecutive"
-  const isFinance =
-    !isFinanceExecutive && !isAccountantExecutive && !isAccountantManager && !isTechAdmin &&
-    (pathname?.startsWith("/financemanager") ||
-      pathname?.startsWith("/finance") ||
-      (authRole as string) === "Finance" ||
-      (authRole as string) === "FinanceManager")
-  const isHrManager =
-    pathname?.startsWith("/hrmanager") || authRole === "HrManager"
-  const isHr = !isHrManager && (pathname?.startsWith("/hr") || authRole === "Hr")
-  const isManager = pathname?.startsWith("/manager") || authRole === "Manager"
-  const isProductManager =
-    pathname?.startsWith("/productmanager") || authRole === "ProductManager"
-  const isEmployee =
-    pathname?.startsWith("/employee") || authRole === "Employee"
-
   const activeRole: ApplicantRole =
     role ||
-    (isTechAdmin
+    (pathname?.startsWith("/superadmin") || authRole === "SuperAdmin"
+      ? "Super Admin"
+      : pathname?.startsWith("/chairman") || authRole === "Chairman"
+      ? "Chairman"
+      : pathname?.startsWith("/asstmanager") || authRole === "AssistantManager"
+      ? "Assistant Manager"
+      : pathname?.startsWith("/techadmin") || (authRole as string) === "TechAdmin"
       ? "Tech Admin"
-      : isAccountantManager
+      : pathname?.startsWith("/accountantmanager") || (authRole as string) === "AccountantManager" || (authRole as string) === "Accountant"
       ? "Accountant Manager"
-      : isAccountantExecutive
+      : pathname?.startsWith("/accountantexecutive") || (authRole as string) === "AccountantExecutive"
       ? "Accountant Executive"
-      : isFinanceExecutive
+      : pathname?.startsWith("/financeexecutive") || authRole === "FinanceExecutive"
       ? "Finance Executive"
-      : isFinance
+      : pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance") || (authRole as string) === "Finance" || (authRole as string) === "FinanceManager"
       ? "Finance Manager"
-      : isHrManager
+      : pathname?.startsWith("/hrmanager") || authRole === "HrManager"
       ? "HR Manager"
-      : isHr
+      : pathname?.startsWith("/hr") || authRole === "Hr"
       ? "HR"
-      : isManager
+      : pathname?.startsWith("/manager") || authRole === "Manager"
       ? "Manager"
-      : isProductManager
+      : pathname?.startsWith("/productmanager") || authRole === "ProductManager"
       ? "Product Manager"
-      : isEmployee
+      : pathname?.startsWith("/employee") || authRole === "Employee"
       ? "Employee"
       : "Team Lead")
 

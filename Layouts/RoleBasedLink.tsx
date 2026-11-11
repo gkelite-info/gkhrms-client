@@ -141,4 +141,13 @@ export const roleBasedNav: Record<
   TechAdmin: [
     { label: "Attendance", href: "/techadmin/attendance", icon: UsersThree },
   ],
+  SuperAdmin: [
+    { label: "Attendance", href: "/superadmin/attendance", icon: UsersThree },
+  ],
+  Chairman: [
+    { label: "Attendance", href: "/chairman/attendance", icon: UsersThree },
+  ],
+  AssistantManager: [
+    { label: "Attendance", href: "/asstmanager/attendance", icon: UsersThree },
+  ],
 }

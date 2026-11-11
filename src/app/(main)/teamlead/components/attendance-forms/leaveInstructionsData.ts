@@ -66,6 +66,26 @@ export const getRoleLeaveInstructions = (
           text: "Assign release approvals and PRD queries to a designated proxy Product Lead.",
         },
       ]
+    case "Super Admin":
+    case "Chairman":
+      return [
+        {
+          icon: UsersThree,
+          title: "Executive Governance Notification",
+          text: "Executive leaves are recorded for organizational governance and delegated to Board / Operations Director.",
+        },
+        {
+          icon: Clock,
+          title: "Advance Protocol Notice",
+          text: "Submit planned leaves in advance to maintain executive oversight and signatory coverage.",
+        },
+        {
+          icon: ShieldCheck,
+          title: "Executive Authority Delegation",
+          text: "Delegate interim administrative and operational authorities to the designated deputy executive.",
+        },
+      ]
+    case "Assistant Manager":
     case "Manager":
       return [
         {
