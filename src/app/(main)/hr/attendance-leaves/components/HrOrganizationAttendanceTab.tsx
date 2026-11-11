@@ -33,6 +33,8 @@ interface HrOrganizationAttendanceTabProps {
   onPageChange: (page: number) => void
   onPageSizeChange: (size: number) => void
   onViewRecord: (record: HrAttendanceRecord) => void
+  onUpdateRecord?: (record: HrAttendanceRecord) => void
+  onBulkUpdateRecords?: (ids: string[], updates: Partial<HrAttendanceRecord>) => void
 }
 
 export default function HrOrganizationAttendanceTab({
@@ -57,6 +59,8 @@ export default function HrOrganizationAttendanceTab({
   onPageChange,
   onPageSizeChange,
   onViewRecord,
+  onUpdateRecord,
+  onBulkUpdateRecords,
 }: HrOrganizationAttendanceTabProps) {
   return (
     <div className="flex flex-col gap-4 sm:gap-5">
@@ -95,6 +99,8 @@ export default function HrOrganizationAttendanceTab({
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}
         onViewRecord={onViewRecord}
+        onUpdateRecord={onUpdateRecord}
+        onBulkUpdateRecords={onBulkUpdateRecords}
       />
     </div>
   )

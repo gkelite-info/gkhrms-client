@@ -40,6 +40,7 @@ export default function HrAttendanceDashboardContent({
       ? (tabParam as HrAttendanceTab)
       : "my-attendance"
 
+  const [recordsData, setRecordsData] = useState<HrAttendanceRecord[]>(HR_ATTENDANCE_RECORDS)
   const [fromDate, setFromDate] = useState<DateFilterValue>(new Date(2025, 7, 26))
   const [toDate, setToDate] = useState<DateFilterValue>(new Date(2025, 7, 28))
   const [searchQuery, setSearchQuery] = useState("")
@@ -49,46 +50,25 @@ export default function HrAttendanceDashboardContent({
   const [pageSize, setPageSize] = useState(8)
 
   const availableRecords = useMemo(() => {
-    if (isEffectiveHrManager) {
-      return HR_ATTENDANCE_RECORDS
-    }
-    return HR_ATTENDANCE_RECORDS.filter(
-      (rec) => rec.department !== "Human Resources" && rec.role !== "HR"
-    )
-  }, [isEffectiveHrManager])
+    if (isEffectiveHrManager) return recordsData
+    return recordsData.filter((rec) => rec.department !== "Human Resources" && rec.role !== "HR")
+  }, [isEffectiveHrManager, recordsData])
 
   const filteredRecords = useMemo(() => {
     return availableRecords.filter((rec) => {
-      if (
-        selectedDepartment &&
-        rec.department.toLowerCase() !== selectedDepartment.toLowerCase()
-      ) {
-        return false
-      }
-
-      if (roleFilter !== "All" && rec.role.toLowerCase() !== roleFilter.toLowerCase()) {
-        return false
-      }
-
+      if (selectedDepartment && rec.department.toLowerCase() !== selectedDepartment.toLowerCase()) return false
+      if (roleFilter !== "All" && rec.role.toLowerCase() !== roleFilter.toLowerCase()) return false
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim()
-        const matchesName = rec.name.toLowerCase().includes(q)
-        const matchesId = rec.employeeId.toLowerCase().includes(q)
-        const matchesDept = rec.department.toLowerCase().includes(q)
-        if (!matchesName && !matchesId && !matchesDept) {
-          return false
-        }
+        if (!rec.name.toLowerCase().includes(q) && !rec.employeeId.toLowerCase().includes(q) && !rec.department.toLowerCase().includes(q)) return false
       }
-
       return true
     })
   }, [availableRecords, selectedDepartment, roleFilter, searchQuery])
 
   const totalEmployeesCount = isEffectiveHrManager ? 2486 : 2256
   const totalPages = Math.ceil(
-    (searchQuery || roleFilter !== "All" || selectedDepartment
-      ? filteredRecords.length
-      : totalEmployeesCount) / pageSize
+    (searchQuery || roleFilter !== "All" || selectedDepartment ? filteredRecords.length : totalEmployeesCount) / pageSize
   )
 
   const paginatedRecords = useMemo(() => {
@@ -106,10 +86,21 @@ export default function HrAttendanceDashboardContent({
   }
 
   const handleViewRecord = (record: HrAttendanceRecord) => {
-    const targetRoute = isEffectiveHrManager
-      ? `/hrmanager/member/${record.employeeId}`
-      : `/hr/member/${record.employeeId}`
+    const targetRoute = isEffectiveHrManager ? `/hrmanager/member/${record.employeeId}` : `/hr/member/${record.employeeId}`
     router.push(targetRoute)
+  }
+
+  const handleUpdateRecord = (updated: HrAttendanceRecord) => {
+    setRecordsData((prev) =>
+      prev.map((r) => (r.id === updated.id || r.employeeId === updated.employeeId ? updated : r))
+    )
+  }
+
+  const handleBulkUpdateRecords = (ids: string[], updates: Partial<HrAttendanceRecord>) => {
+    const idSet = new Set(ids)
+    setRecordsData((prev) =>
+      prev.map((r) => (idSet.has(r.id) || idSet.has(r.employeeId) ? { ...r, ...updates } : r))
+    )
   }
 
   const handleResetFilters = () => {
@@ -121,17 +112,9 @@ export default function HrAttendanceDashboardContent({
     setCurrentPage(1)
   }
 
-  if (tabParam === "apply-leave") {
-    return <TeamLeadAttendanceFormContainer initialFormType="leave" />
-  }
-
-  if (tabParam === "request-wfh") {
-    return <TeamLeadAttendanceFormContainer initialFormType="wfh" />
-  }
-
-  if (tabParam === "apply-exception" || tabParam === "regularize") {
-    return <TeamLeadAttendanceFormContainer initialFormType="exception" />
-  }
+  if (tabParam === "apply-leave") return <TeamLeadAttendanceFormContainer initialFormType="leave" />
+  if (tabParam === "request-wfh") return <TeamLeadAttendanceFormContainer initialFormType="wfh" />
+  if (tabParam === "apply-exception" || tabParam === "regularize") return <TeamLeadAttendanceFormContainer initialFormType="exception" />
 
   return (
     <div className="w-full flex-1 p-3 sm:p-4 md:p-6 pb-16 sm:pb-8 flex flex-col gap-4 sm:gap-5 max-w-[1600px] mx-auto animate-in fade-in duration-200 min-w-0">
@@ -164,23 +147,16 @@ export default function HrAttendanceDashboardContent({
           roleFilter={roleFilter}
           fromDate={fromDate}
           toDate={toDate}
-          onSearchChange={(q) => {
-            setSearchQuery(q)
-            setCurrentPage(1)
-          }}
-          onRoleFilterChange={(r) => {
-            setRoleFilter(r)
-            setCurrentPage(1)
-          }}
+          onSearchChange={(q) => { setSearchQuery(q); setCurrentPage(1) }}
+          onRoleFilterChange={(r) => { setRoleFilter(r); setCurrentPage(1) }}
           onFromDateChange={setFromDate}
           onToDateChange={setToDate}
           onResetFilters={handleResetFilters}
           onPageChange={setCurrentPage}
-          onPageSizeChange={(sz) => {
-            setPageSize(sz)
-            setCurrentPage(1)
-          }}
+          onPageSizeChange={(sz) => { setPageSize(sz); setCurrentPage(1) }}
           onViewRecord={handleViewRecord}
+          onUpdateRecord={handleUpdateRecord}
+          onBulkUpdateRecords={handleBulkUpdateRecords}
         />
       )}
 
