@@ -25,10 +25,8 @@ export default function TeamLeadRequestsSection({ canApprove: canApproveProp }: 
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const isEmployee = pathname?.startsWith("/employee")
-  const isFinance = ["/finance", "/financeexecutive", "/financemanager", "/accountantexecutive", "/accountantmanager", "/techadmin"].some((p) => pathname?.startsWith(p))
-  const isEmployeeLike = isEmployee || isFinance
-  const canApprove = canApproveProp ?? !isEmployeeLike
+  const isEmployeeLike = (pathname?.startsWith("/employee") || ["/superadmin", "/chairman", "/finance", "/financeexecutive", "/financemanager", "/accountantexecutive", "/accountantmanager", "/techadmin"].some((p) => pathname?.startsWith(p))) && !pathname?.startsWith("/asstmanager")
+  const canApprove = canApproveProp ?? true
 
   const tabParam = searchParams.get("tab")
   const subtabParam = searchParams.get("subtab")

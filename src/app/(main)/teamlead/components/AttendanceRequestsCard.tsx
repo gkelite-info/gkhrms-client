@@ -21,20 +21,27 @@ export default function AttendanceRequestsCard({
 }: AttendanceRequestsCardProps) {
   const pathname = usePathname()
   const isEmployee = pathname?.startsWith("/employee")
+  const isAsstManager = pathname?.startsWith("/asstmanager")
 
   const targetHref =
     href ||
-    (isEmployee
+    (isAsstManager
+      ? "/asstmanager/attendance?tab=requests&subtab=team-requests"
+      : isEmployee
       ? "/employee/attendance?tab=requests&subtab=my-requests"
       : "/teamlead?tab=requests")
   const targetNewApprovalHref =
     newApprovalHref ||
-    (isEmployee
+    (isAsstManager
+      ? "/asstmanager/attendance?tab=requests&subtab=team-requests&status=Pending"
+      : isEmployee
       ? "/employee/attendance?tab=requests&subtab=my-requests"
       : "/teamlead?tab=requests&status=Pending")
   const targetPendingHref =
     pendingHref ||
-    (isEmployee
+    (isAsstManager
+      ? "/asstmanager/attendance?tab=requests&subtab=team-requests&status=Pending"
+      : isEmployee
       ? "/employee/attendance?tab=requests&subtab=my-requests&status=Pending"
       : "/teamlead?tab=requests&status=Pending")
 

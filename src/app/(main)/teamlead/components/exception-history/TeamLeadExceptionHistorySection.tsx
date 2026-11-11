@@ -14,6 +14,9 @@ export default function TeamLeadExceptionHistorySection() {
   const router = useRouter()
   const pathname = usePathname()
   const isEmployee = pathname?.startsWith("/employee")
+  const isSuperAdmin = pathname?.startsWith("/superadmin")
+  const isChairman = pathname?.startsWith("/chairman")
+  const isAsstManager = pathname?.startsWith("/asstmanager")
   const isTechAdmin = pathname?.startsWith("/techadmin")
   const isAccountantManager = pathname?.startsWith("/accountantmanager")
   const isAccountantExecutive = pathname?.startsWith("/accountantexecutive")
@@ -23,9 +26,18 @@ export default function TeamLeadExceptionHistorySection() {
     pathname?.startsWith("/finance") ||
     isAccountantExecutive ||
     isAccountantManager ||
-    isTechAdmin
+    isTechAdmin ||
+    isSuperAdmin ||
+    isChairman ||
+    isAsstManager
   const isEmployeeLike = isEmployee || isFinance
-  const basePath = isTechAdmin
+  const basePath = isSuperAdmin
+    ? "/superadmin/attendance"
+    : isChairman
+    ? "/chairman/attendance"
+    : isAsstManager
+    ? "/asstmanager/attendance"
+    : isTechAdmin
     ? "/techadmin/attendance"
     : isAccountantManager
     ? "/accountantmanager/attendance"

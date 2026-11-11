@@ -20,6 +20,9 @@ export const getRoleGuidelines = (role: ApplicantRole): WfhGuidelineItem[] => {
       return hrGuidelines
     case "Product Manager":
       return productManagerGuidelines
+    case "Super Admin":
+    case "Chairman":
+    case "Assistant Manager":
     case "Manager":
       return [
         {

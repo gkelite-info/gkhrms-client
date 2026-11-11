@@ -13,6 +13,9 @@ export type Roles =
   | "AccountantManager"
   | "AccountantExecutive"
   | "TechAdmin"
+  | "SuperAdmin"
+  | "Chairman"
+  | "AssistantManager"
 
 export interface LoginUserData {
   email: string

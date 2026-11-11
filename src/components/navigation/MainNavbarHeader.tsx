@@ -23,29 +23,19 @@ export default function MainNavbarHeader() {
   const handleProfile = () => {
     const targetRole =
       (role && role.toLowerCase()) ||
-      (pathname?.startsWith("/admin")
-        ? "admin"
-        : pathname?.startsWith("/hr")
-        ? "hr"
-        : pathname?.startsWith("/manager")
-        ? "manager"
-        : pathname?.startsWith("/teamlead")
-        ? "teamlead"
-        : pathname?.startsWith("/finance") ||
-          pathname?.startsWith("/financemanager") ||
-          pathname?.startsWith("/financemanger")
-        ? "financemanager"
-        : pathname?.startsWith("/hrmanager")
-        ? "hrmanager"
-        : pathname?.startsWith("/accountantexecutive")
-        ? "accountantexecutive"
-        : pathname?.startsWith("/techadmin")
-        ? "techadmin"
-        : pathname?.startsWith("/financeexecutive")
-        ? "financeexecutive"
-        : pathname?.startsWith("/accountant") ||
-          pathname?.startsWith("/accountantmanager")
-        ? "accountantmanager"
+      (pathname?.startsWith("/admin") ? "admin"
+        : pathname?.startsWith("/hr") ? "hr"
+        : pathname?.startsWith("/manager") ? "manager"
+        : pathname?.startsWith("/teamlead") ? "teamlead"
+        : pathname?.startsWith("/financemanager") || pathname?.startsWith("/finance") || pathname?.startsWith("/financemanger") ? "financemanager"
+        : pathname?.startsWith("/hrmanager") ? "hrmanager"
+        : pathname?.startsWith("/accountantexecutive") ? "accountantexecutive"
+        : pathname?.startsWith("/accountantmanager") || pathname?.startsWith("/accountant") ? "accountantmanager"
+        : pathname?.startsWith("/techadmin") ? "techadmin"
+        : pathname?.startsWith("/chairman") ? "chairman"
+        : pathname?.startsWith("/asstmanager") || pathname?.startsWith("/assistantmanager") ? "asstmanager"
+        : pathname?.startsWith("/superadmin") ? "superadmin"
+        : pathname?.startsWith("/financeexecutive") ? "financeexecutive"
         : "employee")
     router.push(`/${targetRole}/profile`)
   }
@@ -62,23 +52,20 @@ export default function MainNavbarHeader() {
             />
           </div>
 
-          {(pathname?.startsWith("/teamlead") ||
-            pathname?.startsWith("/manager") ||
-            pathname?.startsWith("/hr") ||
-            pathname?.startsWith("/employee") ||
-            pathname?.startsWith("/finance") ||
-            pathname?.startsWith("/financemanager") ||
-            pathname?.startsWith("/financemanger") ||
-            pathname?.startsWith("/financeexecutive") ||
-            pathname?.startsWith("/hrmanager") ||
-            pathname?.startsWith("/accountant") ||
-            pathname?.startsWith("/accountantmanager") ||
-            pathname?.startsWith("/accountantexecutive") ||
-            pathname?.startsWith("/techadmin")) && (
+          {["/teamlead", "/manager", "/hr", "/employee", "/finance", "/financemanager", "/financemanger", "/financeexecutive", "/hrmanager", "/accountant", "/accountantmanager", "/accountantexecutive", "/techadmin", "/chairman", "/asstmanager", "/assistantmanager", "/superadmin"].some((p) => pathname?.startsWith(p)) && (
             <button
               type="button"
               onClick={() => {
-                if (pathname?.startsWith("/techadmin")) {
+                if (pathname?.startsWith("/superadmin")) {
+                  window.dispatchEvent(new CustomEvent("toggle-superadmin-sidebar"))
+                } else if (pathname?.startsWith("/chairman")) {
+                  window.dispatchEvent(new CustomEvent("toggle-chairman-sidebar"))
+                } else if (
+                  pathname?.startsWith("/asstmanager") ||
+                  pathname?.startsWith("/assistantmanager")
+                ) {
+                  window.dispatchEvent(new CustomEvent("toggle-asstmanager-sidebar"))
+                } else if (pathname?.startsWith("/techadmin")) {
                   window.dispatchEvent(
                     new CustomEvent("toggle-techadmin-sidebar")
                   )

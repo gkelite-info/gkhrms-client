@@ -58,6 +58,12 @@ export default function Signin() {
 				roleForRedux = 'AccountantExecutive';
 			} else if (apiRole === 'techadmin' || apiRole === 'tech admin' || apiRole === 'ta') {
 				roleForRedux = 'TechAdmin';
+			} else if (apiRole === 'superadmin' || apiRole === 'super admin' || apiRole === 'sa') {
+				roleForRedux = 'SuperAdmin';
+			} else if (apiRole === 'chairman' || apiRole === 'chairperson' || apiRole === 'chairmen') {
+				roleForRedux = 'Chairman';
+			} else if (apiRole === 'assistantmanager' || apiRole === 'assistant manager' || apiRole === 'asstmanager' || apiRole === 'asst manager' || apiRole === 'am') {
+				roleForRedux = 'AssistantManager';
 			}
 
 			if (roleForRedux) {
@@ -95,6 +101,12 @@ export default function Signin() {
 				router.push('/accountantexecutive/attendance')
 			} else if (apiRole === 'techadmin' || apiRole === 'tech admin' || apiRole === 'ta') {
 				router.push('/techadmin/attendance')
+			} else if (apiRole === 'superadmin' || apiRole === 'super admin' || apiRole === 'sa') {
+				router.push('/superadmin/attendance')
+			} else if (apiRole === 'chairman' || apiRole === 'chairperson' || apiRole === 'chairmen') {
+				router.push('/chairman/attendance')
+			} else if (apiRole === 'assistantmanager' || apiRole === 'assistant manager' || apiRole === 'asstmanager' || apiRole === 'asst manager' || apiRole === 'am') {
+				router.push('/asstmanager/attendance')
 			} else {
 				router.push('/unauthorized')
 			}

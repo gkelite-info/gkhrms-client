@@ -15,11 +15,26 @@ import AccountantSidebar from "./AccountantSidebar"
 import FinanceExecutiveSidebar from "./FinanceExecutiveSidebar"
 import AccountantExecutiveSidebar from "./AccountantExecutiveSidebar"
 import TechAdminSidebar from "./TechAdminSidebar"
+import SuperAdminSidebar from "./SuperAdminSidebar"
+import ChairmanSidebar from "./ChairmanSidebar"
+import AsstManagerSidebar from "./AsstManagerSidebar"
 import ReusableSidebar from "../reusableComponents/ReusableSidebar"
 
 export default function Sidebar() {
   const pathname = usePathname()
   const { role } = useSelector((state: RootState) => state.auth)
+
+  if (pathname?.startsWith("/superadmin")) {
+    return <SuperAdminSidebar />
+  }
+
+  if (pathname?.startsWith("/chairman")) {
+    return <ChairmanSidebar />
+  }
+
+  if (pathname?.startsWith("/asstmanager") || pathname?.startsWith("/assistantmanager")) {
+    return <AsstManagerSidebar />
+  }
 
   if (pathname?.startsWith("/techadmin")) {
     return <TechAdminSidebar />
@@ -99,6 +114,18 @@ export default function Sidebar() {
 
   if (role === "TechAdmin" || (role as string) === "TechAdmin") {
     return <TechAdminSidebar />
+  }
+
+  if (role === "SuperAdmin" || (role as string) === "SuperAdmin") {
+    return <SuperAdminSidebar />
+  }
+
+  if (role === "Chairman" || (role as string) === "Chairman") {
+    return <ChairmanSidebar />
+  }
+
+  if (role === "AssistantManager" || (role as string) === "AssistantManager") {
+    return <AsstManagerSidebar />
   }
 
   if (role === "Hr") {

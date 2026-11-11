@@ -32,7 +32,7 @@ interface AttendanceTabsProps {
 export default function AttendanceTabs({
   activeTab,
   onTabChange,
-  showActions = true,
+  showActions: showActionsProp,
   onApplyLeave,
   onRequestWfh,
   onApplyException,
@@ -43,6 +43,10 @@ export default function AttendanceTabs({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
+  const isSuperAdmin = pathname?.startsWith("/superadmin")
+  const isChairman = pathname?.startsWith("/chairman")
+  const showActions = showActionsProp ?? !isChairman
+  const isAsstManager = pathname?.startsWith("/asstmanager")
   const isTechAdmin = pathname?.startsWith("/techadmin")
   const isAccountantManager = pathname?.startsWith("/accountantmanager")
   const isAccountantExecutive = pathname?.startsWith("/accountantexecutive")
@@ -51,8 +55,14 @@ export default function AttendanceTabs({
     pathname?.startsWith("/financemanager") ||
     pathname?.startsWith("/finance")
   const isEmployee = pathname?.startsWith("/employee")
-  const isEmployeeLike = isEmployee || isFinance || isAccountantExecutive || isAccountantManager || isTechAdmin
-  const defaultBasePath = isTechAdmin
+  const isEmployeeLike = isEmployee || isFinance || isAccountantExecutive || isAccountantManager || isTechAdmin || isSuperAdmin || isChairman || isAsstManager
+  const defaultBasePath = isSuperAdmin
+    ? "/superadmin/attendance"
+    : isChairman
+    ? "/chairman/attendance"
+    : isAsstManager
+    ? "/asstmanager/attendance"
+    : isTechAdmin
     ? "/techadmin/attendance"
     : isAccountantManager
     ? "/accountantmanager/attendance"
@@ -108,9 +118,11 @@ export default function AttendanceTabs({
     { key: "exception-history" as TabKey, label: "Exception History", icon: ClockCounterClockwise },
   ]
 
-  const tabs = isEmployeeLike
-    ? allTabs.filter((tab) => tab.key !== "team-attendance")
-    : allTabs
+  const tabs = allTabs.filter((tab) => {
+    if (isChairman) return tab.key !== "requests" && tab.key !== "team-attendance"
+    if (isEmployeeLike) return tab.key !== "team-attendance"
+    return true
+  })
 
   const handleTabClick = (tabKey: TabKey) => {
     if (onTabChange) onTabChange(tabKey)
