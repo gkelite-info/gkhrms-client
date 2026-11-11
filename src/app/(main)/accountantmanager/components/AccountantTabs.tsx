@@ -40,7 +40,9 @@ export default function AccountantTabs({
 }: AccountantTabsProps) {
   const { financeMode } = useAccountant()
   const currentTabs =
-    financeMode === "Executive Finance" ? executiveFinanceTabs : myFinanceTabs
+    financeMode === "Executive Finance"
+      ? executiveFinanceTabs
+      : myFinanceTabs
 
   return (
     <div className="w-full flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">

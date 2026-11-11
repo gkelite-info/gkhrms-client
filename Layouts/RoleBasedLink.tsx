@@ -126,12 +126,16 @@ export const roleBasedNav: Record<
     { label: "Attendance", href: "/financemanager/attendance", icon: UsersThree },
   ],
   Accountant: [
+<<<<<<< Updated upstream
     { label: "Finance", href: "/accountantmanager", icon: CreditCard },
     { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
   ],
   AccountantManager: [
     { label: "Finance", href: "/accountantmanager", icon: CreditCard },
     { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
+=======
+    { label: "Finance", href: "/accountantmanager?mode=my-finance&tab=overview", icon: CreditCard },
+>>>>>>> Stashed changes
   ],
   FinanceExecutive: [
     { label: "Attendance", href: "/financeexecutive/attendance", icon: UsersThree },

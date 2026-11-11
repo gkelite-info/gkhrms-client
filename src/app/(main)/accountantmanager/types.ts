@@ -7,6 +7,28 @@ export type AccountantTab =
   | "Payments"
   | "Reports"
 
+export const tabToSlug: Record<AccountantTab, string> = {
+  "Finance Overview": "overview",
+  "Executives Overview": "executives-overview",
+  Transactions: "transactions",
+  "Expense Entries": "expense-entries",
+  Reimbursements: "reimbursements",
+  Payments: "payments",
+  Reports: "reports",
+}
+
+export const slugToTab: Record<string, AccountantTab> = {
+  overview: "Finance Overview",
+  "finance-overview": "Finance Overview",
+  "executives-overview": "Executives Overview",
+  transactions: "Transactions",
+  expenses: "Expense Entries",
+  "expense-entries": "Expense Entries",
+  reimbursements: "Reimbursements",
+  payments: "Payments",
+  reports: "Reports",
+}
+
 export interface AccountantKpi {
   id: string
   title: string
@@ -347,6 +369,23 @@ export interface DepartmentBudgetRow {
   status: "On Track" | "Under Budget" | "Review Required"
 }
 
+export interface ExecutiveWorkSummary {
+  expenseEntries: number
+  vendorPayments: number
+  employeeReimbursements: number
+  moneyHandledThisMonth: string
+  averageEntriesPerWeek: number
+}
+
+export interface ExecutiveActivityItem {
+  id: string
+  date: string
+  activityType: string
+  reference: string
+  amount: string
+  status: "Completed" | "Approved" | "Pending" | "Rejected"
+}
+
 export interface AccountantExecutive {
   id: string
   name: string
@@ -357,12 +396,60 @@ export interface AccountantExecutive {
   completedEntries: number
   completedReimbursements: number
   lastActivity: string
+  department?: string
+  designation?: string
+  phone?: string
+  joiningDate?: string
+  email?: string
+  reportingTo?: string
+  workSummary?: ExecutiveWorkSummary
+  recentActivity?: ExecutiveActivityItem[]
 }
 
 export interface ExecutiveOverviewKpis {
   totalExecutives: number
   completedEntries: number
   completedReimbursements: number
+  completedThisMonth: number
+}
+
+export interface AccountantExecutiveTransaction {
+  id: string
+  transactionId: string
+  date: string
+  executiveName: string
+  executiveAvatar: string
+  type: "Expense Entry" | "Reimbursement" | "Payment"
+  reference: string
+  amount: string
+  numericAmount: number
+  status: "Completed" | "Pending" | "Failed"
+}
+
+export interface AccountantExecutiveTransactionKpis {
+  totalTransactions: number
+  moneyReceived: string
+  moneyPaid: string
+  completedThisMonth: number
+}
+
+export interface AccountantExecutiveExpenseEntry {
+  id: string
+  expenseId: string
+  date: string
+  executiveName: string
+  executiveAvatar: string
+  expenseType: string
+  vendorProvider: string
+  amount: string
+  numericAmount: number
+  status: "Completed" | "Pending" | "Rejected"
+}
+
+export interface AccountantExecutiveExpenseKpis {
+  totalEntries: number
+  utilityBills: number
+  officeAdminEntries: number
   completedThisMonth: number
 }
 

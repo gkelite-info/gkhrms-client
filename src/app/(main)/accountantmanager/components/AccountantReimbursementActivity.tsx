@@ -57,15 +57,13 @@ export default function AccountantReimbursementActivity({
         <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
           Recent Reimbursement Activity
         </h3>
-        {onViewAll && (
-          <button
-            type="button"
-            onClick={onViewAll}
-            className="text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] transition-colors cursor-pointer"
-          >
-            View All Activity →
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => onViewAll?.()}
+          className="text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] transition-colors cursor-pointer"
+        >
+          View All Activity →
+        </button>
       </div>
 
       <div className="divide-y divide-slate-100">

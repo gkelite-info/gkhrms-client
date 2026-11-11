@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useAccountant } from "../context/AccountantContext"
 import AccountantExpenseKpis from "./AccountantExpenseKpis"
 import AccountantExpenseFilterBar from "./AccountantExpenseFilterBar"
 import AccountantExpenseTable from "./AccountantExpenseTable"

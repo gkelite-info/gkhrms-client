@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import {
   Users,
   CheckCircle2,
@@ -11,8 +12,7 @@ import {
   FileText,
   ArrowRight,
 } from "lucide-react"
-import Image from "next/image"
-import AccountantViewExecutiveModal from "./AccountantViewExecutiveModal"
+import ReusableAvatar from "../../../../../reusableComponents/ReusableAvatar"
 import {
   executiveOverviewKpis,
   mockAccountantExecutives,
@@ -21,20 +21,26 @@ import {
 } from "../data/mockAccountantData"
 import { AccountantExecutive } from "../types"
 
-export default function AccountantExecutivesOverviewView() {
+interface AccountantExecutivesOverviewViewProps {
+  onViewExecutive?: (executive: AccountantExecutive) => void
+}
+
+export default function AccountantExecutivesOverviewView({
+  onViewExecutive,
+}: AccountantExecutivesOverviewViewProps) {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("Status: All")
   const [monthFilter, setMonthFilter] = useState("Month: Nov 2026")
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false)
   const [monthDropdownOpen, setMonthDropdownOpen] = useState(false)
 
-  const [selectedExecutive, setSelectedExecutive] =
-    useState<AccountantExecutive | null>(null)
-  const [modalOpen, setModalOpen] = useState(false)
-
   const handleOpenExecutive = (exec: AccountantExecutive) => {
-    setSelectedExecutive(exec)
-    setModalOpen(true)
+    if (onViewExecutive) {
+      onViewExecutive(exec)
+    } else {
+      router.push(`/accountantmanager?view=executive-details&id=${exec.id}`)
+    }
   }
 
   const filteredExecutives = useMemo(() => {
@@ -231,14 +237,14 @@ export default function AccountantExecutivesOverviewView() {
             <div>
               <div className="flex items-start justify-between gap-3 mb-5">
                 <div className="flex items-center gap-3.5">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border border-slate-100 shrink-0 bg-slate-100">
-                    <Image
-                      src={exec.avatar}
-                      alt={exec.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                  <ReusableAvatar
+                    src={exec.avatar}
+                    name={exec.name}
+                    size={48}
+                    shape="circle"
+                    fallbackType="initials"
+                    className="shrink-0"
+                  />
                   <div>
                     <h3 className="text-base font-bold text-slate-900 tracking-tight">
                       {exec.name}
@@ -312,14 +318,6 @@ export default function AccountantExecutivesOverviewView() {
           </div>
         )}
       </div>
-
-      <AccountantViewExecutiveModal
-        executive={selectedExecutive}
-        onClose={() => {
-          setModalOpen(false)
-          setSelectedExecutive(null)
-        }}
-      />
     </div>
   )
 }

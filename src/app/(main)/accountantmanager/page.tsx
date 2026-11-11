@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect, useMemo, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import { Calendar, ChevronDown } from "lucide-react"
 import AccountantTabs from "./components/AccountantTabs"
 import AccountantKpiCards from "./components/AccountantKpiCards"
@@ -17,8 +17,11 @@ import AccountantPaymentsView from "./components/AccountantPaymentsView"
 import AccountantReportsView from "./components/AccountantReportsView"
 import AccountantModeToggle from "./components/AccountantModeToggle"
 import AccountantExecutivesOverviewView from "./components/AccountantExecutivesOverviewView"
+import AccountantExecutiveDetailsView from "./components/AccountantExecutiveDetailsView"
+import AccountantExecutiveTransactionsView from "./components/AccountantExecutiveTransactionsView"
+import AccountantExecutiveExpensesView from "./components/AccountantExecutiveExpensesView"
 import { useAccountant } from "./context/AccountantContext"
-import { AccountantTab } from "./types"
+import { AccountantExecutive, AccountantTab } from "./types"
 import {
   accountantKpis,
   monthlyTrendData,
@@ -27,6 +30,7 @@ import {
   pendingItems,
   recentActivities,
   allRecentActivities,
+  mockAccountantExecutives,
 } from "./data/mockAccountantData"
 
 const months = [
@@ -69,90 +73,56 @@ const tabHeaderMeta: Record<AccountantTab, { title: string; subtitle: string }> 
   },
 }
 
-const tabToSlug: Record<AccountantTab, string> = {
-  "Finance Overview": "overview",
-  "Executives Overview": "executives-overview",
-  Transactions: "transactions",
-  "Expense Entries": "expenses",
-  Reimbursements: "reimbursements",
-  Payments: "payments",
-  Reports: "reports",
-}
-
-const slugToTab: Record<string, AccountantTab> = {
-  overview: "Finance Overview",
-  "executives-overview": "Executives Overview",
-  transactions: "Transactions",
-  expenses: "Expense Entries",
-  "expense-entries": "Expense Entries",
-  reimbursements: "Reimbursements",
-  payments: "Payments",
-  reports: "Reports",
-}
 
 function AccountantContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const { financeMode } = useAccountant()
-  const viewParam = searchParams.get("view")?.toLowerCase()
-  const tabParam = searchParams.get("tab")?.toLowerCase()
-
-  const defaultTab: AccountantTab =
-    financeMode === "Executive Finance" ? "Executives Overview" : "Finance Overview"
-  const resolvedTab = (tabParam && slugToTab[tabParam]) || defaultTab
-  const [activeTab, setActiveTab] = useState<AccountantTab>(resolvedTab)
+  const { financeMode, activeTab, setActiveTab } = useAccountant()
   const [selectedMonth, setSelectedMonth] = useState("Nov 2026")
   const [monthDropdownOpen, setMonthDropdownOpen] = useState(false)
+  const [selectedExecutiveDetails, setSelectedExecutiveDetails] =
+    useState<AccountantExecutive | null>(null)
+  const [showRecentActivity, setShowRecentActivity] = useState(false)
 
-  useEffect(() => {
-    if (tabParam && slugToTab[tabParam]) {
-      setActiveTab(slugToTab[tabParam])
-    } else if (!tabParam) {
-      setActiveTab(
-        financeMode === "Executive Finance" ? "Executives Overview" : "Finance Overview"
+  const viewParam = searchParams.get("view")?.toLowerCase()
+  const executiveIdParam = searchParams.get("id")
+
+  const isExecutiveDetailsView =
+    viewParam === "executive-details" || Boolean(selectedExecutiveDetails)
+
+  const activeExecutive = useMemo(() => {
+    if (selectedExecutiveDetails) return selectedExecutiveDetails
+    if (executiveIdParam) {
+      return (
+        mockAccountantExecutives.find((exec) => exec.id === executiveIdParam) ||
+        mockAccountantExecutives[0]
       )
     }
-  }, [tabParam, financeMode])
+    return mockAccountantExecutives[0]
+  }, [selectedExecutiveDetails, executiveIdParam])
 
-  useEffect(() => {
-    if (financeMode === "Executive Finance") {
-      if (activeTab === "Finance Overview") {
-        setActiveTab("Executives Overview")
-      }
-    } else {
-      if (activeTab === "Executives Overview") {
-        setActiveTab("Finance Overview")
-      }
-    }
-  }, [financeMode, activeTab])
+  const handleViewExecutive = (exec: AccountantExecutive) => {
+    setSelectedExecutiveDetails(exec)
+  }
+
+  const handleBackFromExecutiveDetails = () => {
+    setSelectedExecutiveDetails(null)
+  }
 
   const isRecentActivityView =
-    viewParam === "recent-activity" || viewParam === "recent-finance-activity"
+    showRecentActivity ||
+    viewParam === "recent-activity" ||
+    viewParam === "recent-finance-activity"
 
   const handleViewAllActivity = () => {
-    router.push("/accountantmanager?view=recent-activity")
+    setShowRecentActivity(true)
   }
 
   const handleBackToOverview = () => {
-    router.push("/accountantmanager")
-  }
-
-  const tabRoutes: Record<AccountantTab, string> = {
-    "Finance Overview": "/accountantmanager",
-    "Executives Overview": "/accountantmanager",
-    Transactions: "/accountantmanager/transactions",
-    "Expense Entries": "/accountantmanager/expenses",
-    Reimbursements: "/accountantmanager/reimbursements",
-    Payments: "/accountantmanager/payments",
-    Reports: "/accountantmanager/reports",
+    setShowRecentActivity(false)
   }
 
   const handleTabChange = (tab: AccountantTab) => {
     setActiveTab(tab)
-    const targetRoute = tabRoutes[tab]
-    if (targetRoute) {
-      router.push(targetRoute)
-    }
   }
 
   if (isRecentActivityView) {
@@ -164,7 +134,27 @@ function AccountantContent() {
     )
   }
 
-  const currentMeta = tabHeaderMeta[activeTab] || tabHeaderMeta["Finance Overview"]
+  if (isExecutiveDetailsView) {
+    return (
+      <AccountantExecutiveDetailsView
+        executive={activeExecutive}
+        onBack={handleBackFromExecutiveDetails}
+      />
+    )
+  }
+
+  const currentMeta =
+    financeMode === "Executive Finance" && activeTab === "Transactions"
+      ? {
+          title: "Finance Overview",
+          subtitle: "Track all transaction records handled across accountant executives.",
+        }
+      : financeMode === "Executive Finance" && activeTab === "Expense Entries"
+      ? {
+          title: "Finance Overview",
+          subtitle: "Track expense entries handled across accountant executives.",
+        }
+      : tabHeaderMeta[activeTab] || tabHeaderMeta["Finance Overview"]
 
   return (
     <div className="space-y-4 xl:space-y-4.5 pb-6">
@@ -256,11 +246,23 @@ function AccountantContent() {
         </div>
       )}
 
-      {activeTab === "Executives Overview" && <AccountantExecutivesOverviewView />}
+      {activeTab === "Executives Overview" && (
+        <AccountantExecutivesOverviewView onViewExecutive={handleViewExecutive} />
+      )}
 
-      {activeTab === "Transactions" && <AccountantTransactionsView />}
+      {activeTab === "Transactions" &&
+        (financeMode === "Executive Finance" ? (
+          <AccountantExecutiveTransactionsView />
+        ) : (
+          <AccountantTransactionsView />
+        ))}
 
-      {activeTab === "Expense Entries" && <AccountantExpensesView />}
+      {activeTab === "Expense Entries" &&
+        (financeMode === "Executive Finance" ? (
+          <AccountantExecutiveExpensesView />
+        ) : (
+          <AccountantExpensesView />
+        ))}
 
       {activeTab === "Reimbursements" && <AccountantReimbursementsView />}
 
