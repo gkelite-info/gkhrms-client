@@ -21,6 +21,11 @@ import {
 } from "phosphor-react"
 import { Roles } from "../Features/Auth/Slice/loginType"
 
+const accountantNavLinks = [
+  { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
+  { label: "Finance", href: "/accountantmanager?mode=my-finance&tab=overview", icon: CreditCard },
+]
+
 export const roleBasedNav: Record<
   Roles,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -125,18 +130,8 @@ export const roleBasedNav: Record<
     { label: "Finance", href: "/financemanager/finance", icon: CurrencyCircleDollar },
     { label: "Attendance", href: "/financemanager/attendance", icon: UsersThree },
   ],
-  Accountant: [
-<<<<<<< Updated upstream
-    { label: "Finance", href: "/accountantmanager", icon: CreditCard },
-    { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
-  ],
-  AccountantManager: [
-    { label: "Finance", href: "/accountantmanager", icon: CreditCard },
-    { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
-=======
-    { label: "Finance", href: "/accountantmanager?mode=my-finance&tab=overview", icon: CreditCard },
->>>>>>> Stashed changes
-  ],
+  Accountant: accountantNavLinks,
+  AccountantManager: accountantNavLinks,
   FinanceExecutive: [
     { label: "Attendance", href: "/financeexecutive/attendance", icon: UsersThree },
   ],
