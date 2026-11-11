@@ -2,7 +2,7 @@
 
 export interface TableColumn<T> {
   key?: string
-  header: string
+  header: React.ReactNode
   accessor?: keyof T
   render?: (row: T, index: number) => React.ReactNode
   width?: string
