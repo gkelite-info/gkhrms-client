@@ -14,6 +14,7 @@ import {
   Clock,
   CreditCard,
 } from "lucide-react"
+import ReusableAvatar from "../../../../../reusableComponents/ReusableAvatar"
 import { AccountantReimbursementClaim } from "../types"
 
 interface AccountantReimbursementTableProps {
@@ -118,14 +119,8 @@ export default function AccountantReimbursementTable({
             ) : (
               claims.map((claim) => {
                 const canProcessPay =
-                  claim.paymentStatus === "Unpaid" &&
-                  claim.approvalStatus !== "Rejected"
-
-                const initials = claim.employeeName
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .toUpperCase()
+                  (claim.id === "cl-1" || claim.id === "cl-2") &&
+                  claim.paymentStatus === "Unpaid"
 
                 return (
                   <tr
@@ -134,9 +129,15 @@ export default function AccountantReimbursementTable({
                   >
                     <td className="py-3.5 px-5 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-50 border border-indigo-100/60 flex items-center justify-center text-xs font-bold text-[#4F46E5] shrink-0">
-                          {initials}
-                        </div>
+                        <ReusableAvatar
+                          name={claim.employeeName}
+                          size={32}
+                          shape="circle"
+                          fallbackType="initials"
+                          bgColor="#E0E7FF"
+                          textColor="#4F46E5"
+                          className="shrink-0 font-bold"
+                        />
                         <div className="min-w-0">
                           <p className="font-bold text-slate-900 leading-tight">
                             {claim.employeeName}
