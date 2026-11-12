@@ -14,7 +14,7 @@ import {
   Clock,
   CreditCard,
 } from "lucide-react"
-import ReusableAvatar from "../../../../../reusableComponents/ReusableAvatar"
+import ReusableAvatar from "../../../../../../reusableComponents/ReusableAvatar"
 import { AccountantReimbursementClaim } from "../types"
 
 interface AccountantReimbursementTableProps {

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAccountant } from "../context/AccountantContext"
+import { useAccountant } from "../finance/context/AccountantContext"
 
 export default function AccountantReimbursementsPage() {
   const router = useRouter()
@@ -10,7 +10,7 @@ export default function AccountantReimbursementsPage() {
 
   useEffect(() => {
     setActiveTab("Reimbursements")
-    router.replace("/accountantmanager?mode=my-finance&tab=reimbursements")
+    router.replace("/accountantmanager/finance?mode=my-finance&tab=reimbursements")
   }, [router, setActiveTab])
 
   return null

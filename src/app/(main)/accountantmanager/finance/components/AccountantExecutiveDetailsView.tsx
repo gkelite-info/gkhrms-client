@@ -16,7 +16,7 @@ import {
   X,
   Search,
 } from "lucide-react"
-import ReusableAvatar from "../../../../../reusableComponents/ReusableAvatar"
+import ReusableAvatar from "../../../../../../reusableComponents/ReusableAvatar"
 import { AccountantExecutive, ExecutiveActivityItem } from "../types"
 
 interface AccountantExecutiveDetailsViewProps {

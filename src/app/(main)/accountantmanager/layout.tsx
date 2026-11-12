@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import Header from "../../../../Layouts/Header"
 import AccountantSidebar from "./components/AccountantSidebar"
-import { AccountantProvider } from "./context/AccountantContext"
+import { AccountantProvider } from "./finance/context/AccountantContext"
 
 function AccountantLayoutInner({
   children,

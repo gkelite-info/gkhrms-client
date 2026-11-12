@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAccountant } from "../context/AccountantContext"
+import { useAccountant } from "../finance/context/AccountantContext"
 
 export default function AccountantTransactionsPage() {
   const router = useRouter()
@@ -10,7 +10,7 @@ export default function AccountantTransactionsPage() {
 
   useEffect(() => {
     setActiveTab("Transactions")
-    router.replace("/accountantmanager?mode=my-finance&tab=transactions")
+    router.replace("/accountantmanager/finance?mode=my-finance&tab=transactions")
   }, [router, setActiveTab])
 
   return null

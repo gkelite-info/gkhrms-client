@@ -1,12 +1,13 @@
 "use client"
 
-import { UsersThree } from "phosphor-react"
+import { UsersThree, CreditCard } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
 } from "../../../../../reusableComponents/ReusableSidebar"
 
 export const accountantExecutiveNavItems: ReusableSidebarItem[] = [
   { label: "Attendance", href: "/accountantexecutive/attendance", icon: UsersThree },
+  { label: "Finance", href: "/accountantexecutive/finance", icon: CreditCard },
 ]
 
 export default function AccountantExecutiveSidebar() {
@@ -17,7 +18,8 @@ export default function AccountantExecutiveSidebar() {
     if (item.href === "/accountantexecutive/attendance") {
       return (
         currentPath === "/accountantexecutive" ||
-        currentPath.startsWith("/accountantexecutive")
+        (currentPath.startsWith("/accountantexecutive/") &&
+          !currentPath.startsWith("/accountantexecutive/finance"))
       )
     }
     return currentPath === item.href || currentPath.startsWith(`${item.href}/`)

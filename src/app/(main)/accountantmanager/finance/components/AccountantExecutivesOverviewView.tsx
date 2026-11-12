@@ -12,7 +12,7 @@ import {
   FileText,
   ArrowRight,
 } from "lucide-react"
-import ReusableAvatar from "../../../../../reusableComponents/ReusableAvatar"
+import ReusableAvatar from "../../../../../../reusableComponents/ReusableAvatar"
 import {
   executiveOverviewKpis,
   mockAccountantExecutives,

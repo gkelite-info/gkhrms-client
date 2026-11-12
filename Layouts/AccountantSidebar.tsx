@@ -7,7 +7,7 @@ import ReusableSidebar, {
 
 export const accountantNavItems: ReusableSidebarItem[] = [
   { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
-  { label: "Finance", href: "/accountantmanager?mode=my-finance&tab=overview", icon: CreditCard },
+  { label: "Finance", href: "/accountantmanager/finance?mode=my-finance&tab=overview", icon: CreditCard },
 ]
 
 export default function AccountantSidebar() {
