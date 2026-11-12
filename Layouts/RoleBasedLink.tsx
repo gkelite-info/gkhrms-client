@@ -23,7 +23,7 @@ import { Roles } from "../Features/Auth/Slice/loginType"
 
 const accountantNavLinks = [
   { label: "Attendance", href: "/accountantmanager/attendance", icon: UsersThree },
-  { label: "Finance", href: "/accountantmanager?mode=my-finance&tab=overview", icon: CreditCard },
+  { label: "Finance", href: "/accountantmanager/finance?mode=my-finance&tab=overview", icon: CreditCard },
 ]
 
 export const roleBasedNav: Record<
@@ -142,6 +142,7 @@ export const roleBasedNav: Record<
   ],
   AccountantExecutive: [
     { label: "Attendance", href: "/accountantexecutive/attendance", icon: UsersThree },
+    { label: "Finance", href: "/accountantexecutive/finance", icon: CreditCard },
   ],
   TechAdmin: [
     { label: "Attendance", href: "/techadmin/attendance", icon: UsersThree },

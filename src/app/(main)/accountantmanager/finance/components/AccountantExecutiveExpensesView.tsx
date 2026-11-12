@@ -15,7 +15,7 @@ import {
   Eye,
   FileText,
 } from "lucide-react"
-import ReusableAvatar from "../../../../../reusableComponents/ReusableAvatar"
+import ReusableAvatar from "../../../../../../reusableComponents/ReusableAvatar"
 import AccountantViewExpenseModal from "./AccountantViewExpenseModal"
 import {
   mockExecutiveExpenseKpis,
