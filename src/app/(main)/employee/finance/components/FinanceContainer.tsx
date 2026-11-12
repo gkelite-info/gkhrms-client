@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useMemo, Suspense } from "react"
+import Link from "next/link"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { FinanceTabType } from "./types"
 import FinanceTabs, { TabItem } from "./FinanceTabs"
@@ -12,6 +13,7 @@ import EmployeeExpensesView from "../../components/me/EmployeeExpensesView"
 import PayslipView from "./PayslipView"
 import HrFinanceDirectoryView from "./HrFinanceDirectoryView"
 import HrFinanceEmployeeHeader from "./HrFinanceEmployeeHeader"
+import FinanceSegmentedToggle, { SegmentedToggleOption } from "./FinanceSegmentedToggle"
 import {
   HR_PAYROLL_EMPLOYEES,
   HrPayrollEmployee,
@@ -22,6 +24,40 @@ export interface FinanceContainerProps {
   variant?: "employee" | "hr"
   customTabs?: TabItem[]
 }
+
+type HrSubView = "employee" | "org_overview"
+
+const MODE_TOGGLE_OPTIONS: SegmentedToggleOption<"hr" | "personal">[] = [
+  { id: "hr", label: "HR" },
+  { id: "personal", label: "Personal" },
+]
+
+const HR_SUBVIEW_LINKS: {
+  id: HrSubView
+  label: string
+  getHref: (basePath: string) => string
+}[] = [
+  { id: "employee", label: "Employee", getHref: (base) => base },
+  {
+    id: "org_overview",
+    label: "Org Overview",
+    getHref: (base) => `${base}?tab=org_overview`,
+  },
+]
+
+const HR_EMPLOYEE_TABS: TabItem[] = [
+  { id: "summary", label: "Summary" },
+  { id: "mypay", label: "Employee Pay" },
+  { id: "manage_tax", label: "Manage TAX" },
+  { id: "expenses_travel", label: "Expenses and Travel" },
+]
+
+const PERSONAL_TABS: TabItem[] = [
+  { id: "summary", label: "Summary" },
+  { id: "mypay", label: "My Pay" },
+  { id: "manage_tax", label: "Manage TAX" },
+  { id: "expenses_travel", label: "Expenses and Travel" },
+]
 
 function FinanceContainerContent({
   basePath: propBasePath,
@@ -56,12 +92,26 @@ function FinanceContainerContent({
 
   const [activeTab, setActiveTab] = useState<FinanceTabType>("summary")
 
+  const rawTab = searchParams.get("tab")?.toLowerCase()
   const viewParam = searchParams.get("view")?.toLowerCase()
   const payslipParam = searchParams.get("payslip")?.toLowerCase()
   const isPayslipActive = viewParam === "payslip" || payslipParam === "true"
 
+  const isOrgOverviewParam =
+    rawTab === "org_overview" ||
+    rawTab === "org-overview" ||
+    rawTab === "org_salary_overview" ||
+    rawTab === "org-salary-overview" ||
+    rawTab === "salary-overview" ||
+    viewParam === "org_overview" ||
+    viewParam === "org-overview"
+
+  const hrSubView: HrSubView =
+    variant === "hr" && currentMode === "hr" && !selectedEmployee && isOrgOverviewParam
+      ? "org_overview"
+      : "employee"
+
   useEffect(() => {
-    const rawTab = searchParams.get("tab")?.toLowerCase()
     if (rawTab === "mypay" || rawTab === "my-pay" || rawTab === "employeepay" || rawTab === "employee-pay") {
       setActiveTab("mypay")
     } else if (
@@ -71,46 +121,25 @@ function FinanceContainerContent({
     ) {
       setActiveTab("manage_tax")
     } else if (
-      rawTab === "org_salary_overview" ||
-      rawTab === "org-salary-overview" ||
-      rawTab === "salary-overview"
+      isOrgOverviewParam &&
+      customTabs?.some((t) => t.id === "org_salary_overview")
     ) {
-      if (currentMode === "personal") {
-        setActiveTab("org_salary_overview")
-      } else {
-        setActiveTab("summary")
-      }
+      setActiveTab("org_salary_overview")
     } else if (
       rawTab === "expenses" ||
       rawTab === "expenses_travel" ||
       rawTab === "expenses-travel"
     ) {
-      if (currentMode === "hr") {
-        setActiveTab("expenses_travel")
-      } else {
-        setActiveTab("summary")
-      }
+      setActiveTab("expenses_travel")
     } else {
       setActiveTab("summary")
     }
-  }, [searchParams, currentMode])
+  }, [rawTab, isOrgOverviewParam, customTabs])
 
   const currentTabs = useMemo(() => {
     if (customTabs && customTabs.length > 0) return customTabs
-    return currentMode === "personal"
-      ? [
-          { id: "summary" as const, label: "Summary" },
-          { id: "mypay" as const, label: "My Pay" },
-          { id: "manage_tax" as const, label: "Manage TAX" },
-          { id: "org_salary_overview" as const, label: "Org Salary Overview" },
-        ]
-      : [
-          { id: "summary" as const, label: "Summary" },
-          { id: "mypay" as const, label: "My Pay" },
-          { id: "manage_tax" as const, label: "Manage TAX" },
-          { id: "expenses_travel" as const, label: "Expenses and Travel" },
-        ]
-  }, [customTabs, currentMode])
+    return variant === "hr" && currentMode === "hr" ? HR_EMPLOYEE_TABS : PERSONAL_TABS
+  }, [customTabs, variant, currentMode])
 
   const buildUrl = (targetTab: FinanceTabType, extraParams?: Record<string, string>) => {
     const params = new URLSearchParams()
@@ -137,10 +166,18 @@ function FinanceContainerContent({
   }
 
   const handleOpenPayslip = () => {
+    if (hrSubView === "org_overview") {
+      router.push(`${basePath}?tab=org_overview&view=payslip`)
+      return
+    }
     router.push(buildUrl(activeTab, { view: "payslip" }))
   }
 
   const handleClosePayslip = () => {
+    if (hrSubView === "org_overview") {
+      router.push(`${basePath}?tab=org_overview`)
+      return
+    }
     router.push(buildUrl(activeTab))
   }
 
@@ -170,12 +207,48 @@ function FinanceContainerContent({
 
   if (variant === "hr" && currentMode === "hr" && !selectedEmployee) {
     return (
-      <div className="w-full h-full max-w-full min-w-0 flex flex-col px-3 pt-2.5 sm:px-4 sm:pt-3 md:px-6 md:pt-3 pb-2 overflow-y-auto overflow-x-hidden scrollbar-hide">
-        <HrFinanceDirectoryView
-          onSelectEmployee={handleSelectEmployee}
-          currentMode={currentMode}
-          onSwitchMode={handleSwitchMode}
-        />
+      <div className="w-full min-h-full max-w-full min-w-0 flex flex-col px-3 pt-2.5 sm:px-4 sm:pt-3 md:px-6 md:pt-3 pb-8 overflow-y-auto overflow-x-hidden scrollbar-hide">
+        <div className="shrink-0 mb-3 select-none">
+          <FinanceSegmentedToggle
+            options={MODE_TOGGLE_OPTIONS}
+            activeId={currentMode}
+            onChange={handleSwitchMode}
+          />
+        </div>
+
+        <nav
+          aria-label="HR Finance views"
+          className="shrink-0 mb-2.5 sm:mb-3 px-1 flex items-center gap-2 text-xs sm:text-sm select-none"
+        >
+          {HR_SUBVIEW_LINKS.map((item, idx) => {
+            const isActive = hrSubView === item.id
+            return (
+              <React.Fragment key={item.id}>
+                {idx > 0 && (
+                  <span className="font-bold text-slate-400" aria-hidden="true">
+                    /
+                  </span>
+                )}
+                <Link
+                  href={item.getHref(basePath)}
+                  className={`font-bold transition-colors ${
+                    isActive
+                      ? "text-[#5B50EC]"
+                      : "text-slate-600 hover:text-[#5B50EC]"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              </React.Fragment>
+            )
+          })}
+        </nav>
+
+        {hrSubView === "org_overview" ? (
+          <FinanceOrgSalaryOverviewView onViewPayslip={handleOpenPayslip} />
+        ) : (
+          <HrFinanceDirectoryView onSelectEmployee={handleSelectEmployee} />
+        )}
       </div>
     )
   }
@@ -191,24 +264,11 @@ function FinanceContainerContent({
     <div className="w-full min-h-full max-w-full min-w-0 flex flex-col px-3 pt-2.5 sm:px-4 sm:pt-3 md:px-6 md:pt-3 pb-8 overflow-y-auto overflow-x-hidden scrollbar-hide">
       {variant === "hr" && currentMode === "personal" && (
         <div className="shrink-0 mb-3 select-none">
-          <div className="w-full bg-white rounded-2xl p-1.5 shadow-2xs border border-slate-100/80 flex items-center justify-between">
-            <div className="grid grid-cols-2 gap-1.5 w-full">
-              <button
-                type="button"
-                onClick={() => handleSwitchMode("hr")}
-                className="py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-[#A3A3A3] text-white hover:bg-[#949494] shadow-2xs"
-              >
-                HR
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSwitchMode("personal")}
-                className="py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-[#5B50EC] text-white shadow-xs"
-              >
-                Personal
-              </button>
-            </div>
-          </div>
+          <FinanceSegmentedToggle
+            options={MODE_TOGGLE_OPTIONS}
+            activeId={currentMode}
+            onChange={handleSwitchMode}
+          />
         </div>
       )}
 

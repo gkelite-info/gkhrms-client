@@ -118,6 +118,11 @@ export const roleBasedNav: Record<
   ],
   HrManager: [
     { label: "Attendance", href: "/hrmanager/attendance", icon: UsersThree },
+    {
+      label: "Finance & Payroll",
+      href: "/hrmanager/finance",
+      icon: CurrencyCircleDollar,
+    },
   ],
   ProductManager: [
     { label: "Attendance", href: "/productmanager/attendance", icon: UsersThree },

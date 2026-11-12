@@ -18,6 +18,7 @@ export default function HrManagerLayout({
     pathname?.startsWith("/hrmanager/exception-history") ||
     pathname?.startsWith("/hrmanager/member")
   )
+  const isFinance = Boolean(pathname?.startsWith("/hrmanager/finance"))
 
   return (
     <div className="w-full h-[100vh] bg-gradient-to-b from-[#DEDCFA] to-[#F1F1FD] flex flex-col overflow-hidden">
@@ -26,7 +27,7 @@ export default function HrManagerLayout({
         <HrManagerSidebar />
         <main
           className={
-            isAttendance
+            isAttendance || isFinance
               ? "h-full flex-1 min-w-0 flex flex-col overflow-y-auto overflow-x-hidden scrollbar-hide"
               : "flex-1 h-full min-w-0 overflow-y-auto px-4 sm:px-8 py-6 space-y-5"
           }

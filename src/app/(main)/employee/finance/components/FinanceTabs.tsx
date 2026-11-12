@@ -22,7 +22,7 @@ const EMPLOYEE_TABS: TabItem[] = [
 
 const HR_TABS: TabItem[] = [
   { id: "summary", label: "Summary" },
-  { id: "mypay", label: "My Pay" },
+  { id: "mypay", label: "Employee Pay" },
   { id: "manage_tax", label: "Manage TAX" },
   { id: "expenses_travel", label: "Expenses and Travel" },
 ]
