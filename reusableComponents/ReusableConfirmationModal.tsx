@@ -53,7 +53,7 @@ const staggerChildren = {
   animate: { transition: { staggerChildren: 0.06 } },
 }
 
-const fadeUp = {
+const fadeUp: any = {
   initial: { opacity: 0, y: 8 },
   animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
 }
