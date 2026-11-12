@@ -1,6 +1,6 @@
 "use client"
 
-import { Users, UsersThree } from "phosphor-react"
+import { Users, UsersThree, CurrencyCircleDollar } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
 } from "../reusableComponents/ReusableSidebar"
@@ -8,6 +8,11 @@ import ReusableSidebar, {
 export const hrManagerNavItems: ReusableSidebarItem[] = [
   { label: "User Management", href: "/hrmanager", icon: Users },
   { label: "Attendance", href: "/hrmanager/attendance", icon: UsersThree },
+  {
+    label: "Finance & Payroll",
+    href: "/hrmanager/finance",
+    icon: CurrencyCircleDollar,
+  },
 ]
 
 export default function HrManagerSidebar() {
@@ -25,6 +30,9 @@ export default function HrManagerSidebar() {
         currentPath.startsWith("/hrmanager/member")
       )
     }
+    if (item.href === "/hrmanager/finance") {
+      return currentPath.startsWith("/hrmanager/finance")
+    }
     if (item.href === "/hrmanager") {
       return (
         currentPath === "/hrmanager" ||
@@ -34,7 +42,8 @@ export default function HrManagerSidebar() {
           !currentPath.includes("/request-wfh") &&
           !currentPath.includes("/requests") &&
           !currentPath.includes("/exception-history") &&
-          !currentPath.includes("/member"))
+          !currentPath.includes("/member") &&
+          !currentPath.includes("/finance"))
       )
     }
     return currentPath === item.href || currentPath.startsWith(`${item.href}/`)
