@@ -14,4 +14,6 @@ export { default as ReusableConfirmationModal } from "./ReusableConfirmationModa
 export type { ReusableConfirmationModalProps, ConfirmationType } from "./ReusableConfirmationModal"
 export { default as ReusableSidebar } from "./ReusableSidebar"
 export type { ReusableSidebarProps, ReusableSidebarItem } from "./ReusableSidebar"
+export { default as EmployeeConnectDrawer } from "./social-media/EmployeeConnectDrawer"
+export { default as MyActivityScreen } from "./social-media/activity/MyActivityScreen"
 export { default } from "../src/components/reusableComponents/ReusableTable"

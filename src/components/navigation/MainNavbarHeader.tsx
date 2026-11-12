@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Bell, MagnifyingGlass, Tray, List } from "phosphor-react"
+import { useState, useEffect } from "react"
+import { Bell, MagnifyingGlass, Tray, List, UsersThree } from "phosphor-react"
 import NotificationCount from "../../../utils/notificationCount"
 import NotificationModal from "../../../utils/notificationModel"
 import InboxModal from "../../../utils/inboxModal"
@@ -9,16 +9,40 @@ import { usePathname, useRouter } from "next/navigation"
 import { useSelector } from "react-redux"
 import { RootState } from "../../../Redux/Store"
 import ReusableAvatar from "../../../reusableComponents/ReusableAvatar"
+import EmployeeConnectDrawer from "../../../reusableComponents/social-media/EmployeeConnectDrawer"
+
+const getSidebarEvent = (path: string) => {
+  if (path.startsWith("/superadmin")) return "toggle-superadmin-sidebar"
+  if (path.startsWith("/chairman")) return "toggle-chairman-sidebar"
+  if (path.startsWith("/asstmanager") || path.startsWith("/assistantmanager")) return "toggle-asstmanager-sidebar"
+  if (path.startsWith("/techadmin")) return "toggle-techadmin-sidebar"
+  if (path.startsWith("/accountantexecutive")) return "toggle-accountantexecutive-sidebar"
+  if (path.startsWith("/financeexecutive")) return "toggle-financeexecutive-sidebar"
+  if (path.startsWith("/accountant") || path.startsWith("/accountantmanager")) return "toggle-accountant-sidebar"
+  if (path.startsWith("/finance") || path.startsWith("/financemanager") || path.startsWith("/financemanger")) return "toggle-finance-sidebar"
+  if (path.startsWith("/hrmanager")) return "toggle-hrmanager-sidebar"
+  if (path.startsWith("/manager")) return "toggle-manager-sidebar"
+  if (path.startsWith("/hr")) return "toggle-hr-sidebar"
+  if (path.startsWith("/teamlead")) return "toggle-teamlead-sidebar"
+  return "toggle-employee-sidebar"
+}
 
 export default function MainNavbarHeader() {
   const router = useRouter()
   const pathname = usePathname()
   const [showModal, setShowModal] = useState(false)
   const [showIndex, setShowIndex] = useState(false)
+  const [showSocialMedia, setShowSocialMedia] = useState(false)
 
   const { fullname, photoURL, role } = useSelector(
     (state: RootState) => state.auth
   )
+
+  useEffect(() => {
+    const handleToggle = () => setShowSocialMedia((prev) => !prev)
+    window.addEventListener("toggle-social-media", handleToggle)
+    return () => window.removeEventListener("toggle-social-media", handleToggle)
+  }, [])
 
   const handleProfile = () => {
     const targetRole =
@@ -56,51 +80,7 @@ export default function MainNavbarHeader() {
             <button
               type="button"
               onClick={() => {
-                if (pathname?.startsWith("/superadmin")) {
-                  window.dispatchEvent(new CustomEvent("toggle-superadmin-sidebar"))
-                } else if (pathname?.startsWith("/chairman")) {
-                  window.dispatchEvent(new CustomEvent("toggle-chairman-sidebar"))
-                } else if (
-                  pathname?.startsWith("/asstmanager") ||
-                  pathname?.startsWith("/assistantmanager")
-                ) {
-                  window.dispatchEvent(new CustomEvent("toggle-asstmanager-sidebar"))
-                } else if (pathname?.startsWith("/techadmin")) {
-                  window.dispatchEvent(
-                    new CustomEvent("toggle-techadmin-sidebar")
-                  )
-                } else if (pathname?.startsWith("/accountantexecutive")) {
-                  window.dispatchEvent(
-                    new CustomEvent("toggle-accountantexecutive-sidebar")
-                  )
-                } else if (pathname?.startsWith("/financeexecutive")) {
-                  window.dispatchEvent(
-                    new CustomEvent("toggle-financeexecutive-sidebar")
-                  )
-                } else if (
-                  pathname?.startsWith("/accountant") ||
-                  pathname?.startsWith("/accountantmanager")
-                ) {
-                  window.dispatchEvent(
-                    new CustomEvent("toggle-accountant-sidebar")
-                  )
-                } else if (
-                  pathname?.startsWith("/finance") ||
-                  pathname?.startsWith("/financemanager") ||
-                  pathname?.startsWith("/financemanger")
-                ) {
-                  window.dispatchEvent(new CustomEvent("toggle-finance-sidebar"))
-                } else if (pathname?.startsWith("/hrmanager")) {
-                  window.dispatchEvent(new CustomEvent("toggle-hrmanager-sidebar"))
-                } else if (pathname?.startsWith("/manager")) {
-                  window.dispatchEvent(new CustomEvent("toggle-manager-sidebar"))
-                } else if (pathname?.startsWith("/hr")) {
-                  window.dispatchEvent(new CustomEvent("toggle-hr-sidebar"))
-                } else if (pathname?.startsWith("/teamlead")) {
-                  window.dispatchEvent(new CustomEvent("toggle-teamlead-sidebar"))
-                } else {
-                  window.dispatchEvent(new CustomEvent("toggle-employee-sidebar"))
-                }
+                window.dispatchEvent(new CustomEvent(getSidebarEvent(pathname || "")))
               }}
               className="lg:hidden p-2 rounded-xl text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center justify-center transition-colors"
               aria-label="Toggle navigation menu"
@@ -124,7 +104,17 @@ export default function MainNavbarHeader() {
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 sm:gap-4 shrink-0">
+        <div className="flex items-center justify-end gap-1.5 sm:gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowSocialMedia(true)}
+            className="text-[#1E1D32] p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            aria-label="Employee Connect"
+            title="Employee Connect"
+          >
+            <UsersThree size={20} weight="bold" />
+          </button>
+
           <div className="relative flex items-center justify-center">
             <button
               type="button"
@@ -152,7 +142,7 @@ export default function MainNavbarHeader() {
           <ReusableAvatar
             src={photoURL || "/images/alexander.png"}
             name={fullname || "Alexander"}
-            size={36}
+            size={34}
             shape="circle"
             showBorder={true}
             borderColor="#E5E7EB"
@@ -165,6 +155,7 @@ export default function MainNavbarHeader() {
 
       <NotificationModal open={showModal} onClose={() => setShowModal(false)} />
       <InboxModal open={showIndex} onClose={() => setShowIndex(false)} />
+      <EmployeeConnectDrawer isOpen={showSocialMedia} onClose={() => setShowSocialMedia(false)} />
     </>
   )
 }
