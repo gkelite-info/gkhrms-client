@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { UsersThree, X } from "phosphor-react"
+import { Megaphone, X } from "phosphor-react"
 import { EmployeeConnectDrawerProps, SocialPostCategory, SocialPost } from "./types"
 import { DEFAULT_SOCIAL_POSTS } from "./mockSocialData"
 import SocialMediaCollapsibleToolbar from "./SocialMediaCollapsibleToolbar"
@@ -47,7 +47,12 @@ export default function EmployeeConnectDrawer({
   const handleUpdatePost = (updated: SocialPost) => { setPosts((prev) => prev.map((p) => (p.id === updated.id ? updated : p))); setEditingPost(null) }
   const handleEditClick = (post: SocialPost) => { setEditingPost(post); if (post.pollData) setIsPollModalOpen(true); else setIsPostModalOpen(true) }
   const handleConfirmDelete = () => { if (deletingPostId) { setPosts((prev) => prev.filter((p) => p.id !== deletingPostId)); setDeletingPostId(null) } }
-  const handleOpenMyActivity = () => { onClose(); router.push(`/${pathname?.split("/")[1] || "teamlead"}/activity`) }
+  const handleOpenMyActivity = () => {
+    onClose()
+    const currentRole = pathname?.split("/").filter(Boolean)[0] || "teamlead"
+    const currentPath = pathname || `/${currentRole}/attendance`
+    router.push(`/${currentRole}/activity?from=${encodeURIComponent(currentPath)}`)
+  }
 
   const handleLoadMorePosts = () => {
     if (isLoadingMore || !hasMorePosts) return
@@ -88,7 +93,7 @@ export default function EmployeeConnectDrawer({
               <div className="px-4 py-3.5 sm:px-5 sm:py-4 bg-white border-b border-gray-100 flex items-center justify-between shrink-0 shadow-2xs">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-9 h-9 rounded-xl bg-[#EEF2FF] text-[#5B50EC] flex items-center justify-center shrink-0">
-                    <UsersThree size={20} weight="bold" />
+                    <Megaphone size={20} weight="fill" />
                   </div>
                   <div className="flex flex-col min-w-0">
                     <h3 className="text-sm sm:text-base font-bold text-gray-900 truncate leading-tight">{title}</h3>

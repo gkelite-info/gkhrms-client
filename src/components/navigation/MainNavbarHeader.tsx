@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Bell, MagnifyingGlass, Tray, List, UsersThree } from "phosphor-react"
+import { Bell, MagnifyingGlass, Tray, List, Megaphone } from "phosphor-react"
 import NotificationCount from "../../../utils/notificationCount"
 import NotificationModal from "../../../utils/notificationModel"
 import InboxModal from "../../../utils/inboxModal"
@@ -107,12 +107,19 @@ export default function MainNavbarHeader() {
         <div className="flex items-center justify-end gap-1.5 sm:gap-3 shrink-0">
           <button
             type="button"
-            onClick={() => setShowSocialMedia(true)}
-            className="text-[#1E1D32] p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-            aria-label="Employee Connect"
-            title="Employee Connect"
+            onClick={() => setShowSocialMedia((prev) => !prev)}
+            className={`p-1.5 rounded-xl transition-all cursor-pointer relative ${
+              showSocialMedia || Boolean(pathname?.includes("/activity"))
+                ? "bg-[#EEF2FF] text-[#5B50EC] shadow-2xs border border-[#5B50EC]/30"
+                : "text-[#1E1D32] hover:bg-gray-100"
+            }`}
+            aria-label="Employee Connect Feed"
+            title="Employee Connect Feed"
           >
-            <UsersThree size={20} weight="bold" />
+            <Megaphone
+              size={20}
+              weight={showSocialMedia || Boolean(pathname?.includes("/activity")) ? "fill" : "bold"}
+            />
           </button>
 
           <div className="relative flex items-center justify-center">
