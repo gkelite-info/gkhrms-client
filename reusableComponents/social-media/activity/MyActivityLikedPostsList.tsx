@@ -1,6 +1,6 @@
 "use client"
 
-import { ThumbsUp, ChatCircleDots, Eye, Trash } from "phosphor-react"
+import { ThumbsUp, ChatCircleDots, Eye, HeartBreak } from "phosphor-react"
 import { ActivityLikedPostItem } from "./types"
 import ActivityThumbnail from "./ActivityThumbnail"
 import ReusableAvatar from "../../ReusableAvatar"
@@ -103,10 +103,10 @@ export default function MyActivityLikedPostsList({
               <button
                 type="button"
                 onClick={() => onUnlikePost?.(post.id)}
-                className="w-8 h-8 rounded-full border border-gray-200 hover:border-rose-500 bg-white hover:bg-rose-50 text-gray-500 hover:text-rose-600 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
-                title="Remove from Liked"
+                className="w-8 h-8 rounded-full border border-rose-200 hover:border-rose-400 bg-rose-50 hover:bg-rose-100 text-rose-500 hover:text-rose-600 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
+                title="Unlike / Remove from Liked"
               >
-                <Trash size={15} weight="bold" />
+                <HeartBreak size={15} weight="fill" />
               </button>
             </div>
           </div>
