@@ -53,6 +53,7 @@ export interface ReusableDateFilterProps<T = DateFilterValue> {
   backdropClassName?: string
   minYear?: number
   showCaret?: boolean
+  children?: React.ReactNode
 }
 
 export const MONTH_NAMES = [

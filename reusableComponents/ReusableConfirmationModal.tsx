@@ -16,6 +16,7 @@ export interface ReusableConfirmationModalProps {
   cancelText?: string
   type?: ConfirmationType
   isLoading?: boolean
+  zIndex?: number
 }
 
 const TYPE_CONFIG = {
@@ -68,6 +69,7 @@ export default function ReusableConfirmationModal({
   cancelText = "Cancel",
   type = "info",
   isLoading = false,
+  zIndex,
 }: ReusableConfirmationModalProps) {
   useEffect(() => {
     if (!isOpen) return
@@ -84,7 +86,10 @@ export default function ReusableConfirmationModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 select-none">
+        <div
+          className="fixed inset-0 flex items-center justify-center p-4 select-none"
+          style={{ zIndex: zIndex ?? 60 }}
+        >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

@@ -120,7 +120,7 @@ export default function ReusableAvatar({
       style={{ width, height, ...borderStyle }}
       onClick={onClick}
       title={title || name || alt}
-      className={`relative inline-flex items-center justify-center flex-shrink-0 select-none overflow-hidden ${getShapeClass()} ${
+      className={`relative inline-flex items-center justify-center flex-shrink-0 select-none ${getShapeClass()} ${
         onClick ? "cursor-pointer hover:opacity-90 transition-opacity" : ""
       } ${className}`}
     >
@@ -150,7 +150,11 @@ export default function ReusableAvatar({
 
       {status && (
         <span
-          className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-white ${getStatusColor()}`}
+          className={`absolute -bottom-0.5 -right-0.5 rounded-full ring-2 ring-white z-10 ${
+            (typeof size === "number" && size >= 48) || size === "lg" || size === "xl"
+              ? "w-3.5 h-3.5"
+              : "w-2.5 h-2.5"
+          } ${getStatusColor()}`}
         />
       )}
     </div>
