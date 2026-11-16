@@ -40,6 +40,7 @@ export default function ReusableDateFilter<T = DateFilterValue>({
   backdropClassName,
   minYear,
   showCaret = true,
+  children,
 }: ReusableDateFilterProps<T>) {
   const [isOpen, setIsOpen] = useState(false)
   const normalizedValue = useMemo(() => resolveDateFilterValue(value), [value])
@@ -129,14 +130,8 @@ export default function ReusableDateFilter<T = DateFilterValue>({
 
   const handleSelectYear = (yr: number) => {
     setNavYear(yr)
-    if (availableModes.includes("month")) {
-      setActiveTab("month")
-      return
-    }
-    if (availableModes.includes("date")) {
-      setActiveTab("date")
-      return
-    }
+    if (availableModes.includes("month")) return setActiveTab("month")
+    if (availableModes.includes("date")) return setActiveTab("date")
     triggerChange({ mode: "year", label: `Year ${yr}`, selectedYear: yr })
     setIsOpen(false)
   }
@@ -162,11 +157,15 @@ export default function ReusableDateFilter<T = DateFilterValue>({
           "px-3 py-1.5 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1F2433] hover:border-[#5B50EC] hover:bg-[#F9F8FE] shadow-xs"
         }`}
       >
-        <CalendarBlank size={16} weight="bold" className="text-[#5B50EC] shrink-0" />
-        <span className="whitespace-nowrap text-xs font-semibold text-gray-800">
-          {normalizedValue.label}
-        </span>
-        {showCaret && <CaretDown size={12} weight="bold" className="text-gray-400 shrink-0" />}
+        {children || (
+          <>
+            <CalendarBlank size={16} weight="bold" className="text-[#5B50EC] shrink-0" />
+            <span className="whitespace-nowrap text-xs font-semibold text-gray-800">
+              {normalizedValue.label}
+            </span>
+            {showCaret && <CaretDown size={12} weight="bold" className="text-gray-400 shrink-0" />}
+          </>
+        )}
       </button>
 
       <DateFilterModal

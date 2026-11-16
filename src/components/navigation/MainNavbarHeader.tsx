@@ -10,6 +10,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "../../../Redux/Store"
 import ReusableAvatar from "../../../reusableComponents/ReusableAvatar"
 import EmployeeConnectDrawer from "../../../reusableComponents/social-media/EmployeeConnectDrawer"
+import ProfileSettingsDrawer from "../../../reusableComponents/profile-settings/ProfileSettingsDrawer"
 
 const getSidebarEvent = (path: string) => {
   if (path.startsWith("/superadmin")) return "toggle-superadmin-sidebar"
@@ -33,6 +34,7 @@ export default function MainNavbarHeader() {
   const [showModal, setShowModal] = useState(false)
   const [showIndex, setShowIndex] = useState(false)
   const [showSocialMedia, setShowSocialMedia] = useState(false)
+  const [showProfileDrawer, setShowProfileDrawer] = useState(false)
 
   const { fullname, photoURL, role } = useSelector(
     (state: RootState) => state.auth
@@ -153,8 +155,8 @@ export default function MainNavbarHeader() {
             shape="circle"
             showBorder={true}
             borderColor="#E5E7EB"
-            onClick={handleProfile}
-            title={`${fullname || "Alexander"} - View Profile`}
+            onClick={() => setShowProfileDrawer(true)}
+            title={`${fullname || "Alexander"} - Profile & Settings`}
             className="hover:ring-2 hover:ring-[#8570EE] transition-all cursor-pointer"
           />
         </div>
@@ -163,6 +165,7 @@ export default function MainNavbarHeader() {
       <NotificationModal open={showModal} onClose={() => setShowModal(false)} />
       <InboxModal open={showIndex} onClose={() => setShowIndex(false)} />
       <EmployeeConnectDrawer isOpen={showSocialMedia} onClose={() => setShowSocialMedia(false)} />
+      <ProfileSettingsDrawer isOpen={showProfileDrawer} onClose={() => setShowProfileDrawer(false)} onSignOut={() => router.push("/login")} />
     </>
   )
 }
