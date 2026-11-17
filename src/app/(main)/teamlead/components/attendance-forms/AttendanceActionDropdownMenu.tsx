@@ -6,7 +6,7 @@ interface AttendanceActionDropdownMenuProps {
   onApplyLeave: () => void
   onRequestWfh: () => void
   onApplyException: () => void
-  align?: "left" | "right"
+  align?: "left" | "right" | "auto"
 }
 
 const actions = [
@@ -34,7 +34,7 @@ export default function AttendanceActionDropdownMenu({
   onApplyLeave,
   onRequestWfh,
   onApplyException,
-  align = "right",
+  align = "auto",
 }: AttendanceActionDropdownMenuProps) {
   const handlers = {
     onApplyLeave,
@@ -42,11 +42,16 @@ export default function AttendanceActionDropdownMenu({
     onApplyException,
   }
 
+  const alignmentClass =
+    align === "left"
+      ? "left-0"
+      : align === "right"
+      ? "right-0"
+      : "left-0 sm:left-auto sm:right-0"
+
   return (
     <div
-      className={`absolute ${
-        align === "left" ? "left-0" : "right-0"
-      } mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 select-none`}
+      className={`absolute ${alignmentClass} mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 select-none`}
     >
       {actions.map((act) => {
         const Icon = act.icon
