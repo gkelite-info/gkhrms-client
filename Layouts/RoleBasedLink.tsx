@@ -62,6 +62,11 @@ export const roleBasedNav: Record<
   ],
   Manager: [
     { label: "Attendance", href: "/manager/attendance", icon: UsersThree },
+    {
+      label: "Finance & Payroll",
+      href: "/manager/finance",
+      icon: CurrencyCircleDollar,
+    },
     { label: "Profile", href: "/manager/profile", icon: User },
   ],
   Employee: [
@@ -114,6 +119,11 @@ export const roleBasedNav: Record<
   TeamLead: [
     { label: "Attendance", href: "/teamlead/attendance", icon: UsersThree },
     { label: "Performance", href: "/teamlead/performance", icon: ChartLineUp },
+    {
+      label: "Finance & Payroll",
+      href: "/teamlead/finance",
+      icon: CurrencyCircleDollar,
+    },
     { label: "Profile", href: "/teamlead/profile", icon: User },
   ],
   HrManager: [
