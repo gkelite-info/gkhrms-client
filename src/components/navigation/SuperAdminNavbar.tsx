@@ -3,13 +3,7 @@
 import {
   SquaresFour,
   Buildings,
-  Crown,
-  CreditCard,
-  UserGear,
-  Headset,
-  Megaphone,
-  ChartBar,
-  FileText,
+  CurrencyInr,
 } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
@@ -18,13 +12,7 @@ import ReusableSidebar, {
 export const superAdminNavItems: ReusableSidebarItem[] = [
   { label: "Dashboard", href: "/superadmin", icon: SquaresFour, exact: true },
   { label: "Companies", href: "/superadmin/companies", icon: Buildings },
-  { label: "Subscriptions", href: "/superadmin/subscriptions", icon: Crown },
-  { label: "Payments", href: "/superadmin/payments", icon: CreditCard },
-  { label: "Company Admins", href: "/superadmin/company-admins", icon: UserGear },
-  { label: "Support Requests", href: "/superadmin/support-requests", icon: Headset },
-  { label: "Announcements", href: "/superadmin/announcements", icon: Megaphone },
-  { label: "Analytics", href: "/superadmin/analytics", icon: ChartBar },
-  { label: "Audit Logs", href: "/superadmin/audit-logs", icon: FileText },
+  { label: "Finance", href: "/superadmin/finance", icon: CurrencyInr },
 ]
 
 export default function SuperAdminNavbar() {

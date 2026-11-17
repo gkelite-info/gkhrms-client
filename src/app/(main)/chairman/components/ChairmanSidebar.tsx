@@ -1,12 +1,13 @@
 "use client"
 
-import { UsersThree } from "phosphor-react"
+import { UsersThree, CurrencyDollar } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
 } from "../../../../../reusableComponents/ReusableSidebar"
 
 export const chairmanNavItems: ReusableSidebarItem[] = [
   { label: "Attendance", href: "/chairman/attendance", icon: UsersThree },
+  { label: "Finance", href: "/chairman/finance", icon: CurrencyDollar },
 ]
 
 export default function ChairmanSidebar() {
@@ -15,7 +16,12 @@ export default function ChairmanSidebar() {
     currentPath: string
   ): boolean => {
     if (item.href === "/chairman/attendance") {
-      return currentPath === "/chairman" || currentPath.startsWith("/chairman")
+      return (
+        currentPath === "/chairman" ||
+        currentPath.startsWith("/chairman/attendance") ||
+        currentPath.startsWith("/chairman/exception-history") ||
+        currentPath.startsWith("/chairman/member")
+      )
     }
     return currentPath === item.href || currentPath.startsWith(`${item.href}/`)
   }

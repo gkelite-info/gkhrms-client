@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, Suspense } from "react"
 import Link from "next/link"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { FinanceTabType } from "./types"
-import FinanceTabs, { TabItem } from "./FinanceTabs"
+import FinanceTabs, { TabItem, EMPLOYEE_TABS } from "./FinanceTabs"
 import FinanceSummaryView from "./FinanceSummaryView"
 import FinanceMyPayView from "./FinanceMyPayView"
 import FinanceManageTaxView from "./FinanceManageTaxView"
@@ -95,7 +95,18 @@ function FinanceContainerContent({
   const rawTab = searchParams.get("tab")?.toLowerCase()
   const viewParam = searchParams.get("view")?.toLowerCase()
   const payslipParam = searchParams.get("payslip")?.toLowerCase()
+  const modalParam = searchParams.get("modal")?.toLowerCase()
+  const actionParam = searchParams.get("action")?.toLowerCase()
+  const addPayParam = (
+    searchParams.get("addpay") || searchParams.get("addPay")
+  )?.toLowerCase()
   const isPayslipActive = viewParam === "payslip" || payslipParam === "true"
+  const isAddPayQuery =
+    modalParam === "add-pay" ||
+    modalParam === "addpay" ||
+    actionParam === "add-pay" ||
+    actionParam === "addpay" ||
+    addPayParam === "true"
 
   const isOrgOverviewParam =
     rawTab === "org_overview" ||
@@ -112,7 +123,13 @@ function FinanceContainerContent({
       : "employee"
 
   useEffect(() => {
-    if (rawTab === "mypay" || rawTab === "my-pay" || rawTab === "employeepay" || rawTab === "employee-pay") {
+    if (
+      rawTab === "mypay" ||
+      rawTab === "my-pay" ||
+      rawTab === "employeepay" ||
+      rawTab === "employee-pay" ||
+      (!rawTab && isAddPayQuery)
+    ) {
       setActiveTab("mypay")
     } else if (
       rawTab === "manage_tax" ||
@@ -134,10 +151,11 @@ function FinanceContainerContent({
     } else {
       setActiveTab("summary")
     }
-  }, [rawTab, isOrgOverviewParam, customTabs])
+  }, [rawTab, isOrgOverviewParam, isAddPayQuery, customTabs])
 
   const currentTabs = useMemo(() => {
     if (customTabs && customTabs.length > 0) return customTabs
+    if (variant === "employee") return EMPLOYEE_TABS
     return variant === "hr" && currentMode === "hr" ? HR_EMPLOYEE_TABS : PERSONAL_TABS
   }, [customTabs, variant, currentMode])
 
@@ -305,6 +323,8 @@ function FinanceContainerContent({
           <FinanceMyPayView
             onViewPayslip={handleOpenPayslip}
             basePath={tabBasePath}
+            employee={selectedEmployee || undefined}
+            isHrMode={variant === "hr" && currentMode === "hr"}
           />
         )}
 

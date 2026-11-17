@@ -1,12 +1,17 @@
 "use client"
 
-import { UsersThree } from "phosphor-react"
+import { UsersThree, CurrencyCircleDollar } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
 } from "../../../../../reusableComponents/ReusableSidebar"
 
 export const techAdminNavItems: ReusableSidebarItem[] = [
   { label: "Attendance", href: "/techadmin/attendance", icon: UsersThree },
+  {
+    label: "Finance & Payroll",
+    href: "/techadmin/finance",
+    icon: CurrencyCircleDollar,
+  },
 ]
 
 export default function TechAdminSidebar() {
@@ -15,7 +20,11 @@ export default function TechAdminSidebar() {
     currentPath: string
   ): boolean => {
     if (item.href === "/techadmin/attendance") {
-      return currentPath === "/techadmin" || currentPath.startsWith("/techadmin")
+      return (
+        currentPath === "/techadmin" ||
+        (currentPath.startsWith("/techadmin") &&
+          !currentPath.startsWith("/techadmin/finance"))
+      )
     }
     return currentPath === item.href || currentPath.startsWith(`${item.href}/`)
   }

@@ -1,0 +1,231 @@
+export interface MonthRevenueRecord {
+  id: string
+  month: string
+  shortMonth: string
+  year: number
+  totalRevenueNum: number
+  totalRevenue: string
+  barLabel: string
+  companiesPaid: number
+  refundAmount: string
+  netRevenue: string
+  basicRevenue: string
+  proRevenue: string
+  enterpriseRevenue: string
+}
+
+export interface PlanContribution {
+  name: string
+  value: number
+  revenue: string
+  percentage: string
+  color: string
+  [key: string]: any
+}
+
+export const PLAN_CONTRIBUTIONS: PlanContribution[] = [
+  {
+    name: "Basic",
+    value: 45.6,
+    revenue: "₹ 23,62,000",
+    percentage: "45.6%",
+    color: "#4338CA",
+  },
+  {
+    name: "Professional",
+    value: 32.5,
+    revenue: "₹ 16,87,000",
+    percentage: "32.5%",
+    color: "#10B981",
+  },
+  {
+    name: "Enterprise",
+    value: 21.9,
+    revenue: "₹ 11,31,000",
+    percentage: "21.9%",
+    color: "#F97316",
+  },
+]
+
+export const MONTHLY_REVENUE_RECORDS: MonthRevenueRecord[] = [
+  {
+    id: "rev-2026-01",
+    month: "Jan 2026",
+    shortMonth: "Jan",
+    year: 2026,
+    totalRevenueNum: 32,
+    totalRevenue: "₹ 32,00,000",
+    barLabel: "₹ 32L",
+    companiesPaid: 36,
+    refundAmount: "₹ 1,20,000",
+    netRevenue: "₹ 30,80,000",
+    basicRevenue: "₹ 14,50,000",
+    proRevenue: "₹ 10,50,000",
+    enterpriseRevenue: "₹ 7,00,000",
+  },
+  {
+    id: "rev-2026-02",
+    month: "Feb 2026",
+    shortMonth: "Feb",
+    year: 2026,
+    totalRevenueNum: 34,
+    totalRevenue: "₹ 34,00,000",
+    barLabel: "₹ 34L",
+    companiesPaid: 38,
+    refundAmount: "₹ 1,28,000",
+    netRevenue: "₹ 32,72,000",
+    basicRevenue: "₹ 15,20,000",
+    proRevenue: "₹ 11,10,000",
+    enterpriseRevenue: "₹ 7,70,000",
+  },
+  {
+    id: "rev-2026-03",
+    month: "Mar 2026",
+    shortMonth: "Mar",
+    year: 2026,
+    totalRevenueNum: 36,
+    totalRevenue: "₹ 36,00,000",
+    barLabel: "₹ 36L",
+    companiesPaid: 41,
+    refundAmount: "₹ 1,32,000",
+    netRevenue: "₹ 34,68,000",
+    basicRevenue: "₹ 16,10,000",
+    proRevenue: "₹ 11,90,000",
+    enterpriseRevenue: "₹ 8,00,000",
+  },
+  {
+    id: "rev-2026-04",
+    month: "Apr 2026",
+    shortMonth: "Apr",
+    year: 2026,
+    totalRevenueNum: 40,
+    totalRevenue: "₹ 40,00,000",
+    barLabel: "₹ 40L",
+    companiesPaid: 44,
+    refundAmount: "₹ 1,60,000",
+    netRevenue: "₹ 38,40,000",
+    basicRevenue: "₹ 18,00,000",
+    proRevenue: "₹ 13,20,000",
+    enterpriseRevenue: "₹ 8,80,000",
+  },
+  {
+    id: "rev-2026-05",
+    month: "May 2026",
+    shortMonth: "May",
+    year: 2026,
+    totalRevenueNum: 42,
+    totalRevenue: "₹ 42,00,000",
+    barLabel: "₹ 42L",
+    companiesPaid: 47,
+    refundAmount: "₹ 1,66,000",
+    netRevenue: "₹ 40,34,000",
+    basicRevenue: "₹ 19,00,000",
+    proRevenue: "₹ 13,80,000",
+    enterpriseRevenue: "₹ 9,20,000",
+  },
+  {
+    id: "rev-2026-06",
+    month: "Jun 2026",
+    shortMonth: "Jun",
+    year: 2026,
+    totalRevenueNum: 45,
+    totalRevenue: "₹ 45,00,000",
+    barLabel: "₹ 45L",
+    companiesPaid: 49,
+    refundAmount: "₹ 1,80,000",
+    netRevenue: "₹ 43,20,000",
+    basicRevenue: "₹ 20,40,000",
+    proRevenue: "₹ 14,80,000",
+    enterpriseRevenue: "₹ 9,80,000",
+  },
+  {
+    id: "rev-2026-07",
+    month: "Jul 2026",
+    shortMonth: "Jul",
+    year: 2026,
+    totalRevenueNum: 48,
+    totalRevenue: "₹ 48,00,000",
+    barLabel: "₹ 48L",
+    companiesPaid: 52,
+    refundAmount: "₹ 1,92,000",
+    netRevenue: "₹ 46,08,000",
+    basicRevenue: "₹ 21,80,000",
+    proRevenue: "₹ 15,60,000",
+    enterpriseRevenue: "₹ 10,60,000",
+  },
+  {
+    id: "rev-2026-08",
+    month: "Aug 2026",
+    shortMonth: "Aug",
+    year: 2026,
+    totalRevenueNum: 52,
+    totalRevenue: "₹ 52,00,000",
+    barLabel: "₹ 52L",
+    companiesPaid: 54,
+    refundAmount: "₹ 2,00,000",
+    netRevenue: "₹ 50,00,000",
+    basicRevenue: "₹ 23,80,000",
+    proRevenue: "₹ 16,90,000",
+    enterpriseRevenue: "₹ 11,30,000",
+  },
+  {
+    id: "rev-2026-09",
+    month: "Sep 2026",
+    shortMonth: "Sep",
+    year: 2026,
+    totalRevenueNum: 54,
+    totalRevenue: "₹ 54,00,000",
+    barLabel: "₹ 54L",
+    companiesPaid: 55,
+    refundAmount: "₹ 2,04,000",
+    netRevenue: "₹ 51,96,000",
+    basicRevenue: "₹ 24,60,000",
+    proRevenue: "₹ 17,60,000",
+    enterpriseRevenue: "₹ 11,80,000",
+  },
+  {
+    id: "rev-2026-10",
+    month: "Oct 2026",
+    shortMonth: "Oct",
+    year: 2026,
+    totalRevenueNum: 58,
+    totalRevenue: "₹ 58,00,000",
+    barLabel: "₹ 58L",
+    companiesPaid: 56,
+    refundAmount: "₹ 2,08,000",
+    netRevenue: "₹ 55,92,000",
+    basicRevenue: "₹ 26,40,000",
+    proRevenue: "₹ 18,90,000",
+    enterpriseRevenue: "₹ 12,70,000",
+  },
+  {
+    id: "rev-2026-11",
+    month: "Nov 2026",
+    shortMonth: "Nov",
+    year: 2026,
+    totalRevenueNum: 62,
+    totalRevenue: "₹ 62,00,000",
+    barLabel: "₹ 62L",
+    companiesPaid: 58,
+    refundAmount: "₹ 2,12,000",
+    netRevenue: "₹ 59,88,000",
+    basicRevenue: "₹ 28,20,000",
+    proRevenue: "₹ 20,20,000",
+    enterpriseRevenue: "₹ 13,60,000",
+  },
+  {
+    id: "rev-2026-12",
+    month: "Dec 2026",
+    shortMonth: "Dec",
+    year: 2026,
+    totalRevenueNum: 68,
+    totalRevenue: "₹ 68,00,000",
+    barLabel: "₹ 68L",
+    companiesPaid: 64,
+    refundAmount: "₹ 2,18,000",
+    netRevenue: "₹ 65,82,000",
+    basicRevenue: "₹ 31,00,000",
+    proRevenue: "₹ 22,10,000",
+    enterpriseRevenue: "₹ 14,90,000",
+  },
+]
