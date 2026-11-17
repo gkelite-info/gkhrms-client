@@ -2,15 +2,20 @@
 
 import React from "react"
 import FinanceContainer from "../../employee/finance/components/FinanceContainer"
-import { EMPLOYEE_TABS } from "../../employee/finance/components/FinanceTabs"
+import { TabItem } from "../../employee/finance/components/FinanceTabs"
+
+const FINANCE_TABS: TabItem[] = [
+  { id: "summary", label: "Summary" },
+  { id: "mypay", label: "My Pay" },
+  { id: "manage_tax", label: "Manage TAX" },
+]
 
 export default function ManagerFinancePage() {
   return (
     <FinanceContainer
       basePath="/manager/finance"
       variant="employee"
-      customTabs={EMPLOYEE_TABS}
+      customTabs={FINANCE_TABS}
     />
   )
 }
-

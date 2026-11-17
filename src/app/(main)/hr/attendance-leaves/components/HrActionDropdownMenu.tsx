@@ -6,6 +6,7 @@ interface HrActionDropdownMenuProps {
   onApplyLeave: () => void
   onRequestWfh: () => void
   onApplyException: () => void
+  align?: "left" | "right" | "auto"
 }
 
 const actions = [
@@ -29,12 +30,32 @@ const actions = [
   },
 ]
 
-export default function HrActionDropdownMenu(props: HrActionDropdownMenuProps) {
+export default function HrActionDropdownMenu({
+  onApplyLeave,
+  onRequestWfh,
+  onApplyException,
+  align = "auto",
+}: HrActionDropdownMenuProps) {
+  const handlers = {
+    onApplyLeave,
+    onRequestWfh,
+    onApplyException,
+  }
+
+  const alignmentClass =
+    align === "left"
+      ? "left-0"
+      : align === "right"
+      ? "right-0"
+      : "left-0 sm:left-auto sm:right-0"
+
   return (
-    <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+    <div
+      className={`absolute ${alignmentClass} mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 select-none`}
+    >
       {actions.map((act) => {
         const Icon = act.icon
-        const onClickHandler = props[act.handlerKey]
+        const onClickHandler = handlers[act.handlerKey]
         return (
           <button
             key={act.label}

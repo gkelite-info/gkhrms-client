@@ -1,6 +1,6 @@
 "use client"
 
-import { UsersThree, User, ChartLineUp } from "phosphor-react"
+import { UsersThree, User, ChartLineUp, CurrencyCircleDollar } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
 } from "../reusableComponents/ReusableSidebar"
@@ -8,6 +8,11 @@ import ReusableSidebar, {
 export const teamLeadNavItems: ReusableSidebarItem[] = [
   { label: "Attendance", href: "/teamlead/attendance", icon: UsersThree },
   { label: "Performance", href: "/teamlead/performance", icon: ChartLineUp },
+  {
+    label: "Finance & Payroll",
+    href: "/teamlead/finance",
+    icon: CurrencyCircleDollar,
+  },
   { label: "Profile", href: "/teamlead/profile", icon: User },
 ]
 
@@ -18,6 +23,7 @@ export default function TeamLeadSidebar() {
   ): boolean => {
     const isOtherSubRoute = [
       "/teamlead/performance",
+      "/teamlead/finance",
       "/teamlead/profile",
     ].some((route) => currentPath === route || currentPath.startsWith(`${route}/`))
 
