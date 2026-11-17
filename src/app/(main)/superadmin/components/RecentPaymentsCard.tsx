@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { CreditCard } from "lucide-react"
 
 interface PaymentRow {
@@ -90,12 +89,6 @@ export default function RecentPaymentsCard() {
             Recent Payments
           </h2>
         </div>
-        <Link
-          href="/superadmin/payments"
-          className="text-xs font-semibold text-[#5B50E5] hover:text-[#463cb9] hover:underline"
-        >
-          View All
-        </Link>
       </div>
 
       {/* Table */}

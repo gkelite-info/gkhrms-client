@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { Clock } from "lucide-react"
 
 interface ExpiringItem {
@@ -43,12 +42,6 @@ export default function ExpiringSoonCard() {
             Expiring Soon
           </h2>
         </div>
-        <Link
-          href="/superadmin/subscriptions"
-          className="text-xs font-semibold text-[#5B50E5] hover:text-[#463cb9] hover:underline"
-        >
-          View All
-        </Link>
       </div>
 
       {/* Table */}

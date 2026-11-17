@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { History, Building2, ArrowUp, DollarSign, UserPlus } from "lucide-react"
 
 interface ActivityItem {
@@ -67,12 +66,6 @@ export default function PlatformActivityCard() {
             Platform Activity
           </h2>
         </div>
-        <Link
-          href="/superadmin/audit-logs"
-          className="text-xs font-semibold text-[#5B50E5] hover:text-[#463cb9] hover:underline"
-        >
-          View All
-        </Link>
       </div>
 
       {/* Activity List */}

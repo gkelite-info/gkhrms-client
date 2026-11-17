@@ -13,11 +13,10 @@ export interface FinanceTabsProps {
   variant?: "employee" | "hr"
 }
 
-const EMPLOYEE_TABS: TabItem[] = [
+export const EMPLOYEE_TABS: TabItem[] = [
   { id: "summary", label: "Summary" },
   { id: "mypay", label: "My Pay" },
   { id: "manage_tax", label: "Manage TAX" },
-  { id: "org_salary_overview", label: "Org Salary Overview" },
 ]
 
 const HR_TABS: TabItem[] = [
@@ -37,9 +36,9 @@ export default function FinanceTabs({
   const displayTabs = tabs && tabs.length > 0 ? tabs : defaultList
 
   return (
-    <div className="w-full bg-white rounded-2xl border border-slate-100/80 shadow-2xs p-1.5">
+    <div className="w-full bg-white rounded-2xl border border-slate-100/80 shadow-2xs p-1.5 overflow-x-auto scrollbar-hide">
       <div
-        className="grid gap-1.5 sm:gap-2"
+        className="grid gap-1.5 sm:gap-2 min-w-full"
         style={{
           gridTemplateColumns: `repeat(${displayTabs.length}, minmax(0, 1fr))`,
         }}

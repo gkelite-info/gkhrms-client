@@ -1,16 +1,20 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import React, { useState, useEffect, useMemo } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { Download } from "lucide-react"
 import { ReusableCalendar } from "@/../reusableComponents"
 import FinanceIncomeTaxView from "./FinanceIncomeTaxView"
 import { downloadPayslipPdf } from "../utils/downloadPdf"
 import { DEFAULT_PAYSLIP_DATA } from "./EmployeePayslipDocument"
+import { HrPayrollEmployee } from "./hrPayrollData"
+import AddPayDetailsModal, { AddPayDetailsData } from "./AddPayDetailsModal"
 
 export interface FinanceMyPayViewProps {
   onViewPayslip: () => void
   basePath?: string
+  employee?: HrPayrollEmployee
+  isHrMode?: boolean
 }
 
 interface PaySlipCardData {
@@ -41,65 +45,189 @@ const PAY_SLIP_ITEMS: PaySlipCardData[] = [
   },
 ]
 
+function parseAmount(raw: string): number {
+  const cleaned = raw.replace(/,/g, "").trim()
+  const parsed = Number(cleaned)
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
+}
+
+function formatInr(amount: number): string {
+  return `INR ${amount.toLocaleString("en-IN")}`
+}
+
 export default function FinanceMyPayView({
   onViewPayslip,
   basePath = "/employee/finance",
+  employee,
+  isHrMode = false,
 }: FinanceMyPayViewProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const rawSubTab = searchParams.get("subtab")
+  const modalParam = searchParams.get("modal")?.toLowerCase()
+  const actionParam = searchParams.get("action")?.toLowerCase()
+  const addPayParam = (
+    searchParams.get("addpay") || searchParams.get("addPay")
+  )?.toLowerCase()
+
+  const isAddPayModalOpen =
+    isHrMode &&
+    (modalParam === "add-pay" ||
+      modalParam === "addpay" ||
+      actionParam === "add-pay" ||
+      actionParam === "addpay" ||
+      addPayParam === "true")
+
+  const [savedPayByEmployee, setSavedPayByEmployee] = useState<
+    Record<string, AddPayDetailsData>
+  >({})
 
   const [subTab, setSubTab] = useState<"salary_payslips" | "income_tax">(
-    () => (rawSubTab?.toLowerCase() === "income_tax" || rawSubTab?.toLowerCase() === "incometax" ? "income_tax" : "salary_payslips")
+    () =>
+      rawSubTab?.toLowerCase() === "income_tax" ||
+      rawSubTab?.toLowerCase() === "incometax"
+        ? "income_tax"
+        : "salary_payslips"
   )
 
   useEffect(() => {
-    if (rawSubTab?.toLowerCase() === "income_tax" || rawSubTab?.toLowerCase() === "incometax") {
+    if (
+      rawSubTab?.toLowerCase() === "income_tax" ||
+      rawSubTab?.toLowerCase() === "incometax"
+    ) {
       setSubTab("income_tax")
     } else {
       setSubTab("salary_payslips")
     }
   }, [rawSubTab])
 
+  const targetPathname = pathname || basePath.split("?")[0]
+
   const handleSelectSubTab = (tab: "salary_payslips" | "income_tax") => {
     setSubTab(tab)
-    const sep = basePath.includes("?") ? "&" : "?"
-    router.push(`${basePath}${sep}tab=mypay&subtab=${tab}`)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", "mypay")
+    params.set("subtab", tab)
+    params.delete("modal")
+    params.delete("action")
+    params.delete("addpay")
+    params.delete("addPay")
+    router.push(`${targetPathname}?${params.toString()}`, { scroll: false })
   }
+
+  const handleOpenAddPay = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", "mypay")
+    params.set("modal", "add-pay")
+    router.push(`${targetPathname}?${params.toString()}`, { scroll: false })
+  }
+
+  const handleCloseAddPay = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("modal")
+    params.delete("action")
+    params.delete("addpay")
+    params.delete("addPay")
+    const query = params.toString()
+    router.push(query ? `${targetPathname}?${query}` : targetPathname, {
+      scroll: false,
+    })
+  }
+
+  const employeeKey = employee?.employeeId || "default"
+  const savedPayData = savedPayByEmployee[employeeKey] || null
+
+  const handleSavePayDetails = (data: AddPayDetailsData) => {
+    setSavedPayByEmployee((prev) => ({
+      ...prev,
+      [employeeKey]: data,
+    }))
+  }
+
+  const salarySummary = useMemo(() => {
+    if (!savedPayData) {
+      return {
+        compensation: "INR 8,50,000/Annum",
+        regularSalary: "INR 8,50,000",
+        other: "INR 5",
+        bonus: "INR 50,00,000",
+        total: "INR 9,00,005",
+      }
+    }
+    const regularNum =
+      parseAmount(savedPayData.fixedPay) || parseAmount(savedPayData.basicSalary)
+    const totalBonusNum = savedPayData.bonuses.reduce(
+      (sum, item) => sum + parseAmount(item.bonusAmount),
+      0
+    )
+    const otherNum =
+      parseAmount(savedPayData.hra) +
+      parseAmount(savedPayData.telephoneAllowance) +
+      parseAmount(savedPayData.transportationAllowance) +
+      parseAmount(savedPayData.otherAllowance)
+    const ctcNum =
+      parseAmount(savedPayData.totalCtc) ||
+      regularNum + otherNum + totalBonusNum
+    const totalNum = regularNum + otherNum + totalBonusNum
+
+    return {
+      compensation: `${formatInr(ctcNum)}/Annum`,
+      regularSalary: formatInr(regularNum),
+      other: formatInr(otherNum),
+      bonus: formatInr(totalBonusNum),
+      total: formatInr(totalNum),
+    }
+  }, [savedPayData])
 
   const handleDownloadCard = (cardTitle: string, e: React.MouseEvent) => {
     e.stopPropagation()
     const sanitizedTitle = cardTitle.replace(/\s+/g, "_")
+    const empSlug = (employee?.name || "Alexander").replace(/\s+/g, "_")
     downloadPayslipPdf(
       DEFAULT_PAYSLIP_DATA,
-      `Payslip_Alexander_${sanitizedTitle}.pdf`
+      `Payslip_${empSlug}_${sanitizedTitle}.pdf`
     )
   }
 
   return (
     <div className="w-full flex flex-col">
-      <div className="shrink-0 flex items-center gap-2 select-none mb-3 sm:mb-3.5">
-        <button
-          type="button"
-          onClick={() => handleSelectSubTab("salary_payslips")}
-          className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${subTab === "salary_payslips"
-              ? "bg-[#D4D0FA] text-[#312E81] shadow-2xs"
-              : "bg-white text-slate-700 hover:bg-slate-50"
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-2 select-none mb-3 sm:mb-3.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => handleSelectSubTab("salary_payslips")}
+            className={`px-3 sm:px-4 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              subTab === "salary_payslips"
+                ? "bg-[#D4D0FA] text-[#312E81] shadow-2xs"
+                : "bg-white text-slate-700 hover:bg-slate-50"
             }`}
-        >
-          My Salary & Pay Slips
-        </button>
+          >
+            {isHrMode ? "Salary & Pay Slips" : "My Salary & Pay Slips"}
+          </button>
 
-        <button
-          type="button"
-          onClick={() => handleSelectSubTab("income_tax")}
-          className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${subTab === "income_tax"
-              ? "bg-[#D4D0FA] text-[#312E81] shadow-2xs"
-              : "bg-white text-slate-700 hover:bg-slate-50"
+          <button
+            type="button"
+            onClick={() => handleSelectSubTab("income_tax")}
+            className={`px-3 sm:px-4 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              subTab === "income_tax"
+                ? "bg-[#D4D0FA] text-[#312E81] shadow-2xs"
+                : "bg-white text-slate-700 hover:bg-slate-50"
             }`}
-        >
-          Income TAX
-        </button>
+          >
+            Income TAX
+          </button>
+        </div>
+
+        {isHrMode && (
+          <button
+            type="button"
+            onClick={handleOpenAddPay}
+            className="ml-auto px-3.5 sm:px-4 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap bg-[#7D73E3] hover:bg-[#6A5FD8] text-white shadow-2xs transition-all cursor-pointer"
+          >
+            Add Pay
+          </button>
+        )}
       </div>
 
       <div className="w-full flex flex-col pb-4">
@@ -109,7 +237,7 @@ export default function FinanceMyPayView({
         <div className="w-full flex flex-col gap-3.5 sm:gap-4">
           <div className="w-full flex flex-col gap-2">
             <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
-              My Salary
+              {isHrMode ? "Salary" : "My Salary"}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
@@ -118,7 +246,7 @@ export default function FinanceMyPayView({
                   Current Compensation
                 </span>
                 <span className="text-sm sm:text-base font-bold text-slate-900 mt-0.5">
-                  INR 8,50,000/Annum
+                  {salarySummary.compensation}
                 </span>
               </div>
 
@@ -163,7 +291,7 @@ export default function FinanceMyPayView({
                           Regular Salary
                         </div>
                         <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
-                          INR 8,50,000
+                          {salarySummary.regularSalary}
                         </div>
                       </div>
 
@@ -172,7 +300,7 @@ export default function FinanceMyPayView({
                           Other
                         </div>
                         <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
-                          INR 5
+                          {salarySummary.other}
                         </div>
                       </div>
 
@@ -181,7 +309,7 @@ export default function FinanceMyPayView({
                           Bonus
                         </div>
                         <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
-                          INR 50,00,000
+                          {salarySummary.bonus}
                         </div>
                       </div>
 
@@ -190,7 +318,7 @@ export default function FinanceMyPayView({
                           Total
                         </div>
                         <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
-                          INR 9,00,005
+                          {salarySummary.total}
                         </div>
                       </div>
                     </div>
@@ -220,7 +348,7 @@ export default function FinanceMyPayView({
                     key={idx}
                     className="bg-white rounded-xl p-3 sm:p-3.5 border border-slate-100 shadow-2xs flex flex-col gap-2"
                   >
-                    <div className="flex items-center justify-between border-b border-slate-100/90 pb-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100/90 pb-2">
                       <button
                         type="button"
                         onClick={onViewPayslip}
@@ -229,7 +357,7 @@ export default function FinanceMyPayView({
                         {card.title}
                       </button>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                         <span className="text-xs text-slate-700">
                           Status -{" "}
                           <span className="text-emerald-600 font-semibold">
@@ -240,7 +368,7 @@ export default function FinanceMyPayView({
                         <button
                           type="button"
                           onClick={(e) => handleDownloadCard(card.title, e)}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-[#5B50EC] hover:text-[#4338CA] transition-colors cursor-pointer ml-1"
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-[#5B50EC] hover:text-[#4338CA] transition-colors cursor-pointer sm:ml-1"
                         >
                           <span>Download</span>
                           <Download className="w-3.5 h-3.5 stroke-[2]" />
@@ -248,39 +376,39 @@ export default function FinanceMyPayView({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-xs">
-                      <div className="flex items-center">
-                        <span className="w-20 shrink-0 font-semibold text-slate-800">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs">
+                      <div className="flex items-center justify-between sm:justify-start">
+                        <span className="w-24 sm:w-20 shrink-0 font-semibold text-slate-800">
                           Pay Date :
                         </span>
-                        <span className="text-slate-600 font-normal ml-2">
+                        <span className="text-slate-600 font-normal sm:ml-2">
                           {card.payDate}
                         </span>
                       </div>
 
-                      <div className="flex items-center sm:justify-end">
+                      <div className="flex items-center justify-between sm:justify-end">
                         <span className="w-24 shrink-0 font-semibold text-slate-800">
                           Deductions :
                         </span>
-                        <span className="text-slate-600 font-normal ml-2">
+                        <span className="text-slate-600 font-normal sm:ml-2">
                           {card.deductions}
                         </span>
                       </div>
 
-                      <div className="flex items-center">
-                        <span className="w-20 shrink-0 font-semibold text-slate-800">
+                      <div className="flex items-center justify-between sm:justify-start">
+                        <span className="w-24 sm:w-20 shrink-0 font-semibold text-slate-800">
                           Gross Pay :
                         </span>
-                        <span className="text-slate-600 font-normal ml-2">
+                        <span className="text-slate-600 font-normal sm:ml-2">
                           {card.grossPay}
                         </span>
                       </div>
 
-                      <div className="flex items-center sm:justify-end">
+                      <div className="flex items-center justify-between sm:justify-end">
                         <span className="w-24 shrink-0 font-semibold text-slate-800">
                           Net Pay :
                         </span>
-                        <span className="text-slate-600 font-normal ml-2">
+                        <span className="text-slate-600 font-normal sm:ml-2">
                           {card.netPay}
                         </span>
                       </div>
@@ -293,6 +421,16 @@ export default function FinanceMyPayView({
         </div>
       )}
       </div>
+
+      {isHrMode && (
+        <AddPayDetailsModal
+          isOpen={isAddPayModalOpen}
+          onClose={handleCloseAddPay}
+          employee={employee}
+          initialData={savedPayData}
+          onSave={handleSavePayDetails}
+        />
+      )}
     </div>
   )
 }

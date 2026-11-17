@@ -16,14 +16,14 @@ interface DetailRowProps {
 function DetailRow({
   label,
   value,
-  labelWidthClass = "w-[170px] sm:w-[210px]",
+  labelWidthClass = "sm:w-[180px] md:w-[210px]",
 }: DetailRowProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-baseline text-xs sm:text-sm gap-0.5 sm:gap-0">
-      <span className={`${labelWidthClass} shrink-0 font-semibold text-slate-800`}>
+    <div className="flex flex-col sm:flex-row sm:items-baseline text-xs sm:text-sm gap-0.5 sm:gap-0 min-w-0">
+      <span className={`w-full sm:w-auto ${labelWidthClass} shrink-0 font-semibold text-slate-800`}>
         {label} :
       </span>
-      <span className="text-slate-500 font-normal break-words flex-1 sm:pl-2">
+      <span className="text-slate-500 font-normal break-words min-w-0 flex-1 sm:pl-2">
         {value}
       </span>
     </div>
@@ -55,48 +55,48 @@ export default function FinanceSummaryView({
   return (
     <div className="w-full flex flex-col gap-4 sm:gap-5">
       <div className="w-full bg-white rounded-xl shadow-xs p-4 sm:p-5 md:p-6 border border-slate-100/80">
-        <div className="flex flex-col sm:flex-row sm:flex-wrap lg:flex-nowrap items-start sm:items-center justify-between gap-4 lg:gap-6">
-          <div className="shrink-0">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-row lg:items-center lg:justify-between gap-3.5 sm:gap-4 lg:gap-6">
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1 shrink-0">
             <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
               Payroll Summary
             </h2>
           </div>
 
-          <div className="flex flex-col shrink-0">
-            <span className="text-xs sm:text-sm text-slate-500 whitespace-nowrap">
+          <div className="flex flex-col min-w-0">
+            <span className="text-xs sm:text-sm text-slate-500">
               Last processed cycle
             </span>
-            <span className="text-xs sm:text-sm md:text-base font-semibold text-slate-900 mt-1 whitespace-nowrap">
+            <span className="text-xs sm:text-sm md:text-base font-semibold text-slate-900 mt-1 sm:whitespace-nowrap">
               JUl 2025 (26 Jun–25Jul)
             </span>
           </div>
 
-          <div className="flex flex-col shrink-0">
-            <span className="text-xs sm:text-sm text-slate-500 whitespace-nowrap">
+          <div className="flex flex-col min-w-0">
+            <span className="text-xs sm:text-sm text-slate-500">
               Working Days
             </span>
-            <span className="text-xs sm:text-sm md:text-base font-semibold text-slate-900 mt-1 whitespace-nowrap">
+            <span className="text-xs sm:text-sm md:text-base font-semibold text-slate-900 mt-1">
               30
             </span>
           </div>
 
-          <div className="flex flex-col shrink-0">
-            <span className="text-xs sm:text-sm text-slate-500 whitespace-nowrap">
+          <div className="flex flex-col min-w-0">
+            <span className="text-xs sm:text-sm text-slate-500">
               Loss of Day
             </span>
-            <span className="text-xs sm:text-sm md:text-base font-semibold text-slate-900 mt-1 whitespace-nowrap">
+            <span className="text-xs sm:text-sm md:text-base font-semibold text-slate-900 mt-1">
               0
             </span>
           </div>
 
-          <div className="flex flex-col shrink-0">
-            <span className="text-xs sm:text-sm text-slate-500 whitespace-nowrap">
+          <div className="flex flex-col min-w-0">
+            <span className="text-xs sm:text-sm text-slate-500">
               Payslip
             </span>
             <button
               type="button"
               onClick={onViewPayslip}
-              className="text-xs sm:text-sm md:text-base font-semibold text-[#5B50EC] underline hover:text-[#4338CA] transition-colors cursor-pointer text-left mt-1 whitespace-nowrap"
+              className="text-xs sm:text-sm md:text-base font-semibold text-[#5B50EC] underline hover:text-[#4338CA] transition-colors cursor-pointer text-left mt-1 whitespace-nowrap w-fit"
             >
               View Payslip
             </button>

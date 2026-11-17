@@ -174,58 +174,58 @@ export default function EmployeePayslipDocument({
       </div>
 
       <div className="my-5 bg-[#FBFBFC] rounded-lg border border-slate-200/90 p-3.5 sm:p-4 text-xs sm:text-sm">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-2">
-          <div className="flex items-center justify-between sm:justify-start gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+          <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
             <span className="w-24 shrink-0 text-slate-500">Bank Name</span>
-            <span className="font-bold text-slate-900">
+            <span className="font-bold text-slate-900 truncate">
               {data.bankAndStatutory.bankName}
             </span>
           </div>
-          <div className="flex items-center justify-between sm:justify-start gap-3">
+          <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
             <span className="w-24 shrink-0 text-slate-500">Bank A/c</span>
-            <span className="font-bold text-slate-900">
+            <span className="font-bold text-slate-900 break-all sm:break-normal">
               {data.bankAndStatutory.bankAccount}
             </span>
           </div>
-          <div className="flex items-center justify-between sm:justify-start gap-3">
+          <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
             <span className="w-24 shrink-0 text-slate-500">Bank IFSC</span>
-            <span className="font-bold text-slate-900">
+            <span className="font-bold text-slate-900 break-all sm:break-normal">
               {data.bankAndStatutory.bankIfsc}
             </span>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-start gap-3">
+          <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
             <span className="w-24 shrink-0 text-slate-500">PAN #</span>
-            <span className="font-bold text-slate-900">
+            <span className="font-bold text-slate-900 break-all sm:break-normal">
               {data.bankAndStatutory.pan}
             </span>
           </div>
-          <div className="flex items-center justify-between sm:justify-start gap-3">
+          <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
             <span className="w-24 shrink-0 text-slate-500">AADHAAR #</span>
-            <span className="font-bold text-slate-900">
+            <span className="font-bold text-slate-900 break-all sm:break-normal">
               {data.bankAndStatutory.aadhaar}
             </span>
           </div>
-          <div className="flex items-center justify-between sm:justify-start gap-3">
+          <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
             <span className="w-24 shrink-0 text-slate-500">Tax Regime</span>
             <span className="font-bold text-slate-900">
               {data.bankAndStatutory.taxRegime}
             </span>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-start gap-3">
+          <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
             <span className="w-24 shrink-0 text-slate-500">PF A/c #</span>
-            <span className="font-bold text-slate-900">
+            <span className="font-bold text-slate-900 break-all sm:break-normal">
               {data.bankAndStatutory.pfAccount}
             </span>
           </div>
-          <div className="flex items-center justify-between sm:justify-start gap-3">
+          <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
             <span className="w-24 shrink-0 text-slate-500">PF UAN #</span>
-            <span className="font-bold text-slate-900">
+            <span className="font-bold text-slate-900 break-all sm:break-normal">
               {data.bankAndStatutory.pfUan}
             </span>
           </div>
-          <div className="hidden sm:block" />
+          <div className="hidden lg:block" />
         </div>
       </div>
 

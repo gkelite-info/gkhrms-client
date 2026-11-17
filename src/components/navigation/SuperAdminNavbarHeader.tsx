@@ -16,7 +16,7 @@ export default function SuperAdminNavbarHeader() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search companies, admins, payments, etc..."
+            placeholder="Search companies..."
             className="w-full h-10 pl-11 pr-4 bg-[#EEF0FD] hover:bg-[#E8EAFD] focus:bg-white text-xs text-slate-800 placeholder-slate-400 font-medium rounded-full border border-transparent focus:border-[#5B50E5]/30 focus:outline-none focus:ring-2 focus:ring-[#5B50E5]/15 transition-all"
           />
         </div>
