@@ -62,6 +62,7 @@ export const roleBasedNav: Record<
   ],
   Manager: [
     { label: "Attendance", href: "/manager/attendance", icon: UsersThree },
+    { label: "My Team", href: "/manager/my-team", icon: UsersThree },
     {
       label: "Finance & Payroll",
       href: "/manager/finance",
@@ -136,6 +137,11 @@ export const roleBasedNav: Record<
   ],
   ProductManager: [
     { label: "Attendance", href: "/productmanager/attendance", icon: UsersThree },
+    {
+      label: "Finance & Payroll",
+      href: "/productmanager/finance",
+      icon: CurrencyCircleDollar,
+    },
   ],
   Finance: [
     { label: "Finance", href: "/financemanager/finance", icon: CurrencyCircleDollar },
@@ -165,5 +171,10 @@ export const roleBasedNav: Record<
   ],
   AssistantManager: [
     { label: "Attendance", href: "/asstmanager/attendance", icon: UsersThree },
+    {
+      label: "Finance & Payroll",
+      href: "/asstmanager/finance",
+      icon: CurrencyCircleDollar,
+    },
   ],
 }

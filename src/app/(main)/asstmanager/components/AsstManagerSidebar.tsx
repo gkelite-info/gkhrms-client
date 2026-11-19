@@ -1,12 +1,17 @@
 "use client"
 
-import { UsersThree } from "phosphor-react"
+import { UsersThree, CurrencyCircleDollar } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
 } from "../../../../../reusableComponents/ReusableSidebar"
 
 export const asstManagerNavItems: ReusableSidebarItem[] = [
   { label: "Attendance", href: "/asstmanager/attendance", icon: UsersThree },
+  {
+    label: "Finance & Payroll",
+    href: "/asstmanager/finance",
+    icon: CurrencyCircleDollar,
+  },
 ]
 
 export default function AsstManagerSidebar() {
@@ -14,12 +19,23 @@ export default function AsstManagerSidebar() {
     item: ReusableSidebarItem,
     currentPath: string
   ): boolean => {
+    const isOtherSubRoute = [
+      "/asstmanager/finance",
+      "/assistantmanager/finance",
+    ].some((route) => currentPath === route || currentPath.startsWith(`${route}/`))
+
     if (item.href === "/asstmanager/attendance") {
       return (
-        currentPath === "/asstmanager" ||
-        currentPath.startsWith("/asstmanager") ||
-        currentPath === "/assistantmanager" ||
-        currentPath.startsWith("/assistantmanager")
+        !isOtherSubRoute &&
+        (currentPath === "/asstmanager" ||
+          currentPath.startsWith("/asstmanager/attendance") ||
+          currentPath.startsWith("/asstmanager/member") ||
+          currentPath.startsWith("/asstmanager/apply-leave") ||
+          currentPath.startsWith("/asstmanager/request-wfh") ||
+          currentPath.startsWith("/asstmanager/requests") ||
+          currentPath.startsWith("/asstmanager/exception-history") ||
+          currentPath === "/assistantmanager" ||
+          currentPath.startsWith("/assistantmanager/attendance"))
       )
     }
     return currentPath === item.href || currentPath.startsWith(`${item.href}/`)
