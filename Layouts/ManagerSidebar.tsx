@@ -7,6 +7,7 @@ import ReusableSidebar, {
 
 export const managerNavItems: ReusableSidebarItem[] = [
   { label: "Attendance", href: "/manager/attendance", icon: UsersThree },
+  { label: "My Team", href: "/manager/my-team", icon: UsersThree },
   {
     label: "Finance & Payroll",
     href: "/manager/finance",
@@ -26,15 +27,23 @@ export default function ManagerSidebar() {
     const isFinance =
       currentPath === "/manager/finance" ||
       currentPath.startsWith("/manager/finance")
+    const isMyTeam =
+      currentPath === "/manager/my-team" ||
+      currentPath.startsWith("/manager/my-team")
 
     if (item.href === "/manager/finance") {
       return isFinance
+    }
+
+    if (item.href === "/manager/my-team") {
+      return isMyTeam
     }
 
     if (item.href === "/manager/attendance") {
       return (
         !isProfile &&
         !isFinance &&
+        !isMyTeam &&
         (currentPath === "/manager" ||
           currentPath.startsWith("/manager/attendance") ||
           currentPath.startsWith("/manager/member") ||

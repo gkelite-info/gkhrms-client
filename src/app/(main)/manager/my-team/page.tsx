@@ -1,7 +1,7 @@
 "use client"
 
-import MyTeamPage from "../../employee/myteam/page"
+import { TeamsManagementView } from "../../../../../reusableComponents/teams-management"
 
-export default function ManagerMyTeam() {
-  return <MyTeamPage />
+export default function ManagerMyTeamPage() {
+  return <TeamsManagementView currentRole="manager" />
 }
