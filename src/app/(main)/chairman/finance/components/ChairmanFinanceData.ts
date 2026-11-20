@@ -22,6 +22,7 @@ export interface ExpenseCategorySlice {
   percentage: number
   amount: string
   color: string
+  [key: string]: string | number | boolean | undefined
 }
 
 export interface FinancialActivityItem {
