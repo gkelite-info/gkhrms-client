@@ -12,7 +12,7 @@ export default function ChatAttachmentBubble({
 }: ChatAttachmentBubbleProps) {
   if (attachment.type === "image" && attachment.url) {
     return (
-      <div className="mb-2 overflow-hidden rounded-xl border border-gray-200 shadow-2xs">
+      <div className="mb-2 overflow-hidden rounded-xl border border-gray-200 shadow-2xs max-w-full">
         <img
           src={attachment.url}
           alt={attachment.name}
@@ -23,7 +23,7 @@ export default function ChatAttachmentBubble({
   }
 
   return (
-    <div className="flex items-center gap-2.5 p-2.5 mb-2 rounded-xl bg-white border border-[#D5D2FB] shadow-xs">
+    <div className="flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5 mb-2 rounded-xl bg-white border border-[#D5D2FB] shadow-xs w-full max-w-full min-w-0 overflow-hidden">
       <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
         {attachment.type === "pdf" ? (
           <FilePdf size={20} weight="fill" className="text-rose-500" />
@@ -31,8 +31,8 @@ export default function ChatAttachmentBubble({
           <FileDoc size={20} weight="fill" className="text-blue-500" />
         )}
       </div>
-      <div className="min-w-0 flex-1">
-        <span className="block text-xs font-bold text-gray-900 truncate">
+      <div className="min-w-0 flex-1 overflow-hidden">
+        <span className="block text-xs font-bold text-gray-900 truncate w-full">
           {attachment.name}
         </span>
         <span className="block text-[11px] font-medium text-gray-500">{attachment.size}</span>

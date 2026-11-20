@@ -55,7 +55,7 @@ export default function ChatMessageThread({
   }
 
   return (
-    <div className="flex-1 h-full flex flex-col bg-[#FAF9FF]/40 sm:bg-[#FAF9FF]/60 rounded-3xl border border-gray-100/90 shadow-xs overflow-hidden select-none relative">
+    <div className="flex-1 w-full max-w-full h-full flex flex-col bg-[#FAF9FF]/40 sm:bg-[#FAF9FF]/60 rounded-3xl border border-gray-100/90 shadow-xs overflow-hidden select-none relative min-w-0">
       <div className="px-3.5 sm:px-4 py-3 bg-white border-b border-gray-100 flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           {onBack && (
@@ -82,18 +82,18 @@ export default function ChatMessageThread({
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 sm:p-5 flex flex-col gap-3 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-5 flex flex-col gap-3 custom-scrollbar w-full min-w-0">
         <div className="flex justify-center my-1">
           <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white border border-gray-200/70 text-gray-600 shadow-xs">Today</span>
         </div>
         {conversation.messages.map((msg: ChatMessage) => {
           if (msg.isOutgoing) {
             return (
-              <div key={msg.id} className="flex justify-end gap-2 sm:gap-2.5 items-end max-w-[90%] sm:max-w-[75%] self-end">
-                <div className="flex flex-col items-end min-w-0">
-                  <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl rounded-br-xs bg-[#EEF2FF] text-[#1E1B4B] font-semibold text-xs sm:text-[13px] leading-relaxed shadow-xs border border-[#D5D2FB]">
+              <div key={msg.id} className="flex justify-end gap-2 sm:gap-2.5 items-end w-full min-w-0">
+                <div className="flex-1 flex flex-col items-end min-w-0 w-full">
+                  <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl rounded-br-xs bg-[#EEF2FF] text-[#1E1B4B] font-semibold text-xs sm:text-[13px] leading-relaxed shadow-xs border border-[#D5D2FB] w-full min-w-0 break-words [overflow-wrap:anywhere]">
                     {msg.attachment && <ChatAttachmentBubble attachment={msg.attachment} />}
-                    {msg.text && <span>{msg.text}</span>}
+                    {msg.text && <span className="block break-words">{msg.text}</span>}
                   </div>
                   <div className="flex items-center gap-1 mt-1 text-[11px] font-semibold text-[#5B50EC]">
                     <span>{msg.timestamp}</span>
@@ -108,14 +108,14 @@ export default function ChatMessageThread({
           }
 
           return (
-            <div key={msg.id} className="flex gap-2 sm:gap-2.5 items-end max-w-[90%] sm:max-w-[75%]">
+            <div key={msg.id} className="flex gap-2 sm:gap-2.5 items-end w-full min-w-0">
               <div className="shrink-0 mb-1">
                 <ReusableAvatar src={msg.senderAvatar} name={msg.senderName} size={28} shape="circle" fallbackType="icon" />
               </div>
-              <div className="flex flex-col items-start min-w-0">
-                <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl rounded-bl-xs bg-white text-gray-900 font-semibold text-xs sm:text-[13px] leading-relaxed shadow-xs border border-gray-200/90">
+              <div className="flex-1 flex flex-col min-w-0">
+                <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl rounded-bl-xs bg-white text-gray-900 font-semibold text-xs sm:text-[13px] leading-relaxed shadow-xs border border-gray-200/90 w-full min-w-0 break-words [overflow-wrap:anywhere]">
                   {msg.attachment && <ChatAttachmentBubble attachment={msg.attachment} />}
-                  {msg.text && <span>{msg.text}</span>}
+                  {msg.text && <span className="block break-words">{msg.text}</span>}
                 </div>
                 <span className="text-[11px] text-gray-500 font-medium mt-1 ml-1">{msg.timestamp}</span>
               </div>
@@ -126,7 +126,7 @@ export default function ChatMessageThread({
       </div>
 
       {selectedAttachment && (
-        <div className="px-3 sm:px-4 py-1.5 bg-[#F5F4FE] border-t border-purple-100 flex items-center justify-between text-xs shrink-0">
+        <div className="px-3 sm:px-4 py-1.5 bg-[#F5F4FE] border-t border-purple-100 flex items-center justify-between text-xs shrink-0 w-full min-w-0 overflow-hidden">
           <div className="flex items-center gap-2 truncate">
             <Paperclip size={14} className="text-[#5B50EC] shrink-0" />
             <span className="font-bold text-gray-900 truncate">{selectedAttachment.name}</span>
@@ -138,7 +138,7 @@ export default function ChatMessageThread({
         </div>
       )}
 
-      <form onSubmit={handleSend} className="p-2 sm:p-3 bg-white border-t border-gray-100 flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <form onSubmit={handleSend} className="relative p-2 sm:p-3 bg-white border-t border-gray-100 flex items-center gap-1.5 sm:gap-2 shrink-0 w-full min-w-0">
         <label className="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-[#5B50EC] hover:bg-gray-50 transition-colors cursor-pointer shrink-0 flex items-center justify-center" title="Attach file">
           <Paperclip size={18} weight="bold" />
           <input type="file" onChange={handleFileChange} className="sr-only" />
@@ -150,17 +150,14 @@ export default function ChatMessageThread({
           placeholder="Type a message..."
           className="flex-1 min-w-0 px-3 sm:px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-900 bg-white rounded-xl border border-gray-200 focus:border-[#5B50EC] outline-none transition-all placeholder:text-gray-500 placeholder:font-normal"
         />
-        <div className="relative shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsEmojiOpen(!isEmojiOpen)}
-            className={`p-1.5 sm:p-2 rounded-xl transition-colors cursor-pointer shrink-0 ${isEmojiOpen ? "text-[#5B50EC] bg-[#EEF2FF]" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
-            title="Insert emoji"
-          >
-            <Smiley size={18} weight="bold" />
-          </button>
-          <ChatEmojiPicker isOpen={isEmojiOpen} onClose={() => setIsEmojiOpen(false)} onSelectEmoji={handleSelectEmoji} />
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsEmojiOpen(!isEmojiOpen)}
+          className={`p-1.5 sm:p-2 rounded-xl transition-colors cursor-pointer shrink-0 ${isEmojiOpen ? "text-[#5B50EC] bg-[#EEF2FF]" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
+          title="Insert emoji"
+        >
+          <Smiley size={18} weight="bold" />
+        </button>
         <button
           type="submit"
           disabled={!inputText.trim() && !selectedAttachment}
@@ -169,6 +166,7 @@ export default function ChatMessageThread({
         >
           <PaperPlaneRight size={15} weight="fill" />
         </button>
+        <ChatEmojiPicker isOpen={isEmojiOpen} onClose={() => setIsEmojiOpen(false)} onSelectEmoji={handleSelectEmoji} />
       </form>
     </div>
   )

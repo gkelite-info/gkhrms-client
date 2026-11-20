@@ -1,17 +1,29 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { ChatConversation, ChatMessage, ChatAttachment } from "../types"
 import { MOCK_CHAT_CONVERSATIONS, CURRENT_USER } from "./mockChatData"
 import ChatConversationsList from "./ChatConversationsList"
 import ChatMessageThread from "./ChatMessageThread"
 import ChatDetailsPanel from "./ChatDetailsPanel"
 
-export default function TeamChatView() {
+interface TeamChatViewProps {
+  initialChatId?: string | null
+  onChatChange?: (chatId: string) => void
+}
+
+export default function TeamChatView({ initialChatId, onChatChange }: TeamChatViewProps) {
   const [conversations, setConversations] = useState<ChatConversation[]>(MOCK_CHAT_CONVERSATIONS)
-  const [selectedId, setSelectedId] = useState<string>("c-1")
+  const [selectedId, setSelectedId] = useState<string>(initialChatId || "c-1")
   const [isMobileThreadOpen, setIsMobileThreadOpen] = useState(false)
   const [isMobileDetailsOpen, setIsMobileDetailsOpen] = useState(false)
+
+  useEffect(() => {
+    if (initialChatId && initialChatId !== selectedId) {
+      setSelectedId(initialChatId)
+      setIsMobileThreadOpen(true)
+    }
+  }, [initialChatId, selectedId])
 
   const activeConversation = useMemo(() => {
     return conversations.find((c) => c.id === selectedId) || conversations[0]
@@ -20,6 +32,7 @@ export default function TeamChatView() {
   const handleSelectConversation = (c: ChatConversation) => {
     setSelectedId(c.id)
     setIsMobileThreadOpen(true)
+    onChatChange?.(c.id)
     setConversations((prev) =>
       prev.map((item) => (item.id === c.id ? { ...item, unreadCount: 0 } : item))
     )
@@ -60,8 +73,8 @@ export default function TeamChatView() {
   }
 
   return (
-    <div className="w-full flex items-start gap-4 h-[calc(100vh-210px)] min-h-[580px] max-h-[760px] select-none">
-      <div className={`w-full lg:w-72 xl:w-80 shrink-0 h-full ${isMobileThreadOpen ? "hidden lg:flex" : "flex"}`}>
+    <div className="w-full max-w-full flex items-start gap-4 h-[calc(100vh-210px)] min-h-[580px] max-h-[760px] select-none">
+      <div className={`w-full lg:w-72 xl:w-80 shrink-0 h-full min-w-0 ${isMobileThreadOpen ? "hidden lg:flex" : "flex"}`}>
         <ChatConversationsList
           conversations={conversations}
           selectedId={selectedId}
@@ -70,7 +83,7 @@ export default function TeamChatView() {
         />
       </div>
 
-      <div className={`flex-1 h-full min-w-0 ${!isMobileThreadOpen ? "hidden lg:flex" : "flex"}`}>
+      <div className={`flex-1 w-full max-w-full h-full min-w-0 overflow-hidden ${!isMobileThreadOpen ? "hidden lg:flex" : "flex"}`}>
         <ChatMessageThread
           conversation={activeConversation}
           onSendMessage={handleSendMessage}

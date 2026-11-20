@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { CaretDown, MagnifyingGlass, UsersThree } from "phosphor-react"
+import { MagnifyingGlass, UsersThree } from "phosphor-react"
 import { ChatConversation } from "../types"
 import ReusableAvatar from "../../ReusableAvatar"
 
@@ -37,20 +37,14 @@ export default function ChatConversationsList({
         <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">
           Viewing chats for
         </span>
-        <button
-          type="button"
-          className="w-full px-3 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200/60 flex items-center justify-between text-left transition-colors cursor-pointer"
-        >
-          <div className="flex items-center gap-2 truncate">
-            <div className="w-6 h-6 rounded-lg bg-[#EEF2FF] flex items-center justify-center text-[#5B50EC] shrink-0">
-              <UsersThree size={13} weight="bold" />
-            </div>
-            <span className="text-xs sm:text-sm font-bold text-gray-900 truncate">
-              {selectedTeam}
-            </span>
+        <div className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200/60 flex items-center gap-2 text-left">
+          <div className="w-6 h-6 rounded-lg bg-[#EEF2FF] flex items-center justify-center text-[#5B50EC] shrink-0">
+            <UsersThree size={13} weight="bold" />
           </div>
-          <CaretDown size={14} className="text-gray-400 shrink-0" />
-        </button>
+          <span className="text-xs sm:text-sm font-bold text-gray-900 truncate">
+            {selectedTeam}
+          </span>
+        </div>
       </div>
 
       <div className="pt-3 pb-2">
@@ -66,7 +60,7 @@ export default function ChatConversationsList({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-1 pr-0.5">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col gap-1 pr-0.5">
         {filtered.map((item) => {
           const isSelected = item.id === selectedId
           return (

@@ -1,6 +1,6 @@
 "use client"
 
-import { UsersThree, Plus } from "phosphor-react"
+import { UsersThree, Plus, TreeStructure, ChatTeardropText } from "phosphor-react"
 
 export type TeamsTabKey = "management" | "tree" | "chat"
 
@@ -8,6 +8,7 @@ interface TeamsManagementTabsHeaderProps {
   activeTab: TeamsTabKey
   onTabChange: (tab: TeamsTabKey) => void
   onAddNewTeam?: () => void
+  role?: string
 }
 
 const TAB_CONFIG: Record<TeamsTabKey, { title: string; subtitle: string; label: string }> = {
@@ -28,12 +29,24 @@ const TAB_CONFIG: Record<TeamsTabKey, { title: string; subtitle: string; label: 
   },
 }
 
+const TAB_ICONS = {
+  management: UsersThree,
+  tree: TreeStructure,
+  chat: ChatTeardropText,
+}
+
 export default function TeamsManagementTabsHeader({
   activeTab,
   onTabChange,
   onAddNewTeam,
+  role,
 }: TeamsManagementTabsHeaderProps) {
   const current = TAB_CONFIG[activeTab]
+  const isTeamsRole = (role === "hrmanager" || role === "manager") && activeTab === "management"
+  const title = isTeamsRole ? "Teams" : current.title
+  const subtitle = isTeamsRole
+    ? "Manage all teams across the organization, create new teams and view team details."
+    : current.subtitle
 
   return (
     <div className="bg-white rounded-3xl border border-gray-100/80 shadow-xs p-4 sm:p-5 flex flex-col gap-4">
@@ -44,9 +57,9 @@ export default function TeamsManagementTabsHeader({
           </div>
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
-              {current.title}
+              {title}
             </h2>
-            <p className="text-xs text-gray-500 mt-0.5">{current.subtitle}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>
           </div>
         </div>
 
@@ -62,24 +75,23 @@ export default function TeamsManagementTabsHeader({
         )}
       </div>
 
-      <div className="flex items-center gap-6 border-b border-gray-100 overflow-x-auto custom-scrollbar pt-1">
+      <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pt-1">
         {(["management", "tree", "chat"] as TeamsTabKey[]).map((tabKey) => {
           const isActive = activeTab === tabKey
+          const Icon = TAB_ICONS[tabKey]
           return (
             <button
               key={tabKey}
               type="button"
               onClick={() => onTabChange(tabKey)}
-              className={`pb-2.5 text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer relative ${
+              className={`shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
                 isActive
-                  ? "text-[#5B50EC] font-bold"
-                  : "text-gray-500 hover:text-gray-800"
+                  ? "bg-[#5B50EC] text-white shadow-xs"
+                  : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-200/80"
               }`}
             >
+              <Icon size={16} weight={isActive ? "bold" : "regular"} />
               <span>{TAB_CONFIG[tabKey].label}</span>
-              {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#5B50EC] rounded-full" />
-              )}
             </button>
           )
         })}
