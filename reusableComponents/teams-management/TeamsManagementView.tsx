@@ -1,12 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { TeamsManagementProps, TeamItem } from "./types"
 import { INITIAL_TEAMS } from "./mockTeamsData"
 import TeamsManagementTabsHeader, { TeamsTabKey } from "./TeamsManagementTabsHeader"
 import TeamsTableView from "./TeamsTableView"
 import TeamTreeView from "./TeamTreeView"
 import TeamChatView from "./chat/TeamChatView"
+import HrTeamsManagementContainer from "./hr-manager/HrTeamsManagementContainer"
+
+const VALID_TABS: TeamsTabKey[] = ["management", "tree", "chat"]
 
 export default function TeamsManagementView({
   currentRole,
@@ -16,50 +20,112 @@ export default function TeamsManagementView({
   initialTeams,
   defaultTab = "management",
 }: TeamsManagementProps) {
-  const [activeTab, setActiveTab] = useState<TeamsTabKey>(defaultTab)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const tabQuery = searchParams?.get("tab") as TeamsTabKey | null
+  const teamIdQuery = searchParams?.get("teamId")
+  const chatIdQuery = searchParams?.get("chatId")
+
+  const activeTab: TeamsTabKey =
+    tabQuery && VALID_TABS.includes(tabQuery) ? tabQuery : defaultTab
+
   const [teams, setTeams] = useState<TeamItem[]>(initialTeams || INITIAL_TEAMS)
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null)
+  const [internalTeamId, setInternalTeamId] = useState<string | null>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
+  const selectedTeamId = teamIdQuery || internalTeamId
+
+  const handleTabChange = useCallback(
+    (tab: TeamsTabKey) => {
+      const params = new URLSearchParams(searchParams?.toString() || "")
+      if (tab === "management") {
+        params.delete("tab")
+      } else {
+        params.set("tab", tab)
+      }
+      if (tab !== "tree") {
+        params.delete("teamId")
+        setInternalTeamId(null)
+      }
+      if (tab !== "chat") {
+        params.delete("chatId")
+      }
+      const qs = params.toString()
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+    },
+    [pathname, router, searchParams]
+  )
+
   const handleViewTeamTree = (team: TeamItem) => {
-    setSelectedTeamId(team.id)
-    setActiveTab("tree")
+    setInternalTeamId(team.id)
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.set("tab", "tree")
+    params.set("teamId", team.id)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
+  const handleSelectTeamId = (id: string | null) => {
+    setInternalTeamId(id)
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    if (id) {
+      params.set("teamId", id)
+    } else {
+      params.delete("teamId")
+    }
+    const qs = params.toString()
+    router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+  }
+
+  const handleChatChange = (chatId: string) => {
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.set("tab", "chat")
+    params.set("chatId", chatId)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
   return (
     <div className="w-full flex flex-col gap-4 sm:gap-5 p-3.5 sm:p-5 md:p-6 max-w-7xl mx-auto select-none">
       <TeamsManagementTabsHeader
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab)
-          if (tab !== "tree") setSelectedTeamId(null)
-        }}
-        onAddNewTeam={canCreateTeam ? () => setIsCreateModalOpen(true) : undefined}
+        onTabChange={handleTabChange}
+        onAddNewTeam={canCreateTeam && currentRole !== "hrmanager" && currentRole !== "manager" ? () => setIsCreateModalOpen(true) : undefined}
+        role={currentRole}
       />
 
       {activeTab === "management" && (
-        <TeamsTableView
-          teams={teams}
-          setTeams={setTeams}
-          currentRole={currentRole}
-          canCreateTeam={canCreateTeam}
-          canEditTeam={canEditTeam}
-          canDeleteTeam={canDeleteTeam}
-          isCreateModalOpen={isCreateModalOpen}
-          setIsCreateModalOpen={setIsCreateModalOpen}
-          onViewTeamTree={handleViewTeamTree}
-        />
+        currentRole === "hrmanager" || currentRole === "manager" ? (
+          <HrTeamsManagementContainer />
+        ) : (
+          <TeamsTableView
+            teams={teams}
+            setTeams={setTeams}
+            currentRole={currentRole}
+            canCreateTeam={canCreateTeam}
+            canEditTeam={canEditTeam}
+            canDeleteTeam={canDeleteTeam}
+            isCreateModalOpen={isCreateModalOpen}
+            setIsCreateModalOpen={setIsCreateModalOpen}
+            onViewTeamTree={handleViewTeamTree}
+          />
+        )
       )}
 
       {activeTab === "tree" && (
         <TeamTreeView
           teams={teams}
           selectedTeamId={selectedTeamId}
-          onSelectTeamId={setSelectedTeamId}
+          onSelectTeamId={handleSelectTeamId}
         />
       )}
 
-      {activeTab === "chat" && <TeamChatView />}
+      {activeTab === "chat" && (
+        <TeamChatView
+          initialChatId={chatIdQuery}
+          onChatChange={handleChatChange}
+        />
+      )}
     </div>
   )
 }

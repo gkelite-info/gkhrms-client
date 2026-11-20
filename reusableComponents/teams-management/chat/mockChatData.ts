@@ -1,4 +1,4 @@
-import { ChatConversation, SharedFileItem, RecentActivityItem } from "../types"
+import { ChatConversation, SharedFileItem } from "../types"
 
 export const CURRENT_USER = {
   id: "arjun",
@@ -11,12 +11,11 @@ export const MOCK_SHARED_FILES: SharedFileItem[] = [
   { id: "f-1", name: "QA_Test_Report_v1.2", size: "2.4 MB", date: "Today, 11:06 AM", type: "pdf" },
   { id: "f-2", name: "Open_Issues_Tracker", size: "412 KB", date: "Jan 19, 3:35 PM", type: "sheet" },
   { id: "f-3", name: "Release_Notes_v1.2.c", size: "1.1 MB", date: "Jan 18, 4:12 PM", type: "doc" },
-]
-
-export const MOCK_RECENT_ACTIVITIES: RecentActivityItem[] = [
-  { id: "a-1", action: "Shared a file", target: "QA_Test_Report_v1.2.pdf", time: "Today, 11:06 AM" },
-  { id: "a-2", action: "Completed task", target: "QA review for v1.2", time: "Today, 10:02 AM" },
-  { id: "a-3", action: "Updated task", target: "Test cases (100% complete)", time: "Yesterday, 5:18 PM" },
+  { id: "f-4", name: "Sprint_Deliverables_Q1", size: "3.2 MB", date: "Jan 17, 2:15 PM", type: "pdf" },
+  { id: "f-5", name: "Architecture_Design_Doc", size: "1.8 MB", date: "Jan 16, 5:30 PM", type: "doc" },
+  { id: "f-6", name: "Employee_Task_Matrix", size: "520 KB", date: "Jan 15, 11:45 AM", type: "sheet" },
+  { id: "f-7", name: "API_Contract_Specification", size: "890 KB", date: "Jan 14, 10:20 AM", type: "pdf" },
+  { id: "f-8", name: "Security_Audit_Report", size: "4.1 MB", date: "Jan 12, 1:10 PM", type: "pdf" },
 ]
 
 export const MOCK_CHAT_CONVERSATIONS: ChatConversation[] = [

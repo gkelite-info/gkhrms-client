@@ -1,4 +1,6 @@
 export { default as TeamsManagementView } from "./TeamsManagementView"
 export { default as TeamTreeView } from "./TeamTreeView"
 export { default as TeamChatView } from "./chat/TeamChatView"
+export { default as HrTeamsManagementContainer } from "./hr-manager/HrTeamsManagementContainer"
 export * from "./types"
+export * from "./hr-manager/types"

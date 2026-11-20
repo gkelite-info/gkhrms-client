@@ -7,6 +7,7 @@ import ReusableSidebar, {
 
 export const hrManagerNavItems: ReusableSidebarItem[] = [
   { label: "User Management", href: "/hrmanager", icon: Users },
+  { label: "My Team", href: "/hrmanager/my-team", icon: UsersThree },
   { label: "Attendance", href: "/hrmanager/attendance", icon: UsersThree },
   {
     label: "Finance & Payroll",
@@ -20,6 +21,9 @@ export default function HrManagerSidebar() {
     item: ReusableSidebarItem,
     currentPath: string
   ): boolean => {
+    if (item.href === "/hrmanager/my-team") {
+      return currentPath.startsWith("/hrmanager/my-team")
+    }
     if (item.href === "/hrmanager/attendance") {
       return (
         currentPath.startsWith("/hrmanager/attendance") ||
@@ -37,6 +41,7 @@ export default function HrManagerSidebar() {
       return (
         currentPath === "/hrmanager" ||
         (currentPath.startsWith("/hrmanager") &&
+          !currentPath.includes("/my-team") &&
           !currentPath.includes("/attendance") &&
           !currentPath.includes("/apply-leave") &&
           !currentPath.includes("/request-wfh") &&

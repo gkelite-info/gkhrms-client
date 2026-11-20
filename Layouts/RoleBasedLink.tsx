@@ -128,6 +128,7 @@ export const roleBasedNav: Record<
     { label: "Profile", href: "/teamlead/profile", icon: User },
   ],
   HrManager: [
+    { label: "My Team", href: "/hrmanager/my-team", icon: UsersThree },
     { label: "Attendance", href: "/hrmanager/attendance", icon: UsersThree },
     {
       label: "Finance & Payroll",
