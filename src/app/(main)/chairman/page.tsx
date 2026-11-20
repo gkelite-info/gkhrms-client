@@ -1,6 +1,11 @@
-import { redirect } from "next/navigation"
+import ChairmanDashboardView from "./components/dashboard/ChairmanDashboardView"
 
-export default function ChairmanIndexPage() {
-  redirect("/chairman/attendance")
+export const metadata = {
+  title: "Chairman Dashboard | GK-HRMS",
+  description:
+    "Executive strategic overview of people, performance, and financial health.",
 }
 
+export default function ChairmanPage() {
+  return <ChairmanDashboardView />
+}
