@@ -90,7 +90,7 @@ export default function HrTeamDetailsView({
             <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Reporting Structure</span>
             <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto custom-scrollbar pb-1">
               <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200/70 flex items-center gap-3 shrink-0 min-w-[170px]">
-                <ReusableAvatar name={reportingStructure.manager.name} avatar={reportingStructure.manager.avatar} size="sm" />
+                <ReusableAvatar name={reportingStructure.manager.name} src={reportingStructure.manager.avatar} size="sm" />
                 <div>
                   <h4 className="text-xs font-bold text-gray-900 leading-tight">{reportingStructure.manager.name}</h4>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#EEF2FF] text-[#5B50EC] inline-block mt-1">
@@ -103,7 +103,7 @@ export default function HrTeamDetailsView({
                 <>
                   <ArrowRight size={16} className="text-gray-400 shrink-0" weight="bold" />
                   <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200/70 flex items-center gap-3 shrink-0 min-w-[170px]">
-                    <ReusableAvatar name={reportingStructure.assistantManager.name} avatar={reportingStructure.assistantManager.avatar} size="sm" />
+                    <ReusableAvatar name={reportingStructure.assistantManager.name} src={reportingStructure.assistantManager.avatar} size="sm" />
                     <div>
                       <h4 className="text-xs font-bold text-gray-900 leading-tight">{reportingStructure.assistantManager.name}</h4>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-purple-700 inline-block mt-1">
@@ -118,7 +118,7 @@ export default function HrTeamDetailsView({
                 <>
                   <ArrowRight size={16} className="text-gray-400 shrink-0" weight="bold" />
                   <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200/70 flex items-center gap-3 shrink-0 min-w-[170px]">
-                    <ReusableAvatar name={reportingStructure.teamLead.name} avatar={reportingStructure.teamLead.avatar} size="sm" />
+                    <ReusableAvatar name={reportingStructure.teamLead.name} src={reportingStructure.teamLead.avatar} size="sm" />
                     <div>
                       <h4 className="text-xs font-bold text-gray-900 leading-tight">{reportingStructure.teamLead.name}</h4>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 inline-block mt-1">

@@ -13,6 +13,7 @@ import ReusableSidebar, {
 
 export const chairmanNavItems: ReusableSidebarItem[] = [
   { label: "Dashboard", href: "/chairman", icon: House, exact: true },
+  { label: "My Teams", href: "/chairman/my-team", icon: UsersThree },
   { label: "Attendance", href: "/chairman/attendance", icon: CalendarCheck },
   { label: "Headcount", href: "/chairman/headcount", icon: UserList },
   { label: "Finance", href: "/chairman/finance", icon: CurrencyDollar },
@@ -24,6 +25,9 @@ export default function ChairmanSidebar() {
     item: ReusableSidebarItem,
     currentPath: string
   ): boolean => {
+    if (item.href === "/chairman/my-team") {
+      return currentPath.startsWith("/chairman/my-team")
+    }
     if (item.href === "/chairman/attendance") {
       return (
         currentPath.startsWith("/chairman/attendance") ||

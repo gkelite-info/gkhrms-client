@@ -106,6 +106,21 @@ export interface SharedFileItem {
   type: "pdf" | "sheet" | "doc"
 }
 
+export interface SharedMediaItem {
+  id: string
+  title: string
+  url: string
+  date: string
+}
+
+export interface SharedLinkItem {
+  id: string
+  title: string
+  url: string
+  domain: string
+  date: string
+}
+
 export interface RecentActivityItem {
   id: string
   action: string

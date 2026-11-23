@@ -1,18 +1,20 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { Paperclip, Smiley, PaperPlaneRight, Checks, ArrowLeft, Info, X } from "phosphor-react"
-import { ChatConversation, ChatMessage, ChatAttachment } from "../types"
-import { CURRENT_USER } from "./mockChatData"
+import { useState, useRef } from "react"
+import { Paperclip, Smiley, PaperPlaneRight, ArrowLeft, Info, X } from "phosphor-react"
+import { ChatConversation, ChatAttachment } from "../types"
 import ReusableAvatar from "../../ReusableAvatar"
 import ChatEmojiPicker from "./ChatEmojiPicker"
-import ChatAttachmentBubble from "./ChatAttachmentBubble"
+import ChatShimmerSkeleton from "./ChatShimmerSkeleton"
+import ChatMessageItem from "./ChatMessageItem"
+import { useChatPagination } from "./useChatPagination"
 
 interface ChatMessageThreadProps {
   conversation: ChatConversation
   onSendMessage: (text: string, attachment?: ChatAttachment) => void
   onBack?: () => void
   onToggleDetails?: () => void
+  isVisible?: boolean
 }
 
 export default function ChatMessageThread({
@@ -20,19 +22,24 @@ export default function ChatMessageThread({
   onSendMessage,
   onBack,
   onToggleDetails,
+  isVisible = true,
 }: ChatMessageThreadProps) {
   const [inputText, setInputText] = useState("")
   const [isEmojiOpen, setIsEmojiOpen] = useState(false)
   const [selectedAttachment, setSelectedAttachment] = useState<ChatAttachment | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [conversation.messages])
+  const {
+    displayedMessages,
+    isLoadingOlder,
+    messagesContainerRef,
+    handleScroll,
+  } = useChatPagination(conversation, isVisible)
 
   const handleSelectEmoji = (emoji: string) => {
     setInputText((prev) => prev + emoji)
     setIsEmojiOpen(false)
+    inputRef.current?.focus()
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,74 +62,65 @@ export default function ChatMessageThread({
   }
 
   return (
-    <div className="flex-1 w-full max-w-full h-full flex flex-col bg-[#FAF9FF]/40 sm:bg-[#FAF9FF]/60 rounded-3xl border border-gray-100/90 shadow-xs overflow-hidden select-none relative min-w-0">
-      <div className="px-3.5 sm:px-4 py-3 bg-white border-b border-gray-100 flex items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+    <div className="flex-1 w-full max-w-full h-full min-h-0 flex flex-col bg-[#FAF9FF]/40 sm:bg-[#FAF9FF]/60 rounded-3xl border border-gray-100/90 shadow-xs overflow-hidden select-none relative min-w-0">
+      <div className="sticky top-0 z-20 px-3 sm:px-4 py-2.5 sm:py-3 bg-white border-b border-gray-100 flex items-center justify-between gap-2.5 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
           {onBack && (
             <button type="button" onClick={onBack} className="lg:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors cursor-pointer shrink-0">
               <ArrowLeft size={18} weight="bold" />
             </button>
           )}
-          <div className="relative shrink-0">
-            <ReusableAvatar src={conversation.avatar} name={conversation.name} size={36} shape="circle" fallbackType="icon" />
-            {conversation.isOnline && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />}
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <h3 className="text-xs sm:text-sm font-bold text-gray-900 truncate">{conversation.name}</h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#EEF2FF] text-[#5B50EC]">{conversation.role}</span>
+          <div
+            onClick={onToggleDetails}
+            className="flex items-center gap-2 sm:gap-2.5 min-w-0 cursor-pointer hover:bg-gray-50 p-1 -m-1 rounded-2xl transition-all group flex-1"
+            title="Click to view contact info & shared media"
+          >
+            <ReusableAvatar
+              src={conversation.avatar}
+              name={conversation.name}
+              size={36}
+              shape="circle"
+              fallbackType="icon"
+              status={conversation.isOnline ? "online" : undefined}
+              className="shrink-0"
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[#5B50EC] transition-colors truncate">{conversation.name}</h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#EEF2FF] text-[#5B50EC] shrink-0">{conversation.role}</span>
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-gray-500 font-medium block truncate">{conversation.team}</span>
             </div>
-            <span className="text-[10px] sm:text-[11px] text-gray-500 font-medium block truncate">{conversation.team}</span>
           </div>
         </div>
         {onToggleDetails && (
-          <button type="button" onClick={onToggleDetails} className="xl:hidden p-2 rounded-xl text-gray-500 hover:text-[#5B50EC] hover:bg-[#EEF2FF] transition-colors cursor-pointer shrink-0" title="View details">
+          <button
+            type="button"
+            onClick={onToggleDetails}
+            className="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-[#5B50EC] hover:bg-[#EEF2FF] transition-colors cursor-pointer shrink-0"
+            title="View contact details & shared media"
+          >
             <Info size={18} weight="bold" />
           </button>
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-5 flex flex-col gap-3 custom-scrollbar w-full min-w-0">
-        <div className="flex justify-center my-1">
+      <div
+        ref={messagesContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-2.5 sm:p-4 md:p-5 flex flex-col gap-3 custom-scrollbar w-full min-w-0"
+      >
+        <div className="flex-1 min-h-0" />
+
+        {isLoadingOlder && <ChatShimmerSkeleton />}
+
+        <div className="flex justify-center my-0.5">
           <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white border border-gray-200/70 text-gray-600 shadow-xs">Today</span>
         </div>
-        {conversation.messages.map((msg: ChatMessage) => {
-          if (msg.isOutgoing) {
-            return (
-              <div key={msg.id} className="flex justify-end gap-2 sm:gap-2.5 items-end w-full min-w-0">
-                <div className="flex-1 flex flex-col items-end min-w-0 w-full">
-                  <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl rounded-br-xs bg-[#EEF2FF] text-[#1E1B4B] font-semibold text-xs sm:text-[13px] leading-relaxed shadow-xs border border-[#D5D2FB] w-full min-w-0 break-words [overflow-wrap:anywhere]">
-                    {msg.attachment && <ChatAttachmentBubble attachment={msg.attachment} />}
-                    {msg.text && <span className="block break-words">{msg.text}</span>}
-                  </div>
-                  <div className="flex items-center gap-1 mt-1 text-[11px] font-semibold text-[#5B50EC]">
-                    <span>{msg.timestamp}</span>
-                    <Checks size={14} weight="bold" />
-                  </div>
-                </div>
-                <div className="shrink-0 mb-1">
-                  <ReusableAvatar src={msg.senderAvatar || CURRENT_USER.avatar} name={msg.senderName || CURRENT_USER.name} size={28} shape="circle" fallbackType="icon" />
-                </div>
-              </div>
-            )
-          }
 
-          return (
-            <div key={msg.id} className="flex gap-2 sm:gap-2.5 items-end w-full min-w-0">
-              <div className="shrink-0 mb-1">
-                <ReusableAvatar src={msg.senderAvatar} name={msg.senderName} size={28} shape="circle" fallbackType="icon" />
-              </div>
-              <div className="flex-1 flex flex-col min-w-0">
-                <div className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl rounded-bl-xs bg-white text-gray-900 font-semibold text-xs sm:text-[13px] leading-relaxed shadow-xs border border-gray-200/90 w-full min-w-0 break-words [overflow-wrap:anywhere]">
-                  {msg.attachment && <ChatAttachmentBubble attachment={msg.attachment} />}
-                  {msg.text && <span className="block break-words">{msg.text}</span>}
-                </div>
-                <span className="text-[11px] text-gray-500 font-medium mt-1 ml-1">{msg.timestamp}</span>
-              </div>
-            </div>
-          )
-        })}
-        <div ref={messagesEndRef} />
+        {displayedMessages.map((msg) => (
+          <ChatMessageItem key={msg.id} message={msg} />
+        ))}
       </div>
 
       {selectedAttachment && (
@@ -144,6 +142,7 @@ export default function ChatMessageThread({
           <input type="file" onChange={handleFileChange} className="sr-only" />
         </label>
         <input
+          ref={inputRef}
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
