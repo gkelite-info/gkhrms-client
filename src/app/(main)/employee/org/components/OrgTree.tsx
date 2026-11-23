@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 
 interface TreeNodeProps {
   avatar: string
@@ -98,7 +99,6 @@ function TreeNode({
   )
 }
 
-// 3 small ICs row component for Level 5
 function ICRow() {
   const ics = [
     {
@@ -117,7 +117,6 @@ function ICRow() {
 
   return (
     <div className="flex flex-col items-center w-full mt-0.5">
-      {/* Connector lines to the 3 ICs */}
       <svg className="w-[105px] h-3.5 pointer-events-none" viewBox="0 0 105 14">
         <line x1="52.5" y1="0" x2="52.5" y2="7" stroke="#CBD5E1" strokeWidth="1.5" />
         <line x1="17.5" y1="7" x2="87.5" y2="7" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -126,7 +125,6 @@ function ICRow() {
         <line x1="87.5" y1="7" x2="87.5" y2="14" stroke="#CBD5E1" strokeWidth="1.5" />
       </svg>
       <div className="flex items-start justify-center w-[105px]">
-        {/* IC 1 */}
         <div className="w-[35px] flex flex-col items-center">
           <TreeNode
             avatar={ics[0].avatar}
@@ -137,7 +135,6 @@ function ICRow() {
           />
         </div>
 
-        {/* IC 2 */}
         <div className="w-[35px] flex flex-col items-center">
           <TreeNode
             avatar={ics[1].avatar}
@@ -148,7 +145,6 @@ function ICRow() {
           />
         </div>
 
-        {/* IC 3 */}
         <div className="w-[35px] flex flex-col items-center">
           <TreeNode
             avatar={ics[2].avatar}
@@ -165,11 +161,9 @@ function ICRow() {
 
 export default function OrgTree() {
   return (
-    <div className="w-full flex flex-col gap-4">
-      {/* 1. Top Section: 3 Project Info Cards matching screenshot */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-        {/* Card 1: Project Name */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-gray-100 flex flex-col justify-center min-h-[95px]">
+    <div className="w-full flex flex-col gap-3.5 sm:gap-4 min-w-0">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-xs border border-gray-100 flex flex-col justify-center min-h-[85px] sm:min-h-[95px]">
           <span className="text-xs sm:text-sm font-medium text-gray-500">
             Project Name
           </span>
@@ -178,8 +172,7 @@ export default function OrgTree() {
           </h3>
         </div>
 
-        {/* Card 2: Manager */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-gray-100 flex flex-col justify-center min-h-[95px]">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-xs border border-gray-100 flex flex-col justify-center min-h-[85px] sm:min-h-[95px]">
           <span className="text-xs sm:text-sm font-medium text-gray-500">
             Manager
           </span>
@@ -188,8 +181,7 @@ export default function OrgTree() {
           </h3>
         </div>
 
-        {/* Card 3: Project Timing */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-gray-100 flex flex-col justify-center min-h-[95px]">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-xs border border-gray-100 flex flex-col justify-center min-h-[85px] sm:min-h-[95px]">
           <span className="text-xs sm:text-sm font-medium text-gray-500">
             Project Timing
           </span>
@@ -202,11 +194,15 @@ export default function OrgTree() {
         </div>
       </div>
 
-      {/* 2. Main Hierarchy Tree Card matching screenshot */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xs border border-gray-100 w-full overflow-x-auto min-h-[620px]">
-        {/* Tree Container with fixed width of 1486px + padding so nothing clips or overlaps */}
+      <div className="bg-white rounded-xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-xs border border-gray-100 w-full overflow-x-auto min-h-[500px] sm:min-h-[620px] scrollbar-hide touch-pan-x">
+        <div className="sm:hidden flex items-center justify-between text-[11px] text-gray-500 mb-2 px-1">
+          <span>Hierarchy Tree</span>
+          <span className="text-[#8571EE] font-medium flex items-center gap-1">
+            Swipe horizontally →
+          </span>
+        </div>
+
         <div className="w-[1486px] min-w-[1486px] flex flex-col items-start py-4 px-8">
-          {/* Level 1: CEO (Alex Johnson) positioned above the junction of the horizontal connector line */}
           <div className="w-full flex justify-center mb-0" style={{ paddingLeft: "115px" }}>
             <div className="flex flex-col items-center">
               <TreeNode
@@ -216,16 +212,12 @@ export default function OrgTree() {
                 status="Present"
                 size="xl"
               />
-              {/* Vertical line from CEO down to C-Suite connector */}
               <div className="w-0.5 h-7 bg-gray-300" />
             </div>
           </div>
 
-          {/* Level 2 Connector: Horizontal line spanning from CTO (x=230) to COO (x=1371) */}
           <svg className="w-[1486px] h-7 pointer-events-none" viewBox="0 0 1486 28">
-            {/* Horizontal line from CTO to COO */}
             <line x1="230" y1="0" x2="1371" y2="0" stroke="#CBD5E1" strokeWidth="1.5" />
-            {/* 5 Vertical drop lines to each C-Suite */}
             <line x1="230" y1="0" x2="230" y2="28" stroke="#CBD5E1" strokeWidth="1.5" />
             <line x1="604" y1="0" x2="604" y2="28" stroke="#CBD5E1" strokeWidth="1.5" />
             <line x1="863" y1="0" x2="863" y2="28" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -233,9 +225,7 @@ export default function OrgTree() {
             <line x1="1371" y1="0" x2="1371" y2="28" stroke="#CBD5E1" strokeWidth="1.5" />
           </svg>
 
-          {/* Level 2: C-Suite Row (5 Columns separated by gap-6 so no text ever touches) */}
           <div className="w-[1486px] flex items-start gap-6">
-            {/* 1. CTO Column (width 460px, center at x = 230) */}
             <div className="w-[460px] shrink-0 flex flex-col items-center">
               <TreeNode
                 avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=140"
@@ -245,7 +235,6 @@ export default function OrgTree() {
                 size="lg"
               />
 
-              {/* Connector to 2 Managers */}
               <svg className="w-[460px] h-6 pointer-events-none" viewBox="0 0 460 24">
                 <line x1="230" y1="0" x2="230" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
                 <line x1="110" y1="12" x2="350" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -253,9 +242,7 @@ export default function OrgTree() {
                 <line x1="350" y1="12" x2="350" y2="24" stroke="#CBD5E1" strokeWidth="1.5" />
               </svg>
 
-              {/* Level 3: CTO Managers (Engineering Manager & DevOps Manager) */}
               <div className="w-[460px] flex items-start justify-between">
-                {/* Engineering Manager (John Doe) - 220px branch */}
                 <div className="w-[220px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120"
@@ -265,7 +252,6 @@ export default function OrgTree() {
                     size="md"
                   />
 
-                  {/* Connector to 2 Leads */}
                   <svg className="w-[220px] h-5 pointer-events-none" viewBox="0 0 220 20">
                     <line x1="110" y1="0" x2="110" y2="10" stroke="#CBD5E1" strokeWidth="1.5" />
                     <line x1="52.5" y1="10" x2="167.5" y2="10" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -273,9 +259,7 @@ export default function OrgTree() {
                     <line x1="167.5" y1="10" x2="167.5" y2="20" stroke="#CBD5E1" strokeWidth="1.5" />
                   </svg>
 
-                  {/* Level 4: Team Leads under Engineering Manager */}
                   <div className="w-[220px] flex items-start justify-between">
-                    {/* Lead 1: Michael Smith */}
                     <div className="w-[105px] shrink-0 flex flex-col items-center">
                       <TreeNode
                         avatar="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100"
@@ -287,7 +271,6 @@ export default function OrgTree() {
                       <ICRow />
                     </div>
 
-                    {/* Lead 2: Emily Davis */}
                     <div className="w-[105px] shrink-0 flex flex-col items-center">
                       <TreeNode
                         avatar="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100"
@@ -301,7 +284,6 @@ export default function OrgTree() {
                   </div>
                 </div>
 
-                {/* DevOps Manager (Sarah Johnson) - 220px branch */}
                 <div className="w-[220px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120"
@@ -311,7 +293,6 @@ export default function OrgTree() {
                     size="md"
                   />
 
-                  {/* Connector to 2 Leads */}
                   <svg className="w-[220px] h-5 pointer-events-none" viewBox="0 0 220 20">
                     <line x1="110" y1="0" x2="110" y2="10" stroke="#CBD5E1" strokeWidth="1.5" />
                     <line x1="52.5" y1="10" x2="167.5" y2="10" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -319,9 +300,7 @@ export default function OrgTree() {
                     <line x1="167.5" y1="10" x2="167.5" y2="20" stroke="#CBD5E1" strokeWidth="1.5" />
                   </svg>
 
-                  {/* Level 4: Team Leads under DevOps Manager */}
                   <div className="w-[220px] flex items-start justify-between">
-                    {/* Lead 1: Michael Smith */}
                     <div className="w-[105px] shrink-0 flex flex-col items-center">
                       <TreeNode
                         avatar="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100"
@@ -333,7 +312,6 @@ export default function OrgTree() {
                       <ICRow />
                     </div>
 
-                    {/* Lead 2: Emily Davis */}
                     <div className="w-[105px] shrink-0 flex flex-col items-center">
                       <TreeNode
                         avatar="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100"
@@ -349,7 +327,6 @@ export default function OrgTree() {
               </div>
             </div>
 
-            {/* 2. CFO Column (width 240px, center at x = 604) */}
             <div className="w-[240px] shrink-0 flex flex-col items-center">
               <TreeNode
                 avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=140"
@@ -359,7 +336,6 @@ export default function OrgTree() {
                 size="lg"
               />
 
-              {/* Connector to 2 Managers */}
               <svg className="w-[240px] h-6 pointer-events-none" viewBox="0 0 240 24">
                 <line x1="120" y1="0" x2="120" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
                 <line x1="55" y1="12" x2="185" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -367,9 +343,7 @@ export default function OrgTree() {
                 <line x1="185" y1="12" x2="185" y2="24" stroke="#CBD5E1" strokeWidth="1.5" />
               </svg>
 
-              {/* Level 3: CFO Managers (Finance & Accounting Manager) */}
               <div className="w-[240px] flex items-start justify-between">
-                {/* Finance Manager (John Doe) */}
                 <div className="w-[110px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120"
@@ -380,7 +354,6 @@ export default function OrgTree() {
                   />
                 </div>
 
-                {/* Accounting Manager (Sarah Johnson) */}
                 <div className="w-[110px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120"
@@ -390,10 +363,8 @@ export default function OrgTree() {
                     size="md"
                   />
 
-                  {/* Stem down to Payroll Lead */}
                   <div className="w-0.5 h-4 bg-gray-300 mt-1" />
 
-                  {/* Level 4: Payroll Lead */}
                   <div className="w-[105px] flex flex-col items-center">
                     <TreeNode
                       avatar="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100"
@@ -408,7 +379,6 @@ export default function OrgTree() {
               </div>
             </div>
 
-            {/* 3. CMO Column (width 230px, center at x = 863) */}
             <div className="w-[230px] shrink-0 flex flex-col items-center">
               <TreeNode
                 avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=140"
@@ -418,7 +388,6 @@ export default function OrgTree() {
                 size="lg"
               />
 
-              {/* Connector to 2 Managers */}
               <svg className="w-[230px] h-6 pointer-events-none" viewBox="0 0 230 24">
                 <line x1="115" y1="0" x2="115" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
                 <line x1="52.5" y1="12" x2="177.5" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -426,9 +395,7 @@ export default function OrgTree() {
                 <line x1="177.5" y1="12" x2="177.5" y2="24" stroke="#CBD5E1" strokeWidth="1.5" />
               </svg>
 
-              {/* Level 3: CMO Managers */}
               <div className="w-[230px] flex items-start justify-between">
-                {/* Digital Marketing Manager */}
                 <div className="w-[105px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120"
@@ -439,7 +406,6 @@ export default function OrgTree() {
                   />
                 </div>
 
-                {/* Branding Manager */}
                 <div className="w-[105px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120"
@@ -452,7 +418,6 @@ export default function OrgTree() {
               </div>
             </div>
 
-            {/* 4. CHRO Column (width 230px, center at x = 1117) */}
             <div className="w-[230px] shrink-0 flex flex-col items-center">
               <TreeNode
                 avatar="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=140"
@@ -462,7 +427,6 @@ export default function OrgTree() {
                 size="lg"
               />
 
-              {/* Connector to 2 Managers */}
               <svg className="w-[230px] h-6 pointer-events-none" viewBox="0 0 230 24">
                 <line x1="115" y1="0" x2="115" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
                 <line x1="52.5" y1="12" x2="177.5" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -470,9 +434,7 @@ export default function OrgTree() {
                 <line x1="177.5" y1="12" x2="177.5" y2="24" stroke="#CBD5E1" strokeWidth="1.5" />
               </svg>
 
-              {/* Level 3: CHRO Managers */}
               <div className="w-[230px] flex items-start justify-between">
-                {/* Recruitment Manager */}
                 <div className="w-[105px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120"
@@ -483,7 +445,6 @@ export default function OrgTree() {
                   />
                 </div>
 
-                {/* HR Ops Manager */}
                 <div className="w-[105px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120"
@@ -496,7 +457,6 @@ export default function OrgTree() {
               </div>
             </div>
 
-            {/* 5. COO Column (width 230px, center at x = 1371) */}
             <div className="w-[230px] shrink-0 flex flex-col items-center">
               <TreeNode
                 avatar="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=140"
@@ -506,7 +466,6 @@ export default function OrgTree() {
                 size="lg"
               />
 
-              {/* Connector to 2 Managers */}
               <svg className="w-[230px] h-6 pointer-events-none" viewBox="0 0 230 24">
                 <line x1="115" y1="0" x2="115" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
                 <line x1="52.5" y1="12" x2="177.5" y2="12" stroke="#CBD5E1" strokeWidth="1.5" />
@@ -514,9 +473,7 @@ export default function OrgTree() {
                 <line x1="177.5" y1="12" x2="177.5" y2="24" stroke="#CBD5E1" strokeWidth="1.5" />
               </svg>
 
-              {/* Level 3: COO Managers */}
               <div className="w-[230px] flex items-start justify-between">
-                {/* Operations Manager */}
                 <div className="w-[105px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120"
@@ -527,7 +484,6 @@ export default function OrgTree() {
                   />
                 </div>
 
-                {/* Logistics Manager */}
                 <div className="w-[105px] shrink-0 flex flex-col items-center">
                   <TreeNode
                     avatar="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120"

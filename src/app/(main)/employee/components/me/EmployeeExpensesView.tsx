@@ -180,7 +180,7 @@ function EmployeeExpensesContent({
           style={{ cursor: "pointer" }}
           className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer select-none focus:outline-none ${subTab === "new_pending"
               ? "bg-[#7D73E3] text-white shadow-sm"
-              : "bg-[#E5E5EA] text-[#374151] hover:bg-[#dedde3] hover:text-[#1F2937]"
+              : "bg-white text-[#374151] hover:bg-white/90 hover:text-[#1F2937] shadow-xs border border-gray-200"
             }`}
         >
           New/Pending Expenses
@@ -192,7 +192,7 @@ function EmployeeExpensesContent({
           style={{ cursor: "pointer" }}
           className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer select-none focus:outline-none ${subTab === "past_rejected"
               ? "bg-[#7D73E3] text-white shadow-sm"
-              : "bg-[#E5E5EA] text-[#374151] hover:bg-[#dedde3] hover:text-[#1F2937]"
+              : "bg-white text-[#374151] hover:bg-white/90 hover:text-[#1F2937] shadow-xs border border-gray-200"
             }`}
         >
           Past Claims / Rejected Claims
@@ -211,7 +211,7 @@ function EmployeeExpensesContent({
           <div className="w-full flex flex-col gap-3">
             <h2 className="text-base sm:text-lg font-bold text-[#1F2937]">Expenses to be Claimed</h2>
 
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] gap-3 sm:gap-4 items-center">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] gap-3 sm:gap-4 items-center">
               {claimedCards.map((card) => (
                 <div
                   key={card.id}

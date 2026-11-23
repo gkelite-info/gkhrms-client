@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { useState, useEffect, Suspense } from "react"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import EmployeeMeTabs, { MeTabType } from "../components/me/EmployeeMeTabs"
 import EmployeeMetricsRow from "../components/me/EmployeeMetricsRow"
 import EmployeeOperationsRow from "../components/me/EmployeeOperationsRow"
@@ -14,9 +14,10 @@ export interface EmployeeMeProps {
   basePath?: string
 }
 
-export default function EmployeeMe({ basePath }: EmployeeMeProps) {
+function EmployeeMeContent({ basePath }: EmployeeMeProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const currentBase =
     basePath || (pathname?.startsWith("/hr") ? "/hr/me" : "/employee/me")
   const [activeTab, setActiveTab] = useState<MeTabType>("overview")
@@ -25,8 +26,13 @@ export default function EmployeeMe({ basePath }: EmployeeMeProps) {
     const syncTabFromUrl = () => {
       if (typeof window === "undefined") return
       const params = new URLSearchParams(window.location.search)
-      const tabParam = (params.get("tab") || params.get("view") || "").toLowerCase()
-      const subtabParam = params.get("subtab")
+      const tabParam = (
+        searchParams?.get("tab") ||
+        params.get("tab") ||
+        params.get("view") ||
+        ""
+      ).toLowerCase()
+      const subtabParam = searchParams?.get("subtab") || params.get("subtab")
 
       if (
         subtabParam ||
@@ -66,25 +72,21 @@ export default function EmployeeMe({ basePath }: EmployeeMeProps) {
     syncTabFromUrl()
     window.addEventListener("popstate", syncTabFromUrl)
     return () => window.removeEventListener("popstate", syncTabFromUrl)
-  }, [router, currentBase])
+  }, [router, currentBase, searchParams])
 
   const handleSelectTab = (tab: MeTabType) => {
     setActiveTab(tab)
-    if (currentBase.startsWith("/hr")) {
+    const targetUrl = tab === "overview" ? currentBase : `${currentBase}?tab=${tab}`
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href)
       if (tab === "overview") {
-        router.push(currentBase)
+        url.searchParams.delete("tab")
       } else {
-        router.push(`${currentBase}?tab=${tab}`)
+        url.searchParams.set("tab", tab)
       }
-      return
+      window.history.pushState(null, "", url.toString())
     }
-    if (tab === "timesheet") {
-      router.push("/employee/me/timesheet")
-    } else if (tab === "overview") {
-      router.push("/employee/me")
-    } else if (tab === "project_time") {
-      router.push("/employee/me/project-time")
-    }
+    router.push(targetUrl)
   }
 
   const handleSelectPerformance = () => {
@@ -116,5 +118,13 @@ export default function EmployeeMe({ basePath }: EmployeeMeProps) {
 
       <div className="w-full h-4 shrink-0" aria-hidden="true" />
     </div>
+  )
+}
+
+export default function EmployeeMe(props: EmployeeMeProps) {
+  return (
+    <Suspense fallback={null}>
+      <EmployeeMeContent {...props} />
+    </Suspense>
   )
 }

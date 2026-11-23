@@ -1,21 +1,12 @@
 "use client"
 
-import {  useState, useMemo, useEffect, Suspense  } from "react";
+import { useState, useMemo, useEffect, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import {
   CaretDown,
   Funnel,
   MagnifyingGlass,
-  TreeStructure,
-  GitFork,
-  Briefcase,
-  FileText,
-  EnvelopeSimple,
-  MapPin,
-  Buildings,
-  CheckCircle,
   User,
-  ArrowRight,
 } from "phosphor-react"
 import OrgTree from "./components/OrgTree"
 import { ReusablePagination } from "@/../reusableComponents"
@@ -320,54 +311,90 @@ const hiringLocations = [
   "Remote",
 ]
 
+type OrgMainTab = "Employees" | "Org Terms and conditions" | "Hiring"
+type OrgSubTab = "Organization Tree" | "Employee Directory"
+
 function OrgPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const parseTabFromQuery = (tabParam: string | null): "Employees" | "Org Terms and conditions" | "Hiring" => {
-    const t = (tabParam || "").toLowerCase()
-    if (t === "terms" || t === "terms-and-conditions" || t === "org-terms" || t === "conditions") {
-      return "Org Terms and conditions"
-    }
-    if (t === "hiring" || t === "jobs" || t === "careers") {
-      return "Hiring"
-    }
-    return "Employees"
-  }
+  const parseTabFromQuery = useCallback(
+    (tabParam: string | null): OrgMainTab => {
+      const t = (tabParam || "").toLowerCase()
+      if (
+        t === "terms" ||
+        t === "terms-and-conditions" ||
+        t === "org-terms" ||
+        t === "conditions"
+      ) {
+        return "Org Terms and conditions"
+      }
+      if (t === "hiring" || t === "jobs" || t === "careers") {
+        return "Hiring"
+      }
+      return "Employees"
+    },
+    []
+  )
 
-  const parseSubTabFromQuery = (
-    subTabParam: string | null
-  ): "Organization Tree" | "Employee Directory" => {
-    const s = (subTabParam || "").toLowerCase()
-    if (s === "directory" || s === "employee-directory" || s === "employees") {
-      return "Employee Directory"
-    }
-    return "Organization Tree"
-  }
+  const parseSubTabFromQuery = useCallback(
+    (subTabParam: string | null): OrgSubTab => {
+      const s = (subTabParam || "").toLowerCase()
+      if (s === "directory" || s === "employee-directory" || s === "employees") {
+        return "Employee Directory"
+      }
+      return "Organization Tree"
+    },
+    []
+  )
 
-  const parseHiringSubTabFromQuery = (
-    subTabParam: string | null
-  ): "referrals" | "applications" => {
-    const s = (subTabParam || "").toLowerCase()
-    if (s === "applications" || s === "my-applications") {
-      return "applications"
-    }
-    return "referrals"
-  }
+  const parseHiringSubTabFromQuery = useCallback(
+    (subTabParam: string | null): "referrals" | "applications" => {
+      const s = (subTabParam || "").toLowerCase()
+      if (s === "applications" || s === "my-applications") {
+        return "applications"
+      }
+      return "referrals"
+    },
+    []
+  )
 
-  const [activeMainTab, setActiveMainTab] = useState<
-    "Employees" | "Org Terms and conditions" | "Hiring"
-  >(() => parseTabFromQuery(searchParams?.get("tab")))
+  const [activeMainTab, setActiveMainTab] = useState<OrgMainTab>(() =>
+    parseTabFromQuery(searchParams?.get("tab"))
+  )
 
-  const [activeSubTab, setActiveSubTab] = useState<
-    "Organization Tree" | "Employee Directory"
-  >(() => parseSubTabFromQuery(searchParams?.get("subtab")))
+  const [activeSubTab, setActiveSubTab] = useState<OrgSubTab>(() =>
+    parseSubTabFromQuery(searchParams?.get("subtab"))
+  )
 
   const [hiringSubTab, setHiringSubTab] = useState<"referrals" | "applications">(
     () => parseHiringSubTabFromQuery(searchParams?.get("subtab"))
   )
 
-  // Synchronize state when URL search params change (e.g. browser Back / Forward)
+  const [directoryPage, setDirectoryPage] = useState(() => {
+    const p = Number(searchParams?.get("page"))
+    return Number.isFinite(p) && p > 0 ? p : 1
+  })
+  const [directoryPageSize, setDirectoryPageSize] = useState(() => {
+    const s = Number(searchParams?.get("pageSize"))
+    return Number.isFinite(s) && s > 0 ? s : 8
+  })
+
+  const [selectedBusinessUnit, setSelectedBusinessUnit] = useState(
+    () => searchParams?.get("unit") || "Business Unit"
+  )
+  const [selectedDepartment, setSelectedDepartment] = useState(
+    () => searchParams?.get("dept") || "Department"
+  )
+  const [selectedLocation, setSelectedLocation] = useState(
+    () => searchParams?.get("loc") || "Location"
+  )
+  const [selectedCostCenter, setSelectedCostCenter] = useState("Cost Center")
+  const [selectedLegalEntry, setSelectedLegalEntry] = useState("Legal Entry")
+  const [searchQuery, setSearchQuery] = useState(
+    () => searchParams?.get("search") || ""
+  )
+
   useEffect(() => {
     const tabParam = searchParams?.get("tab")
     const subTabParam = searchParams?.get("subtab")
@@ -378,31 +405,108 @@ function OrgPageContent() {
     } else {
       setActiveSubTab(parseSubTabFromQuery(subTabParam))
     }
-  }, [searchParams])
 
-  // Update query params in the URL
-  const updateQueryParams = (tab: string, subtab?: string) => {
-    if (typeof window === "undefined") return
-    const url = new URL(window.location.href)
-    url.searchParams.set("tab", tab)
-    if (subtab) {
-      url.searchParams.set("subtab", subtab)
-    } else {
-      url.searchParams.delete("subtab")
+    const pageParam = Number(searchParams?.get("page"))
+    if (Number.isFinite(pageParam) && pageParam > 0) {
+      setDirectoryPage(pageParam)
     }
-    window.history.pushState(null, "", url.toString())
+
+    const sizeParam = Number(searchParams?.get("pageSize"))
+    if (Number.isFinite(sizeParam) && sizeParam > 0) {
+      setDirectoryPageSize(sizeParam)
+    }
+
+    if (searchParams?.has("search")) {
+      setSearchQuery(searchParams.get("search") || "")
+    }
+    if (searchParams?.has("dept")) {
+      setSelectedDepartment(searchParams.get("dept") || "Department")
+    }
+    if (searchParams?.has("unit")) {
+      setSelectedBusinessUnit(searchParams.get("unit") || "Business Unit")
+    }
+    if (searchParams?.has("loc")) {
+      setSelectedLocation(searchParams.get("loc") || "Location")
+    }
+  }, [
+    searchParams,
+    parseTabFromQuery,
+    parseSubTabFromQuery,
+    parseHiringSubTabFromQuery,
+  ])
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const currentParams = new URLSearchParams(window.location.search)
+      const tabParam = currentParams.get("tab")
+      const subTabParam = currentParams.get("subtab")
+
+      setActiveMainTab(parseTabFromQuery(tabParam))
+      if (tabParam === "hiring") {
+        setHiringSubTab(parseHiringSubTabFromQuery(subTabParam))
+      } else {
+        setActiveSubTab(parseSubTabFromQuery(subTabParam))
+      }
+
+      const pageParam = Number(currentParams.get("page"))
+      setDirectoryPage(Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1)
+
+      const sizeParam = Number(currentParams.get("pageSize"))
+      setDirectoryPageSize(Number.isFinite(sizeParam) && sizeParam > 0 ? sizeParam : 8)
+
+      setSearchQuery(currentParams.get("search") || "")
+      setSelectedDepartment(currentParams.get("dept") || "Department")
+      setSelectedBusinessUnit(currentParams.get("unit") || "Business Unit")
+      setSelectedLocation(currentParams.get("loc") || "Location")
+    }
+
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [
+    parseTabFromQuery,
+    parseSubTabFromQuery,
+    parseHiringSubTabFromQuery,
+  ])
+
+  const updateQueryParams = (
+    tab: string,
+    subtab?: string,
+    extraParams?: Record<string, string | number | undefined>
+  ) => {
+    if (typeof window === "undefined") return
+    const params = new URLSearchParams()
+    if (tab && tab !== "employees") {
+      params.set("tab", tab)
+    }
+    if (subtab && subtab !== "tree") {
+      params.set("subtab", subtab)
+    }
+
+    if (extraParams) {
+      Object.entries(extraParams).forEach(([k, v]) => {
+        if (v !== undefined && v !== "" && v !== 1 && v !== "all") {
+          params.set(k, String(v))
+        }
+      })
+    }
+
+    const query = params.toString()
+    const url = query ? `/employee/org?${query}` : "/employee/org"
+    window.history.pushState(null, "", url)
     try {
-      router.push(url.pathname + url.search, { scroll: false })
+      router.push(url, { scroll: false })
     } catch {}
   }
 
-  const handleMainTabChange = (
-    tab: "Employees" | "Org Terms and conditions" | "Hiring"
-  ) => {
+  const handleMainTabChange = (tab: OrgMainTab) => {
     setActiveMainTab(tab)
     if (tab === "Employees") {
       const sub = activeSubTab === "Employee Directory" ? "directory" : "tree"
-      updateQueryParams("employees", sub)
+      updateQueryParams(
+        "employees",
+        sub,
+        sub === "directory" ? { page: directoryPage, pageSize: directoryPageSize } : undefined
+      )
     } else if (tab === "Org Terms and conditions") {
       updateQueryParams("terms")
     } else if (tab === "Hiring") {
@@ -410,12 +514,14 @@ function OrgPageContent() {
     }
   }
 
-  const handleSubTabChange = (
-    sub: "Organization Tree" | "Employee Directory"
-  ) => {
+  const handleSubTabChange = (sub: OrgSubTab) => {
     setActiveSubTab(sub)
     const subParam = sub === "Employee Directory" ? "directory" : "tree"
-    updateQueryParams("employees", subParam)
+    updateQueryParams(
+      "employees",
+      subParam,
+      subParam === "directory" ? { page: directoryPage, pageSize: directoryPageSize } : undefined
+    )
   }
 
   const handleHiringSubTabChange = (sub: "referrals" | "applications") => {
@@ -423,25 +529,38 @@ function OrgPageContent() {
     updateQueryParams("hiring", sub)
   }
 
-  // Filter States
-  const [selectedBusinessUnit, setSelectedBusinessUnit] =
-    useState("Business Unit")
-  const [selectedDepartment, setSelectedDepartment] = useState("Department")
-  const [selectedLocation, setSelectedLocation] = useState("Location")
-  const [selectedCostCenter, setSelectedCostCenter] = useState("Cost Center")
-  const [selectedLegalEntry, setSelectedLegalEntry] = useState("Legal Entry")
-  const [searchQuery, setSearchQuery] = useState("")
+  const handleDirectoryPageChange = (newPage: number) => {
+    setDirectoryPage(newPage)
+    updateQueryParams("employees", "directory", {
+      page: newPage,
+      pageSize: directoryPageSize,
+      search: searchQuery || undefined,
+      dept: selectedDepartment !== "Department" ? selectedDepartment : undefined,
+      unit: selectedBusinessUnit !== "Business Unit" ? selectedBusinessUnit : undefined,
+      loc: selectedLocation !== "Location" ? selectedLocation : undefined,
+    })
+  }
 
-  // Dropdown open states
+  const handleDirectoryPageSizeChange = (newSize: number) => {
+    setDirectoryPageSize(newSize)
+    setDirectoryPage(1)
+    updateQueryParams("employees", "directory", {
+      page: 1,
+      pageSize: newSize,
+      search: searchQuery || undefined,
+      dept: selectedDepartment !== "Department" ? selectedDepartment : undefined,
+      unit: selectedBusinessUnit !== "Business Unit" ? selectedBusinessUnit : undefined,
+      loc: selectedLocation !== "Location" ? selectedLocation : undefined,
+    })
+  }
+
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
 
-  // Hiring Tab States
   const [hiringDept, setHiringDept] = useState("Department")
   const [hiringExp, setHiringExp] = useState("Experience")
   const [hiringLoc, setHiringLoc] = useState("Location")
   const [hiringDropdownOpen, setHiringDropdownOpen] = useState<string | null>(null)
 
-  // Referral Modal States
   const [referModalOpen, setReferModalOpen] = useState(false)
   const [selectedJob, setSelectedJob] = useState<JobOpening | null>(null)
   const [candidateName, setCandidateName] = useState("")
@@ -455,7 +574,6 @@ function OrgPageContent() {
     status: string
   }[]>([])
 
-  // Filtered Job Openings
   const filteredJobs = useMemo(() => {
     return jobOpeningsList.filter((job) => {
       const matchDept = hiringDept === "Department" || job.department === hiringDept
@@ -465,14 +583,9 @@ function OrgPageContent() {
     })
   }, [hiringDept, hiringExp, hiringLoc])
 
-  // Toggle Dropdown
   const handleDropdownClick = (name: string) => {
     setOpenDropdown((prev) => (prev === name ? null : name))
   }
-
-  // Reset Filters
-  const [directoryPage, setDirectoryPage] = useState(1)
-  const [directoryPageSize, setDirectoryPageSize] = useState(8)
 
   const handleResetFilters = () => {
     setSelectedBusinessUnit("Business Unit")
@@ -483,9 +596,12 @@ function OrgPageContent() {
     setSearchQuery("")
     setOpenDropdown(null)
     setDirectoryPage(1)
+    updateQueryParams("employees", "directory", {
+      page: 1,
+      pageSize: directoryPageSize,
+    })
   }
 
-  // Filtered Employees
   const filteredEmployees = useMemo(() => {
     return initialEmployees.filter((emp) => {
       const matchSearch =
@@ -541,54 +657,58 @@ function OrgPageContent() {
 
   return (
     <div
-      className="w-full min-h-full px-4 pt-4 md:px-6 md:pt-6 pb-4 md:pb-6 flex flex-col gap-4 select-none"
+      className="w-full min-h-full max-w-full min-w-0 px-2.5 sm:px-4 md:px-6 pt-3 sm:pt-4 pb-6 md:pb-8 flex flex-col gap-3.5 sm:gap-4 select-none overflow-y-auto overflow-x-hidden scrollbar-hide"
       onClick={() => {
         if (openDropdown) setOpenDropdown(null)
+        if (hiringDropdownOpen) setHiringDropdownOpen(null)
       }}
     >
-      {/* 1. Main Navigation Tabs (Employees | Org Terms and conditions | Hiring) */}
-      <div className="w-full bg-white rounded-xl p-2.5 flex items-center gap-3 shadow-xs border border-gray-100">
-        <button
-          onClick={() => handleMainTabChange("Employees")}
-          className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm text-center transition-all cursor-pointer ${
-            activeMainTab === "Employees"
-              ? "bg-[#8571EE] text-white shadow-sm"
-              : "bg-[#B3B3B3] text-white hover:bg-gray-400"
-          }`}
-        >
-          Employees
-        </button>
-        <button
-          onClick={() => handleMainTabChange("Org Terms and conditions")}
-          className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm text-center transition-all cursor-pointer ${
-            activeMainTab === "Org Terms and conditions"
-              ? "bg-[#8571EE] text-white shadow-sm"
-              : "bg-[#B3B3B3] text-white hover:bg-gray-400"
-          }`}
-        >
-          Org Terms and conditions
-        </button>
-        <button
-          onClick={() => handleMainTabChange("Hiring")}
-          className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm text-center transition-all cursor-pointer ${
-            activeMainTab === "Hiring"
-              ? "bg-[#8571EE] text-white shadow-sm"
-              : "bg-[#B3B3B3] text-white hover:bg-gray-400"
-          }`}
-        >
-          Hiring
-        </button>
+      <div className="shrink-0 w-full bg-white rounded-xl sm:rounded-2xl p-1.5 sm:p-2 shadow-xs border border-gray-100">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 w-full">
+          <button
+            type="button"
+            onClick={() => handleMainTabChange("Employees")}
+            className={`w-full py-2 sm:py-2.5 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm text-center transition-all cursor-pointer select-none focus:outline-none shrink-0 ${
+              activeMainTab === "Employees"
+                ? "bg-[#8571EE] text-white shadow-xs"
+                : "bg-white text-[#374151] hover:bg-gray-50 border border-gray-200/70 shadow-2xs"
+            }`}
+          >
+            Employees
+          </button>
+          <button
+            type="button"
+            onClick={() => handleMainTabChange("Org Terms and conditions")}
+            className={`w-full py-2 sm:py-2.5 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm text-center transition-all cursor-pointer select-none focus:outline-none shrink-0 ${
+              activeMainTab === "Org Terms and conditions"
+                ? "bg-[#8571EE] text-white shadow-xs"
+                : "bg-white text-[#374151] hover:bg-gray-50 border border-gray-200/70 shadow-2xs"
+            }`}
+          >
+            Org Terms and conditions
+          </button>
+          <button
+            type="button"
+            onClick={() => handleMainTabChange("Hiring")}
+            className={`w-full py-2 sm:py-2.5 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm text-center transition-all cursor-pointer select-none focus:outline-none shrink-0 ${
+              activeMainTab === "Hiring"
+                ? "bg-[#8571EE] text-white shadow-xs"
+                : "bg-white text-[#374151] hover:bg-gray-50 border border-gray-200/70 shadow-2xs"
+            }`}
+          >
+            Hiring
+          </button>
+        </div>
       </div>
 
-      {/* 2. Content for 'Employees' Tab */}
       {activeMainTab === "Employees" && (
-        <div className="flex flex-col gap-4">
-          {/* Sub Navigation (Organization Tree | Employee Directory) */}
+        <div className="flex flex-col gap-3.5 sm:gap-4 w-full min-w-0">
           <div className="w-full flex items-center">
-            <div className="bg-white p-1 rounded-xl inline-flex gap-2 shadow-xs border border-gray-100">
+            <div className="w-full sm:w-auto bg-white p-1 rounded-xl flex sm:inline-flex gap-1.5 sm:gap-2 shadow-xs border border-gray-100 overflow-x-auto scrollbar-hide">
               <button
+                type="button"
                 onClick={() => handleSubTabChange("Organization Tree")}
-                className={`py-2 px-6 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial py-2 px-3.5 sm:px-6 rounded-lg text-xs font-semibold text-center transition-all cursor-pointer whitespace-nowrap ${
                   activeSubTab === "Organization Tree"
                     ? "bg-[#C5C1FF] text-[#1E1D32] shadow-xs"
                     : "bg-white text-[#374151] hover:bg-gray-50"
@@ -597,8 +717,9 @@ function OrgPageContent() {
                 Organization Tree
               </button>
               <button
+                type="button"
                 onClick={() => handleSubTabChange("Employee Directory")}
-                className={`py-2 px-6 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial py-2 px-3.5 sm:px-6 rounded-lg text-xs font-semibold text-center transition-all cursor-pointer whitespace-nowrap ${
                   activeSubTab === "Employee Directory"
                     ? "bg-[#C5C1FF] text-[#1E1D32] shadow-xs"
                     : "bg-white text-[#374151] hover:bg-gray-50"
@@ -609,224 +730,246 @@ function OrgPageContent() {
             </div>
           </div>
 
-          {/* Sub-view: Employee Directory */}
           {activeSubTab === "Employee Directory" && (
             <>
-              {/* Dropdown Filters Bar */}
               <div
-                className="w-full bg-white rounded-xl p-2.5 flex flex-wrap lg:flex-nowrap items-center gap-3 shadow-xs border border-gray-100 relative z-20"
+                className="w-full bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-3 shadow-xs border border-gray-100 relative z-20"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* 1. Business Unit Dropdown */}
-                <div className="relative flex-1 min-w-[140px]">
-                  <button
-                    type="button"
-                    onClick={() => handleDropdownClick("businessUnit")}
-                    className="w-full border border-gray-300 rounded-lg px-3.5 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
-                  >
-                    <span className="truncate">{selectedBusinessUnit}</span>
-                    <CaretDown
-                      size={14}
-                      weight="bold"
-                      className={`text-gray-500 transition-transform ${
-                        openDropdown === "businessUnit" ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {openDropdown === "businessUnit" && (
-                    <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
-                      {businessUnits.map((item) => (
-                        <div
-                          key={item}
-                          onClick={() => {
-                            setSelectedBusinessUnit(item)
-                            setOpenDropdown(null)
-                          }}
-                          className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
-                            selectedBusinessUnit === item
-                              ? "bg-purple-50 text-[#8571EE] font-semibold"
-                              : "text-[#374151]"
-                          }`}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 items-center">
+                  <div className="relative w-full">
+                    <button
+                      type="button"
+                      onClick={() => handleDropdownClick("businessUnit")}
+                      className="w-full border border-gray-300 rounded-lg px-2.5 sm:px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
+                    >
+                      <span className="truncate">{selectedBusinessUnit}</span>
+                      <CaretDown
+                        size={14}
+                        weight="bold"
+                        className={`text-gray-500 transition-transform shrink-0 ml-1 ${
+                          openDropdown === "businessUnit" ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === "businessUnit" && (
+                      <div className="absolute top-full left-0 mt-1 w-full min-w-[150px] bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
+                        {businessUnits.map((item) => (
+                          <div
+                            key={item}
+                            onClick={() => {
+                              setSelectedBusinessUnit(item)
+                              setOpenDropdown(null)
+                              setDirectoryPage(1)
+                              updateQueryParams("employees", "directory", {
+                                page: 1,
+                                pageSize: directoryPageSize,
+                                unit: item !== "Business Unit" ? item : undefined,
+                                dept: selectedDepartment !== "Department" ? selectedDepartment : undefined,
+                                loc: selectedLocation !== "Location" ? selectedLocation : undefined,
+                                search: searchQuery || undefined,
+                              })
+                            }}
+                            className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
+                              selectedBusinessUnit === item
+                                ? "bg-purple-50 text-[#8571EE] font-semibold"
+                                : "text-[#374151]"
+                            }`}
+                          >
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-                {/* 2. Department Dropdown */}
-                <div className="relative flex-1 min-w-[140px]">
-                  <button
-                    type="button"
-                    onClick={() => handleDropdownClick("department")}
-                    className="w-full border border-gray-300 rounded-lg px-3.5 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
-                  >
-                    <span className="truncate">{selectedDepartment}</span>
-                    <CaretDown
-                      size={14}
-                      weight="bold"
-                      className={`text-gray-500 transition-transform ${
-                        openDropdown === "department" ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {openDropdown === "department" && (
-                    <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
-                      {departments.map((item) => (
-                        <div
-                          key={item}
-                          onClick={() => {
-                            setSelectedDepartment(item)
-                            setOpenDropdown(null)
-                          }}
-                          className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
-                            selectedDepartment === item
-                              ? "bg-purple-50 text-[#8571EE] font-semibold"
-                              : "text-[#374151]"
-                          }`}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                  <div className="relative w-full">
+                    <button
+                      type="button"
+                      onClick={() => handleDropdownClick("department")}
+                      className="w-full border border-gray-300 rounded-lg px-2.5 sm:px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
+                    >
+                      <span className="truncate">{selectedDepartment}</span>
+                      <CaretDown
+                        size={14}
+                        weight="bold"
+                        className={`text-gray-500 transition-transform shrink-0 ml-1 ${
+                          openDropdown === "department" ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === "department" && (
+                      <div className="absolute top-full left-0 mt-1 w-full min-w-[150px] bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
+                        {departments.map((item) => (
+                          <div
+                            key={item}
+                            onClick={() => {
+                              setSelectedDepartment(item)
+                              setOpenDropdown(null)
+                              setDirectoryPage(1)
+                              updateQueryParams("employees", "directory", {
+                                page: 1,
+                                pageSize: directoryPageSize,
+                                unit: selectedBusinessUnit !== "Business Unit" ? selectedBusinessUnit : undefined,
+                                dept: item !== "Department" ? item : undefined,
+                                loc: selectedLocation !== "Location" ? selectedLocation : undefined,
+                                search: searchQuery || undefined,
+                              })
+                            }}
+                            className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
+                              selectedDepartment === item
+                                ? "bg-purple-50 text-[#8571EE] font-semibold"
+                                : "text-[#374151]"
+                            }`}
+                          >
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-                {/* 3. Location Dropdown */}
-                <div className="relative flex-1 min-w-[140px]">
-                  <button
-                    type="button"
-                    onClick={() => handleDropdownClick("location")}
-                    className="w-full border border-gray-300 rounded-lg px-3.5 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
-                  >
-                    <span className="truncate">{selectedLocation}</span>
-                    <CaretDown
-                      size={14}
-                      weight="bold"
-                      className={`text-gray-500 transition-transform ${
-                        openDropdown === "location" ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {openDropdown === "location" && (
-                    <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
-                      {locations.map((item) => (
-                        <div
-                          key={item}
-                          onClick={() => {
-                            setSelectedLocation(item)
-                            setOpenDropdown(null)
-                          }}
-                          className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
-                            selectedLocation === item
-                              ? "bg-purple-50 text-[#8571EE] font-semibold"
-                              : "text-[#374151]"
-                          }`}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                  <div className="relative w-full">
+                    <button
+                      type="button"
+                      onClick={() => handleDropdownClick("location")}
+                      className="w-full border border-gray-300 rounded-lg px-2.5 sm:px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
+                    >
+                      <span className="truncate">{selectedLocation}</span>
+                      <CaretDown
+                        size={14}
+                        weight="bold"
+                        className={`text-gray-500 transition-transform shrink-0 ml-1 ${
+                          openDropdown === "location" ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === "location" && (
+                      <div className="absolute top-full left-0 mt-1 w-full min-w-[150px] bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
+                        {locations.map((item) => (
+                          <div
+                            key={item}
+                            onClick={() => {
+                              setSelectedLocation(item)
+                              setOpenDropdown(null)
+                              setDirectoryPage(1)
+                              updateQueryParams("employees", "directory", {
+                                page: 1,
+                                pageSize: directoryPageSize,
+                                unit: selectedBusinessUnit !== "Business Unit" ? selectedBusinessUnit : undefined,
+                                dept: selectedDepartment !== "Department" ? selectedDepartment : undefined,
+                                loc: item !== "Location" ? item : undefined,
+                                search: searchQuery || undefined,
+                              })
+                            }}
+                            className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
+                              selectedLocation === item
+                                ? "bg-purple-50 text-[#8571EE] font-semibold"
+                                : "text-[#374151]"
+                            }`}
+                          >
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-                {/* 4. Cost Center Dropdown */}
-                <div className="relative flex-1 min-w-[140px]">
-                  <button
-                    type="button"
-                    onClick={() => handleDropdownClick("costCenter")}
-                    className="w-full border border-gray-300 rounded-lg px-3.5 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
-                  >
-                    <span className="truncate">{selectedCostCenter}</span>
-                    <CaretDown
-                      size={14}
-                      weight="bold"
-                      className={`text-gray-500 transition-transform ${
-                        openDropdown === "costCenter" ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {openDropdown === "costCenter" && (
-                    <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
-                      {costCenters.map((item) => (
-                        <div
-                          key={item}
-                          onClick={() => {
-                            setSelectedCostCenter(item)
-                            setOpenDropdown(null)
-                          }}
-                          className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
-                            selectedCostCenter === item
-                              ? "bg-purple-50 text-[#8571EE] font-semibold"
-                              : "text-[#374151]"
-                          }`}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                  <div className="relative w-full">
+                    <button
+                      type="button"
+                      onClick={() => handleDropdownClick("costCenter")}
+                      className="w-full border border-gray-300 rounded-lg px-2.5 sm:px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
+                    >
+                      <span className="truncate">{selectedCostCenter}</span>
+                      <CaretDown
+                        size={14}
+                        weight="bold"
+                        className={`text-gray-500 transition-transform shrink-0 ml-1 ${
+                          openDropdown === "costCenter" ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === "costCenter" && (
+                      <div className="absolute top-full left-0 mt-1 w-full min-w-[150px] bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
+                        {costCenters.map((item) => (
+                          <div
+                            key={item}
+                            onClick={() => {
+                              setSelectedCostCenter(item)
+                              setOpenDropdown(null)
+                            }}
+                            className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
+                              selectedCostCenter === item
+                                ? "bg-purple-50 text-[#8571EE] font-semibold"
+                                : "text-[#374151]"
+                            }`}
+                          >
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-                {/* 5. Legal Entry Dropdown */}
-                <div className="relative flex-1 min-w-[140px]">
-                  <button
-                    type="button"
-                    onClick={() => handleDropdownClick("legalEntry")}
-                    className="w-full border border-gray-300 rounded-lg px-3.5 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
-                  >
-                    <span className="truncate">{selectedLegalEntry}</span>
-                    <CaretDown
-                      size={14}
-                      weight="bold"
-                      className={`text-gray-500 transition-transform ${
-                        openDropdown === "legalEntry" ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {openDropdown === "legalEntry" && (
-                    <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
-                      {legalEntries.map((item) => (
-                        <div
-                          key={item}
-                          onClick={() => {
-                            setSelectedLegalEntry(item)
-                            setOpenDropdown(null)
-                          }}
-                          className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
-                            selectedLegalEntry === item
-                              ? "bg-purple-50 text-[#8571EE] font-semibold"
-                              : "text-[#374151]"
-                          }`}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                  <div className="relative w-full">
+                    <button
+                      type="button"
+                      onClick={() => handleDropdownClick("legalEntry")}
+                      className="w-full border border-gray-300 rounded-lg px-2.5 sm:px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
+                    >
+                      <span className="truncate">{selectedLegalEntry}</span>
+                      <CaretDown
+                        size={14}
+                        weight="bold"
+                        className={`text-gray-500 transition-transform shrink-0 ml-1 ${
+                          openDropdown === "legalEntry" ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === "legalEntry" && (
+                      <div className="absolute top-full left-0 mt-1 w-full min-w-[150px] bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 max-h-48 overflow-y-auto">
+                        {legalEntries.map((item) => (
+                          <div
+                            key={item}
+                            onClick={() => {
+                              setSelectedLegalEntry(item)
+                              setOpenDropdown(null)
+                            }}
+                            className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
+                              selectedLegalEntry === item
+                                ? "bg-purple-50 text-[#8571EE] font-semibold"
+                                : "text-[#374151]"
+                            }`}
+                          >
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-                {/* Filter Icon Button */}
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  title="Reset all filters"
-                  className="p-2 text-[#374151] hover:text-[#8571EE] hover:bg-purple-50 rounded-lg transition-colors cursor-pointer shrink-0"
-                >
-                  <Funnel size={18} weight="bold" />
-                </button>
+                  <div className="w-full flex items-center justify-end col-span-2 sm:col-span-1">
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      title="Reset all filters"
+                      className="w-full sm:w-auto p-2 text-[#374151] hover:text-[#8571EE] hover:bg-purple-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 border border-gray-200 sm:border-transparent text-xs font-semibold"
+                    >
+                      <Funnel size={16} weight="bold" />
+                      <span className="sm:hidden">Reset</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {/* 4-Column Responsive Grid of Employee Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {paginatedEmployees.map((emp) => (
                   <div
                     key={emp.id}
-                    className="bg-white rounded-2xl p-5 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col items-center border border-gray-100"
+                    className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col items-center border border-gray-100"
                   >
-                    {/* Round Avatar */}
-                    <div className="w-16 h-16 rounded-full overflow-hidden mb-3 shadow-xs bg-purple-50 shrink-0">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden mb-3 shadow-xs bg-purple-50 shrink-0">
                       <img
                         src={emp.avatar}
                         alt={emp.name}
@@ -838,16 +981,14 @@ function OrgPageContent() {
                       />
                     </div>
 
-                    {/* Name & Title */}
-                    <h3 className="font-bold text-sm text-[#1E293B] mb-0.5 text-center">
+                    <h3 className="font-bold text-sm text-[#1E293B] mb-0.5 text-center truncate max-w-full">
                       {emp.name}
                     </h3>
-                    <p className="text-[11px] text-[#64748B] font-medium mb-3 text-center">
+                    <p className="text-[11px] text-[#64748B] font-medium mb-3 text-center truncate max-w-full">
                       {emp.role}
                     </p>
 
-                    {/* Employee Details (Department, Location, Email) */}
-                    <div className="w-full text-left space-y-2 text-xs pt-2 pb-2 border-t border-gray-100">
+                    <div className="w-full text-left space-y-2 text-xs pt-2 pb-1 border-t border-gray-100">
                       <div className="flex items-center text-[11px]">
                         <span className="font-semibold text-[#1F2937] shrink-0">
                           Department :&nbsp;
@@ -878,29 +1019,27 @@ function OrgPageContent() {
               </div>
 
               {filteredEmployees.length > 0 && (
-                <div className="bg-white rounded-2xl p-4 shadow-xs border border-gray-100 mt-2">
+                <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xs border border-gray-100 mt-1">
                   <ReusablePagination
                     currentPage={directoryPage}
                     totalPages={totalDirectoryPages}
                     totalItems={filteredEmployees.length}
                     pageSize={directoryPageSize}
-                    onPageChange={setDirectoryPage}
-                    onPageSizeChange={(newSize) => {
-                      setDirectoryPageSize(newSize)
-                      setDirectoryPage(1)
-                    }}
+                    onPageChange={handleDirectoryPageChange}
+                    onPageSizeChange={handleDirectoryPageSizeChange}
                     pageSizeOptions={[4, 8, 12, 16]}
                   />
                 </div>
               )}
 
               {filteredEmployees.length === 0 && (
-                <div className="bg-white rounded-2xl p-12 text-center shadow-xs border border-gray-100 flex flex-col items-center gap-3">
+                <div className="bg-white rounded-2xl p-8 sm:p-12 text-center shadow-xs border border-gray-100 flex flex-col items-center gap-3">
                   <User size={36} className="text-gray-400" />
                   <p className="text-sm font-semibold text-gray-700">
                     No employees found matching the selected filters.
                   </p>
                   <button
+                    type="button"
                     onClick={handleResetFilters}
                     className="text-xs text-[#8571EE] font-semibold hover:underline cursor-pointer"
                   >
@@ -911,19 +1050,17 @@ function OrgPageContent() {
             </>
           )}
 
-          {/* Sub-view: Organization Tree */}
           {activeSubTab === "Organization Tree" && <OrgTree />}
         </div>
       )}
 
-      {/* 3. Content for 'Org Terms and conditions' Tab */}
       {activeMainTab === "Org Terms and conditions" && (
-        <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-xs border border-gray-100 flex flex-col gap-5">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xs border border-gray-100 flex flex-col gap-4 sm:gap-5 w-full min-w-0">
           <h3 className="font-extrabold text-sm sm:text-base text-[#1E293B] text-center tracking-wide uppercase">
             TERMS AND CONDITIONS
           </h3>
 
-          <div className="flex flex-col gap-3.5 text-[11px] sm:text-xs text-[#4B5563] leading-relaxed">
+          <div className="flex flex-col gap-3 text-xs sm:text-sm text-[#4B5563] leading-relaxed">
             {[
               "You shall abide by all the terms and conditions of service as shall be applicable from time to time.",
               "You will be on probation initially up to three year (90 working days); however, your probation period can be extended at the management discretion. You will continue to be on probation until such time till you receive the letter of confirmation.",
@@ -960,166 +1097,162 @@ function OrgPageContent() {
         </div>
       )}
 
-      {/* 4. Content for 'Hiring' Tab */}
       {activeMainTab === "Hiring" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-          {/* Left Column: Filters + Job Cards List */}
-          <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-3">
-            {/* Filters Bar: Department | Experience | Location */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-start w-full min-w-0">
+          <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-3 min-w-0">
             <div
-              className="w-full bg-white rounded-xl p-2.5 flex items-center gap-3 shadow-xs border border-gray-100 relative z-20"
+              className="w-full bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-3 shadow-xs border border-gray-100 relative z-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Department Dropdown */}
-              <div className="relative flex-1 min-w-[120px]">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setHiringDropdownOpen(
-                      hiringDropdownOpen === "dept" ? null : "dept"
-                    )
-                  }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
-                >
-                  <span className="truncate">{hiringDept}</span>
-                  <CaretDown
-                    size={14}
-                    weight="bold"
-                    className={`text-gray-500 transition-transform ${
-                      hiringDropdownOpen === "dept" ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {hiringDropdownOpen === "dept" && (
-                  <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30">
-                    {hiringDepartments.map((dept) => (
-                      <div
-                        key={dept}
-                        onClick={() => {
-                          setHiringDept(dept)
-                          setHiringDropdownOpen(null)
-                        }}
-                        className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
-                          hiringDept === dept
-                            ? "bg-purple-50 text-[#8571EE] font-semibold"
-                            : "text-[#374151]"
-                        }`}
-                      >
-                        {dept}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
+                <div className="relative w-full">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setHiringDropdownOpen(
+                        hiringDropdownOpen === "dept" ? null : "dept"
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
+                  >
+                    <span className="truncate">{hiringDept}</span>
+                    <CaretDown
+                      size={14}
+                      weight="bold"
+                      className={`text-gray-500 transition-transform shrink-0 ml-1 ${
+                        hiringDropdownOpen === "dept" ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {hiringDropdownOpen === "dept" && (
+                    <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30">
+                      {hiringDepartments.map((dept) => (
+                        <div
+                          key={dept}
+                          onClick={() => {
+                            setHiringDept(dept)
+                            setHiringDropdownOpen(null)
+                          }}
+                          className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
+                            hiringDept === dept
+                              ? "bg-purple-50 text-[#8571EE] font-semibold"
+                              : "text-[#374151]"
+                          }`}
+                        >
+                          {dept}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-              {/* Experience Dropdown */}
-              <div className="relative flex-1 min-w-[120px]">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setHiringDropdownOpen(
-                      hiringDropdownOpen === "exp" ? null : "exp"
-                    )
-                  }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
-                >
-                  <span className="truncate">{hiringExp}</span>
-                  <CaretDown
-                    size={14}
-                    weight="bold"
-                    className={`text-gray-500 transition-transform ${
-                      hiringDropdownOpen === "exp" ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {hiringDropdownOpen === "exp" && (
-                  <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30">
-                    {hiringExperiences.map((exp) => (
-                      <div
-                        key={exp}
-                        onClick={() => {
-                          setHiringExp(exp)
-                          setHiringDropdownOpen(null)
-                        }}
-                        className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
-                          hiringExp === exp
-                            ? "bg-purple-50 text-[#8571EE] font-semibold"
-                            : "text-[#374151]"
-                        }`}
-                      >
-                        {exp}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                <div className="relative w-full">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setHiringDropdownOpen(
+                        hiringDropdownOpen === "exp" ? null : "exp"
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
+                  >
+                    <span className="truncate">{hiringExp}</span>
+                    <CaretDown
+                      size={14}
+                      weight="bold"
+                      className={`text-gray-500 transition-transform shrink-0 ml-1 ${
+                        hiringDropdownOpen === "exp" ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {hiringDropdownOpen === "exp" && (
+                    <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30">
+                      {hiringExperiences.map((exp) => (
+                        <div
+                          key={exp}
+                          onClick={() => {
+                            setHiringExp(exp)
+                            setHiringDropdownOpen(null)
+                          }}
+                          className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
+                            hiringExp === exp
+                              ? "bg-purple-50 text-[#8571EE] font-semibold"
+                              : "text-[#374151]"
+                          }`}
+                        >
+                          {exp}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-              {/* Location Dropdown */}
-              <div className="relative flex-1 min-w-[120px]">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setHiringDropdownOpen(
-                      hiringDropdownOpen === "loc" ? null : "loc"
-                    )
-                  }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
-                >
-                  <span className="truncate">{hiringLoc}</span>
-                  <CaretDown
-                    size={14}
-                    weight="bold"
-                    className={`text-gray-500 transition-transform ${
-                      hiringDropdownOpen === "loc" ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {hiringDropdownOpen === "loc" && (
-                  <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30">
-                    {hiringLocations.map((loc) => (
-                      <div
-                        key={loc}
-                        onClick={() => {
-                          setHiringLoc(loc)
-                          setHiringDropdownOpen(null)
-                        }}
-                        className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
-                          hiringLoc === loc
-                            ? "bg-purple-50 text-[#8571EE] font-semibold"
-                            : "text-[#374151]"
-                        }`}
-                      >
-                        {loc}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="relative w-full">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setHiringDropdownOpen(
+                        hiringDropdownOpen === "loc" ? null : "loc"
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-medium text-[#1F2937] bg-white hover:border-[#8571EE] transition-colors cursor-pointer"
+                  >
+                    <span className="truncate">{hiringLoc}</span>
+                    <CaretDown
+                      size={14}
+                      weight="bold"
+                      className={`text-gray-500 transition-transform shrink-0 ml-1 ${
+                        hiringDropdownOpen === "loc" ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {hiringDropdownOpen === "loc" && (
+                    <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30">
+                      {hiringLocations.map((loc) => (
+                        <div
+                          key={loc}
+                          onClick={() => {
+                            setHiringLoc(loc)
+                            setHiringDropdownOpen(null)
+                          }}
+                          className={`px-3 py-1.5 text-xs cursor-pointer hover:bg-purple-50 hover:text-[#8571EE] ${
+                            hiringLoc === loc
+                              ? "bg-purple-50 text-[#8571EE] font-semibold"
+                              : "text-[#374151]"
+                          }`}
+                        >
+                          {loc}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* List of Job Opening Cards */}
             <div className="flex flex-col gap-2.5">
               {filteredJobs.map((job) => (
                 <div
                   key={job.id}
-                  className="bg-white rounded-xl p-4 shadow-xs border border-gray-100 flex items-center justify-between hover:shadow-sm transition-shadow"
+                  className="bg-white rounded-xl p-3.5 sm:p-4 shadow-xs border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:shadow-sm transition-shadow"
                 >
-                  <div>
-                    <h4 className="font-bold text-sm text-[#1E293B]">
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-sm text-[#1E293B] truncate">
                       {job.title}
                     </h4>
-                    <div className="flex items-center gap-5 text-xs text-[#64748B] mt-1 font-medium">
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs text-[#64748B] mt-1 font-medium">
                       <span>{job.department}</span>
                       <span>{job.experience}</span>
                       <span>{job.positions}</span>
                     </div>
                   </div>
                   <button
+                    type="button"
                     onClick={() => {
                       setSelectedJob(job)
                       setReferModalOpen(true)
                     }}
-                    className="bg-[#8571EE] hover:bg-[#725EE8] text-white text-xs font-semibold px-7 py-2 rounded-lg cursor-pointer transition-colors shadow-xs"
+                    className="w-full sm:w-auto bg-[#8571EE] hover:bg-[#725EE8] text-white text-xs font-semibold px-6 py-2 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 text-center"
                   >
                     Refer
                   </button>
@@ -1128,13 +1261,11 @@ function OrgPageContent() {
             </div>
           </div>
 
-          {/* Right Column: 2 Cards (My Referrals/Applications + Reward Card) */}
-          <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-4">
-            {/* Card 1: My Referrals / My Applications */}
-            <div className="bg-white rounded-2xl p-5 shadow-xs border border-gray-100 flex flex-col items-center min-h-[350px]">
-              {/* Internal Tabs */}
+          <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-3.5 sm:gap-4 min-w-0">
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-xs border border-gray-100 flex flex-col items-center min-h-[300px] sm:min-h-[350px]">
               <div className="w-full flex items-center justify-around border-b border-gray-200">
                 <button
+                  type="button"
                   onClick={() => handleHiringSubTabChange("referrals")}
                   className={`pb-2.5 text-xs sm:text-sm font-semibold transition-colors cursor-pointer relative ${
                     hiringSubTab === "referrals"
@@ -1145,6 +1276,7 @@ function OrgPageContent() {
                   My Referrals
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleHiringSubTabChange("applications")}
                   className={`pb-2.5 text-xs sm:text-sm font-semibold transition-colors cursor-pointer relative ${
                     hiringSubTab === "applications"
@@ -1156,15 +1288,13 @@ function OrgPageContent() {
                 </button>
               </div>
 
-              {/* Sub-tab content */}
               {hiringSubTab === "referrals" ? (
                 submittedReferrals.length === 0 ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-                    {/* SVG Illustration: Document with magnifying glass and ? */}
-                    <div className="w-24 h-28 relative flex items-center justify-center mb-3">
+                  <div className="flex-1 flex flex-col items-center justify-center text-center py-6 sm:py-8">
+                    <div className="w-20 h-24 sm:w-24 sm:h-28 relative flex items-center justify-center mb-3">
                       <svg
                         viewBox="0 0 120 130"
-                        className="w-22 h-26"
+                        className="w-20 h-24 sm:w-22 sm:h-26"
                         fill="none"
                       >
                         <rect
@@ -1271,7 +1401,7 @@ function OrgPageContent() {
                     </p>
                   </div>
                 ) : (
-                  <div className="w-full mt-4 flex flex-col gap-2.5 max-h-[260px] overflow-y-auto">
+                  <div className="w-full mt-3 sm:mt-4 flex flex-col gap-2.5 max-h-[260px] overflow-y-auto">
                     {submittedReferrals.map((ref) => (
                       <div
                         key={ref.id}
@@ -1293,7 +1423,7 @@ function OrgPageContent() {
                   </div>
                 )
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+                <div className="flex-1 flex flex-col items-center justify-center text-center py-6 sm:py-8">
                   <p className="text-xs font-semibold text-[#1E293B]">
                     No internal applications submitted yet
                   </p>
@@ -1304,20 +1434,19 @@ function OrgPageContent() {
               )}
             </div>
 
-            {/* Card 2: Refer a friend and earn */}
-            <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-100 flex flex-col justify-center">
-              <h3 className="font-bold text-lg text-[#1E293B]">
+            <div className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 shadow-xs border border-gray-100 flex flex-col justify-center">
+              <h3 className="font-bold text-base sm:text-lg text-[#1E293B]">
                 Refer a friend and earn
               </h3>
               <div className="flex items-baseline gap-2 my-2">
-                <span className="text-3xl font-black text-[#8571EE]">
+                <span className="text-2xl sm:text-3xl font-black text-[#8571EE]">
                   ₹ 5,000
                 </span>
-                <span className="text-base font-semibold text-[#1E293B]">
+                <span className="text-sm sm:text-base font-semibold text-[#1E293B]">
                   upon
                 </span>
               </div>
-              <p className="font-bold text-lg text-[#1E293B]">
+              <p className="font-bold text-base sm:text-lg text-[#1E293B]">
                 Successful hire!
               </p>
             </div>
@@ -1325,10 +1454,9 @@ function OrgPageContent() {
         </div>
       )}
 
-      {/* Referral Modal */}
       {referModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-3 sm:p-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <h3 className="font-bold text-base text-[#1E293B]">
@@ -1343,6 +1471,7 @@ function OrgPageContent() {
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setReferModalOpen(false)}
                 className="text-gray-400 hover:text-gray-600 cursor-pointer text-lg font-bold"
               >
@@ -1431,7 +1560,6 @@ function OrgPageContent() {
         </div>
       )}
 
-      {/* Bottom clearance spacer so content never touches the bottom of the viewport when scrolled */}
       <div className="w-full h-4 shrink-0" aria-hidden="true" />
     </div>
   )
@@ -1439,7 +1567,20 @@ function OrgPageContent() {
 
 export default function OrgPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      fallback={
+        <div className="w-full p-4">
+          <div className="w-full h-11 bg-white/60 animate-pulse rounded-xl mb-4" />
+          <div className="w-full h-11 bg-white/60 animate-pulse rounded-xl mb-4" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="h-44 bg-white/60 animate-pulse rounded-2xl" />
+            <div className="h-44 bg-white/60 animate-pulse rounded-2xl" />
+            <div className="h-44 bg-white/60 animate-pulse rounded-2xl" />
+            <div className="h-44 bg-white/60 animate-pulse rounded-2xl" />
+          </div>
+        </div>
+      }
+    >
       <OrgPageContent />
     </Suspense>
   )

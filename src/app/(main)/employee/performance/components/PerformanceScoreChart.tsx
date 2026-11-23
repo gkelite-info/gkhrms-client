@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { CaretDown, ArrowUp } from "phosphor-react"
 import {
   AreaChart,
@@ -58,23 +59,57 @@ function CustomizedDot({ cx, cy, value }: CustomizedDotProps) {
   )
 }
 
+const timeOptions = ["Month", "Quarter", "Year"]
+
 export default function PerformanceScoreChart() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [mounted, setMounted] = useState(false)
-  const [timeFilter, setTimeFilter] = useState("Month")
   const [dropdownOpen, setDropdownOpen] = useState(false)
+
+  const parseTimeFromQuery = useCallback((query: string | null): string => {
+    const q = (query || "").toLowerCase()
+    if (q === "quarter") return "Quarter"
+    if (q === "year") return "Year"
+    return "Month"
+  }, [])
+
+  const initialTime = parseTimeFromQuery(searchParams?.get("time"))
+  const [timeFilter, setTimeFilter] = useState(initialTime)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  useEffect(() => {
+    const q = parseTimeFromQuery(searchParams?.get("time"))
+    setTimeFilter(q)
+  }, [searchParams, parseTimeFromQuery])
+
+  const handleTimeChange = (opt: string) => {
+    setTimeFilter(opt)
+    setDropdownOpen(false)
+
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    if (opt.toLowerCase() === "month") {
+      params.delete("time")
+    } else {
+      params.set("time", opt.toLowerCase())
+    }
+    const query = params.toString()
+    router.push(`${pathname}${query ? `?${query}` : ""}`, { scroll: false })
+  }
+
   return (
-    <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-gray-100 flex flex-col justify-between h-full">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div className="flex flex-wrap items-center gap-2.5">
+    <div className="bg-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-xs border border-gray-100 flex flex-col justify-between h-full min-w-0">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 mb-3 sm:mb-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           <h3 className="text-xs sm:text-sm font-bold text-gray-900 tracking-tight">
             Performance Score by Month
           </h3>
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#16A34A] bg-emerald-50 px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-[#16A34A] bg-emerald-50 px-2 py-0.5 rounded-full">
             <ArrowUp size={11} weight="bold" />
             <span>10%</span>
             <span className="text-gray-500 font-normal hidden sm:inline">
@@ -87,7 +122,7 @@ export default function PerformanceScoreChart() {
           <button
             type="button"
             onClick={() => setDropdownOpen((prev) => !prev)}
-            className="inline-flex items-center gap-1.5 bg-[#C5C1FF] hover:bg-[#b8b3ff] text-gray-800 text-xs font-semibold px-3 py-1 rounded-md transition-colors cursor-pointer select-none"
+            className="inline-flex items-center gap-1.5 bg-[#C5C1FF] hover:bg-[#b8b3ff] text-gray-800 text-xs font-semibold px-2.5 sm:px-3 py-1 rounded-md transition-colors cursor-pointer select-none"
           >
             <span>{timeFilter}</span>
             <CaretDown
@@ -101,14 +136,11 @@ export default function PerformanceScoreChart() {
 
           {dropdownOpen && (
             <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-30 min-w-[100px]">
-              {["Month", "Quarter", "Year"].map((opt) => (
+              {timeOptions.map((opt) => (
                 <button
                   key={opt}
                   type="button"
-                  onClick={() => {
-                    setTimeFilter(opt)
-                    setDropdownOpen(false)
-                  }}
+                  onClick={() => handleTimeChange(opt)}
                   className={`w-full text-left px-3 py-1.5 text-xs hover:bg-purple-50 hover:text-[#8571EE] cursor-pointer ${
                     timeFilter === opt
                       ? "text-[#8571EE] font-bold bg-purple-50/50"
@@ -123,12 +155,12 @@ export default function PerformanceScoreChart() {
         </div>
       </div>
 
-      <div className="w-full h-56 sm:h-64 mt-2">
+      <div className="w-full h-52 sm:h-60 md:h-64 mt-2 min-w-0">
         {mounted ? (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={chartData}
-              margin={{ top: 20, right: 12, left: -20, bottom: 0 }}
+              margin={{ top: 18, right: 10, left: -20, bottom: 0 }}
             >
               <defs>
                 <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
@@ -141,15 +173,16 @@ export default function PerformanceScoreChart() {
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: "#64748B" }}
+                tick={{ fontSize: 10, fill: "#64748B" }}
                 dy={6}
+                interval="preserveStartEnd"
               />
               <YAxis
                 domain={[0, 5]}
                 ticks={[1, 2, 3, 4, 5]}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: "#64748B" }}
+                tick={{ fontSize: 10, fill: "#64748B" }}
               />
               <Tooltip
                 content={({ active, payload, label }) => {

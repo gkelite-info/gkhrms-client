@@ -9,16 +9,16 @@ export default function EmployeeProjectTimeDirectPage() {
 
   const handleSelectTab = (tab: MeTabType) => {
     if (tab === "overview") {
-      router.push("/employee/me")
+      router.push("/employee/me?tab=overview")
     } else if (tab === "timesheet") {
-      router.push("/employee/me/timesheet")
+      router.push("/employee/me?tab=timesheet")
     } else if (tab === "project_time") {
-      router.push("/employee/me/project-time")
+      router.push("/employee/me?tab=project_time")
     }
   }
 
   return (
-    <div className="w-full max-w-full flex flex-col p-4 md:p-6 pb-24 gap-5">
+    <div className="w-full max-w-full min-w-0 flex flex-col p-3 sm:p-4 md:p-6 pb-20 sm:pb-24 gap-4 sm:gap-5">
       <EmployeeMeTabs activeTab="project_time" onSelectTab={handleSelectTab} />
       <EmployeeProjectTimeOverview />
     </div>

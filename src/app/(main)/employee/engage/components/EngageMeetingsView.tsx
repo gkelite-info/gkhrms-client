@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState, useRef } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, Plus, VideoCamera, CaretDown } from "phosphor-react"
+import React, { useState, useRef, useEffect, useCallback } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { ArrowLeft, Plus, VideoCamera, CaretDown, X } from "phosphor-react"
 
 export interface MeetingItem {
   id: string
@@ -163,8 +163,9 @@ function PlatformIcon({
   if (platform === "zoom") {
     return (
       <div
-        className={`${compact ? "w-5 h-5 text-[8px]" : "w-8 h-8 text-[10px]"
-          } rounded-full bg-[#0E71EB] flex items-center justify-center shrink-0 shadow-2xs`}
+        className={`${
+          compact ? "w-5 h-5 text-[8px]" : "w-8 h-8 text-[10px]"
+        } rounded-full bg-[#0E71EB] flex items-center justify-center shrink-0 shadow-2xs`}
       >
         <span className="text-white font-extrabold tracking-tight italic select-none">
           zoom
@@ -175,8 +176,9 @@ function PlatformIcon({
 
   return (
     <div
-      className={`${compact ? "w-5 h-5" : "w-8 h-8"
-        } flex items-center justify-center shrink-0`}
+      className={`${
+        compact ? "w-5 h-5" : "w-8 h-8"
+      } flex items-center justify-center shrink-0`}
     >
       <svg
         className={compact ? "w-4 h-4" : "w-7 h-7"}
@@ -200,19 +202,23 @@ function PlatformIcon({
 
 export default function EngageMeetingsView() {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const subtabParam = (searchParams?.get("subtab") || "today").toLowerCase()
-  const activeSubtab =
-    subtabParam === "upcoming"
-      ? "upcoming"
-      : subtabParam === "completed"
-        ? "completed"
-        : "today"
+  const parseSubtabFromQuery = useCallback((param: string | null): "today" | "upcoming" | "completed" => {
+    const s = (param || "").toLowerCase()
+    if (s === "upcoming") return "upcoming"
+    if (s === "completed") return "completed"
+    return "today"
+  }, [])
 
+  const initialSubtab = parseSubtabFromQuery(searchParams?.get("subtab"))
+  const initialModalOpen = searchParams?.get("modal") === "new"
+
+  const [activeSubtab, setActiveSubtab] = useState<"today" | "upcoming" | "completed">(initialSubtab)
   const [meetings, setMeetings] = useState<MeetingItem[]>(initialMeetings)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(initialModalOpen)
 
   const [newTitle, setNewTitle] = useState("")
   const [newDate, setNewDate] = useState("")
@@ -227,6 +233,11 @@ export default function EngageMeetingsView() {
   const [isOrganizerMenuOpen, setIsOrganizerMenuOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  useEffect(() => {
+    setActiveSubtab(parseSubtabFromQuery(searchParams?.get("subtab")))
+    setIsModalOpen(searchParams?.get("modal") === "new")
+  }, [searchParams, parseSubtabFromQuery])
+
   const showToast = (msg: string) => {
     setToastMessage(msg)
     setTimeout(() => {
@@ -235,11 +246,42 @@ export default function EngageMeetingsView() {
   }
 
   const handleSubtabChange = (subtab: "today" | "upcoming" | "completed") => {
-    router.push(`/employee/engage?tab=meetings&subtab=${subtab}`)
+    setActiveSubtab(subtab)
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    params.set("tab", "meetings")
+    if (subtab === "today") {
+      params.delete("subtab")
+    } else {
+      params.set("subtab", subtab)
+    }
+    const query = params.toString()
+    router.push(`${pathname}${query ? `?${query}` : ""}`, { scroll: false })
   }
 
   const handleBackToHierarchy = () => {
-    router.push("/employee/engage")
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    params.delete("tab")
+    params.delete("subtab")
+    params.delete("modal")
+    const query = params.toString()
+    router.push(`${pathname}${query ? `?${query}` : ""}`)
+  }
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true)
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    params.set("modal", "new")
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setIsPlatformMenuOpen(false)
+    setIsOrganizerMenuOpen(false)
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    params.delete("modal")
+    const query = params.toString()
+    router.push(`${pathname}${query ? `?${query}` : ""}`, { scroll: false })
   }
 
   const handleCreateMeeting = (e: React.FormEvent) => {
@@ -260,20 +302,18 @@ export default function EngageMeetingsView() {
     }
 
     setMeetings((prev) => [created, ...prev])
-    setIsModalOpen(false)
-    setIsPlatformMenuOpen(false)
-    setIsOrganizerMenuOpen(false)
     setNewTitle("")
     setNotes("")
+    handleCloseModal()
     showToast("Meeting scheduled successfully!")
   }
 
   const filteredMeetings = meetings.filter((m) => m.category === activeSubtab)
 
   return (
-    <div className="w-full min-h-full px-4 pt-3 sm:pt-4 md:px-6 md:pt-4 pb-6 flex flex-col gap-4 sm:gap-5 select-none">
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-3">
+    <div className="w-full min-h-full px-3 py-3 sm:px-4 sm:pt-4 md:px-6 md:pt-4 pb-6 flex flex-col gap-4 sm:gap-5 select-none">
+      <div className="flex flex-wrap items-center justify-between gap-3 w-full">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <button
             type="button"
             onClick={handleBackToHierarchy}
@@ -282,20 +322,21 @@ export default function EngageMeetingsView() {
           >
             <ArrowLeft size={19} weight="bold" />
           </button>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#1F2937] tracking-tight">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-[#1F2937] tracking-tight">
             Meetings
           </h1>
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 bg-white sm:bg-transparent rounded-xl px-2 py-1 sm:p-0 border border-gray-100 sm:border-none shadow-2xs sm:shadow-none">
             <button
               type="button"
               onClick={() => handleSubtabChange("today")}
-              className={`text-xs sm:text-sm transition-colors cursor-pointer ${activeSubtab === "today"
-                ? "font-bold text-[#1F2937]"
-                : "font-medium text-gray-500 hover:text-gray-800"
-                }`}
+              className={`text-xs sm:text-sm px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                activeSubtab === "today"
+                  ? "font-bold text-[#1F2937] bg-gray-100 sm:bg-transparent"
+                  : "font-medium text-gray-500 hover:text-gray-800"
+              }`}
             >
               Today
             </button>
@@ -303,10 +344,11 @@ export default function EngageMeetingsView() {
             <button
               type="button"
               onClick={() => handleSubtabChange("upcoming")}
-              className={`text-xs sm:text-sm transition-colors cursor-pointer ${activeSubtab === "upcoming"
-                ? "font-bold text-[#1F2937]"
-                : "font-medium text-gray-500 hover:text-gray-800"
-                }`}
+              className={`text-xs sm:text-sm px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                activeSubtab === "upcoming"
+                  ? "font-bold text-[#1F2937] bg-gray-100 sm:bg-transparent"
+                  : "font-medium text-gray-500 hover:text-gray-800"
+              }`}
             >
               Upcoming
             </button>
@@ -314,10 +356,11 @@ export default function EngageMeetingsView() {
             <button
               type="button"
               onClick={() => handleSubtabChange("completed")}
-              className={`text-xs sm:text-sm transition-colors cursor-pointer ${activeSubtab === "completed"
-                ? "font-bold text-[#1F2937]"
-                : "font-medium text-gray-500 hover:text-gray-800"
-                }`}
+              className={`text-xs sm:text-sm px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                activeSubtab === "completed"
+                  ? "font-bold text-[#1F2937] bg-gray-100 sm:bg-transparent"
+                  : "font-medium text-gray-500 hover:text-gray-800"
+              }`}
             >
               Completed
             </button>
@@ -325,8 +368,8 @@ export default function EngageMeetingsView() {
 
           <button
             type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="w-7 h-7 rounded-full bg-[#8571EE] hover:bg-[#725EE8] text-white flex items-center justify-center transition-colors cursor-pointer shadow-xs shrink-0"
+            onClick={handleOpenModal}
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#8571EE] hover:bg-[#725EE8] text-white flex items-center justify-center transition-colors cursor-pointer shadow-xs shrink-0"
             aria-label="Schedule Meeting"
           >
             <Plus size={15} weight="bold" />
@@ -334,11 +377,11 @@ export default function EngageMeetingsView() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4 md:gap-5 w-full">
         {filteredMeetings.map((meeting) => (
           <div
             key={meeting.id}
-            className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow"
+            className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow min-w-0"
           >
             <div>
               <div className="flex items-center gap-3">
@@ -353,7 +396,7 @@ export default function EngageMeetingsView() {
                 </div>
               </div>
 
-              <div className="border-t border-gray-100 my-3.5" />
+              <div className="border-t border-gray-100 my-3 sm:my-3.5" />
 
               <div className="flex flex-col items-center text-center">
                 <span className="text-[11px] text-gray-400 font-medium">
@@ -407,7 +450,7 @@ export default function EngageMeetingsView() {
       </div>
 
       {filteredMeetings.length === 0 && (
-        <div className="bg-white rounded-2xl p-12 text-center shadow-xs border border-gray-100 flex flex-col items-center justify-center gap-2">
+        <div className="bg-white rounded-2xl p-8 sm:p-12 text-center shadow-xs border border-gray-100 flex flex-col items-center justify-center gap-2">
           <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-[#8571EE]">
             <VideoCamera size={24} weight="duotone" />
           </div>
@@ -423,22 +466,18 @@ export default function EngageMeetingsView() {
 
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
-          onClick={() => {
-            setIsModalOpen(false)
-            setIsPlatformMenuOpen(false)
-            setIsOrganizerMenuOpen(false)
-          }}
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-150"
+          onClick={handleCloseModal}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl border border-gray-100 max-w-[560px] w-full p-4 sm:p-5 flex flex-col my-auto h-[430px] max-h-[80vh] animate-in zoom-in-95 duration-150"
+            className="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-[560px] w-full p-4 sm:p-5 flex flex-col my-auto max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 shrink-0 border-b border-gray-100">
               <h2 className="text-base sm:text-lg font-bold text-gray-900 tracking-tight">
                 Add New Meeting
               </h2>
-              <div className="flex items-center">
+              <div className="flex items-center gap-1">
                 <div className="flex items-center -space-x-1.5">
                   {modalParticipantAvatars.map((avatar, idx) => (
                     <img
@@ -460,11 +499,19 @@ export default function EngageMeetingsView() {
                 >
                   <Plus size={13} weight="bold" />
                 </button>
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="text-gray-400 hover:text-gray-600 p-1 ml-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  aria-label="Close"
+                >
+                  <X size={17} weight="bold" />
+                </button>
               </div>
             </div>
 
             <form onSubmit={handleCreateMeeting} className="flex flex-col flex-1 min-h-0 pt-3">
-              <div className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-3.5 [scrollbar-width:thin] [scrollbar-color:#CBD5E1_transparent]">
+              <div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-3.5 [scrollbar-width:thin] [scrollbar-color:#CBD5E1_transparent]">
                 <div>
                   <label className="text-xs sm:text-sm font-semibold text-gray-800 block mb-1.5">
                     Meeting Title
@@ -673,11 +720,7 @@ export default function EngageMeetingsView() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsModalOpen(false)
-                    setIsPlatformMenuOpen(false)
-                    setIsOrganizerMenuOpen(false)
-                  }}
+                  onClick={handleCloseModal}
                   className="px-8 py-2 rounded-lg bg-[#9CA3AF] hover:bg-[#6B7280] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer shadow-xs"
                 >
                   Cancel
@@ -696,4 +739,3 @@ export default function EngageMeetingsView() {
     </div>
   )
 }
-

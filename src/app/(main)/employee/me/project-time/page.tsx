@@ -9,11 +9,11 @@ export default function EmployeeProjectTimePage() {
 
   const handleSelectTab = (tab: MeTabType) => {
     if (tab === "overview") {
-      router.push("/employee/me")
+      router.push("/employee/me?tab=overview")
     } else if (tab === "timesheet") {
-      router.push("/employee/me/timesheet")
+      router.push("/employee/me?tab=timesheet")
     } else if (tab === "project_time") {
-      router.push("/employee/me/project-time")
+      router.push("/employee/me?tab=project_time")
     }
   }
 

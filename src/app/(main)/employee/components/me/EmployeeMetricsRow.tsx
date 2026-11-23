@@ -21,55 +21,51 @@ export default function EmployeeMetricsRow({
   }
 
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 1. Employee Profile Card */}
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       <div
         onClick={handleProfileClick}
         style={{ cursor: "pointer" }}
-        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-3.5 cursor-pointer hover:border-[#7D73E3]/40 hover:shadow-md transition-all group select-none"
+        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-4 flex items-center gap-3.5 cursor-pointer hover:border-[#7D73E3]/40 hover:shadow-md transition-all group select-none min-h-[96px]"
       >
-        <div className="h-12 w-12 rounded-full overflow-hidden flex-shrink-0 shadow-sm border border-gray-100">
+        <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-full overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 bg-gray-50 flex items-center justify-center">
           <img
             src="/images/alexander.png"
             alt="Alexander"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
             onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = "none";
+              const target = e.target as HTMLImageElement
+              target.style.display = "none"
             }}
           />
         </div>
-        <div className="flex flex-col">
-          <h3 className="text-base font-bold text-[#1F2937] leading-snug group-hover:text-[#5B50E5] transition-colors">
+        <div className="flex flex-col min-w-0">
+          <h3 className="text-sm sm:text-base font-bold text-[#1F2937] leading-snug group-hover:text-[#5B50E5] transition-colors truncate">
             Alexander
           </h3>
-          <p className="text-xs text-gray-400 font-medium mt-0.5">Employee ID : 154358</p>
+          <p className="text-[11px] sm:text-xs text-gray-400 font-medium mt-0.5 truncate">Employee ID : 154358</p>
         </div>
       </div>
 
-      {/* 2. Attendance Card with Donut */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-4 flex items-center justify-between min-h-[96px]">
         <div className="flex flex-col justify-between h-full">
           <div>
-            <h3 className="text-sm font-bold text-[#1F2937]">Attendance</h3>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">October Month</p>
+            <h3 className="text-xs sm:text-sm font-bold text-[#1F2937]">Attendance</h3>
+            <p className="text-[11px] sm:text-xs text-gray-400 font-medium mt-0.5">October Month</p>
           </div>
-          <div className="flex flex-col gap-1 mt-2.5">
+          <div className="flex flex-col gap-1 mt-2">
             <div className="flex items-center gap-1.5 text-[10px] text-gray-500 font-medium">
-              <span className="h-2 w-2 rounded-full bg-[#F59E0B]"></span>
+              <span className="h-2 w-2 rounded-full bg-[#F59E0B] shrink-0" />
               <span>Holidays</span>
             </div>
             <div className="flex items-center gap-1.5 text-[10px] text-gray-500 font-medium">
-              <span className="h-2 w-2 rounded-full bg-[#EF4444]"></span>
+              <span className="h-2 w-2 rounded-full bg-[#EF4444] shrink-0" />
               <span>Unpaid leave</span>
             </div>
           </div>
         </div>
 
-        {/* Circular Donut Ring 95% */}
-        <div className="relative h-16 w-16 flex items-center justify-center flex-shrink-0">
+        <div className="relative h-14 w-14 sm:h-16 sm:w-16 flex items-center justify-center flex-shrink-0">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-            {/* Background path */}
             <circle
               cx="18"
               cy="18"
@@ -78,7 +74,6 @@ export default function EmployeeMetricsRow({
               stroke="#F3F4F6"
               strokeWidth="4"
             />
-            {/* Orange/Red small segment */}
             <circle
               cx="18"
               cy="18"
@@ -89,7 +84,6 @@ export default function EmployeeMetricsRow({
               strokeDasharray="88 88"
               strokeDashoffset="0"
             />
-            {/* Main Purple segment 95% */}
             <circle
               cx="18"
               cy="18"
@@ -102,24 +96,23 @@ export default function EmployeeMetricsRow({
               strokeLinecap="round"
             />
           </svg>
-          <span className="absolute text-xs font-bold text-[#1F2937]">95 %</span>
+          <span className="absolute text-[11px] sm:text-xs font-bold text-[#1F2937]">95 %</span>
         </div>
       </div>
 
-      {/* 3. Attendance Requests Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
-        <h3 className="text-sm font-bold text-[#1F2937]">Attendance Requests</h3>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-4 flex flex-col justify-between min-h-[96px]">
+        <h3 className="text-xs sm:text-sm font-bold text-[#1F2937]">Attendance Requests</h3>
         <div className="flex flex-col gap-2 mt-2">
           <button
             type="button"
-            className="flex items-center justify-between text-xs text-gray-700 font-medium hover:text-[#7D73E3] transition-colors focus:outline-none"
+            className="flex items-center justify-between text-xs text-gray-700 font-medium hover:text-[#7D73E3] transition-colors focus:outline-none cursor-pointer"
           >
             <span>New Approval</span>
             <CaretRight size={14} className="text-gray-400" />
           </button>
           <button
             type="button"
-            className="flex items-center justify-between text-xs text-gray-700 font-medium hover:text-[#7D73E3] transition-colors focus:outline-none"
+            className="flex items-center justify-between text-xs text-gray-700 font-medium hover:text-[#7D73E3] transition-colors focus:outline-none cursor-pointer"
           >
             <span>Pending</span>
             <CaretRight size={14} className="text-gray-400" />
@@ -127,23 +120,21 @@ export default function EmployeeMetricsRow({
         </div>
       </div>
 
-      {/* 4. Performance Card with Donut */}
       <div
         onClick={onSelectPerformance}
-        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-[#7D73E3]/50 transition-all group"
+        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-4 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-[#7D73E3]/50 transition-all group min-h-[96px]"
         title="Click to view detailed Performance analysis"
       >
         <div className="flex flex-col justify-between h-full">
           <div>
-            <h3 className="text-sm font-bold text-[#1F2937] group-hover:text-[#7D73E3] transition-colors">
+            <h3 className="text-xs sm:text-sm font-bold text-[#1F2937] group-hover:text-[#7D73E3] transition-colors">
               Performance
             </h3>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">This Month (OCT)</p>
+            <p className="text-[11px] sm:text-xs text-gray-400 font-medium mt-0.5">This Month (OCT)</p>
           </div>
         </div>
 
-        {/* Circular Donut Ring 95% */}
-        <div className="relative h-16 w-16 flex items-center justify-center flex-shrink-0">
+        <div className="relative h-14 w-14 sm:h-16 sm:w-16 flex items-center justify-center flex-shrink-0">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
             <circle
               cx="18"
@@ -165,7 +156,7 @@ export default function EmployeeMetricsRow({
               strokeLinecap="round"
             />
           </svg>
-          <span className="absolute text-xs font-bold text-[#1F2937]">95 %</span>
+          <span className="absolute text-[11px] sm:text-xs font-bold text-[#1F2937]">95 %</span>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import FinanceFormsView from "./FinanceFormsView"
 import FinanceTaxFilingView from "./FinanceTaxFilingView"
@@ -59,10 +59,26 @@ export default function FinanceManageTaxView({
     setActiveSubTab(normalizeSubTab(rawSubTab))
   }, [rawSubTab])
 
+  useEffect(() => {
+    const handlePopState = () => {
+      const currentParams = new URLSearchParams(window.location.search)
+      setActiveSubTab(normalizeSubTab(currentParams.get("subtab")))
+    }
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [])
+
   const handleSelectSubTab = (tabId: ManageTaxSubTab) => {
     setActiveSubTab(tabId)
-    const sep = basePath.includes("?") ? "&" : "?"
-    router.push(`${basePath}${sep}tab=manage_tax&subtab=${tabId}`)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", "manage_tax")
+    params.set("subtab", tabId)
+    const cleanBase = basePath.split("?")[0]
+    const url = `${cleanBase}?${params.toString()}`
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", url)
+    }
+    router.push(url, { scroll: false })
   }
 
   return (
@@ -133,7 +149,7 @@ export default function FinanceManageTaxView({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4">
               <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-100 shadow-2xs flex flex-col justify-between">
                 <span className="text-xs text-slate-600 font-normal">
                   Net Taxable Income
@@ -157,9 +173,9 @@ export default function FinanceManageTaxView({
                 </span>
               </div>
 
-              <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-100 shadow-2xs flex flex-col justify-between">
+              <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-100 shadow-2xs flex flex-col justify-between sm:col-span-2 md:col-span-1">
                 <span className="text-xs text-slate-600 font-normal">
-                  Tax Already Paid
+                  Total TAX Deducted
                 </span>
                 <span className="text-base sm:text-lg font-bold text-slate-900 mt-1.5">
                   INR 0

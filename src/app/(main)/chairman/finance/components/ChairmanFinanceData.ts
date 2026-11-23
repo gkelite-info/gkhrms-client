@@ -32,7 +32,9 @@ export interface FinancialActivityItem {
   reference: string
   departmentSource: string
   amount: string
-  status: "Completed" | "Pending" | "Failed"
+  status: "Completed" | "Pending" | "Failed" | "Processing"
+  paymentMethod?: string
+  description?: string
 }
 
 export const CHAIRMAN_FINANCE_STATS: FinanceStatItem[] = [
@@ -218,7 +220,7 @@ export const EXPENSE_BREAKDOWN_SLICES: ExpenseCategorySlice[] = [
   },
 ]
 
-export const RECENT_FINANCIAL_ACTIVITIES: FinancialActivityItem[] = [
+export const ALL_FINANCIAL_ACTIVITIES: FinancialActivityItem[] = [
   {
     id: "act-1",
     date: "Aug 25, 2025",
@@ -227,6 +229,8 @@ export const RECENT_FINANCIAL_ACTIVITIES: FinancialActivityItem[] = [
     departmentSource: "Client Services",
     amount: "$1,280,000",
     status: "Completed",
+    paymentMethod: "Wire Transfer",
+    description: "Enterprise multi-region software deployment contract final tranche.",
   },
   {
     id: "act-2",
@@ -236,6 +240,8 @@ export const RECENT_FINANCIAL_ACTIVITIES: FinancialActivityItem[] = [
     departmentSource: "Operations",
     amount: "$420,000",
     status: "Completed",
+    paymentMethod: "Corporate ACH",
+    description: "Global cloud infrastructure tier-1 data center hosting fees.",
   },
   {
     id: "act-3",
@@ -245,6 +251,8 @@ export const RECENT_FINANCIAL_ACTIVITIES: FinancialActivityItem[] = [
     departmentSource: "Human Resources",
     amount: "$360,000",
     status: "Completed",
+    paymentMethod: "Direct Deposit",
+    description: "Bi-weekly contractor disbursements and performance bonuses.",
   },
   {
     id: "act-4",
@@ -254,6 +262,8 @@ export const RECENT_FINANCIAL_ACTIVITIES: FinancialActivityItem[] = [
     departmentSource: "Corporate Accounts",
     amount: "$950,000",
     status: "Completed",
+    paymentMethod: "Wire Transfer",
+    description: "Annual SaaS licensing subscription renewal for strategic partner.",
   },
   {
     id: "act-5",
@@ -263,5 +273,152 @@ export const RECENT_FINANCIAL_ACTIVITIES: FinancialActivityItem[] = [
     departmentSource: "Technology",
     amount: "$285,000",
     status: "Completed",
+    paymentMethod: "Corporate Card",
+    description: "Developer tooling licenses, AI compute tokens, and dev infrastructure.",
+  },
+  {
+    id: "act-6",
+    date: "Aug 14, 2025",
+    type: "Revenue",
+    reference: "INV-04562",
+    departmentSource: "Strategic Consulting",
+    amount: "$680,000",
+    status: "Completed",
+    paymentMethod: "ACH Transfer",
+    description: "Enterprise IT modernization advisory deliverables milestone 2.",
+  },
+  {
+    id: "act-7",
+    date: "Aug 12, 2025",
+    type: "Payroll",
+    reference: "PRL-0812",
+    departmentSource: "Human Resources",
+    amount: "$1,840,000",
+    status: "Completed",
+    paymentMethod: "Direct Deposit",
+    description: "Monthly executive and salaried workforce payroll execution.",
+  },
+  {
+    id: "act-8",
+    date: "Aug 10, 2025",
+    type: "Expense",
+    reference: "EXP-03792",
+    departmentSource: "Marketing",
+    amount: "$175,000",
+    status: "Completed",
+    paymentMethod: "Corporate Card",
+    description: "Q3 global industry tech conference sponsorship and booth setup.",
+  },
+  {
+    id: "act-9",
+    date: "Aug 08, 2025",
+    type: "Revenue",
+    reference: "INV-04544",
+    departmentSource: "Client Services",
+    amount: "$1,450,000",
+    status: "Completed",
+    paymentMethod: "Wire Transfer",
+    description: "Quarterly retainer billing for banking consortium client.",
+  },
+  {
+    id: "act-10",
+    date: "Aug 06, 2025",
+    type: "Expense",
+    reference: "EXP-03780",
+    departmentSource: "Administration",
+    amount: "$94,000",
+    status: "Completed",
+    paymentMethod: "Bank Transfer",
+    description: "Headquarters facility maintenance, security, and utilities settlement.",
+  },
+  {
+    id: "act-11",
+    date: "Aug 05, 2025",
+    type: "Revenue",
+    reference: "INV-04530",
+    departmentSource: "Healthcare Solutions",
+    amount: "$820,000",
+    status: "Completed",
+    paymentMethod: "Wire Transfer",
+    description: "Clinical management software implementation phase 3 sign-off.",
+  },
+  {
+    id: "act-12",
+    date: "Aug 03, 2025",
+    type: "Expense",
+    reference: "EXP-03764",
+    departmentSource: "Legal & Compliance",
+    amount: "$112,000",
+    status: "Completed",
+    paymentMethod: "Bank Transfer",
+    description: "International patent filings, regulatory audit, and external counsel retainers.",
+  },
+  {
+    id: "act-13",
+    date: "Aug 02, 2025",
+    type: "Payroll",
+    reference: "PRL-0801",
+    departmentSource: "Human Resources",
+    amount: "$210,000",
+    status: "Completed",
+    paymentMethod: "Direct Deposit",
+    description: "Intern stipends and specialist external contractor settlements.",
+  },
+  {
+    id: "act-14",
+    date: "Aug 01, 2025",
+    type: "Revenue",
+    reference: "INV-04518",
+    departmentSource: "E-Commerce Systems",
+    amount: "$530,000",
+    status: "Completed",
+    paymentMethod: "ACH Transfer",
+    description: "Monthly cloud transaction fee share and API integrations revenue.",
+  },
+  {
+    id: "act-15",
+    date: "Jul 29, 2025",
+    type: "Expense",
+    reference: "EXP-03742",
+    departmentSource: "Technology",
+    amount: "$340,000",
+    status: "Completed",
+    paymentMethod: "Corporate ACH",
+    description: "Hardware procurement, server blade replacements, and network firewalls.",
+  },
+  {
+    id: "act-16",
+    date: "Jul 28, 2025",
+    type: "Revenue",
+    reference: "INV-04505",
+    departmentSource: "Corporate Accounts",
+    amount: "$1,120,000",
+    status: "Completed",
+    paymentMethod: "Wire Transfer",
+    description: "Multi-year enterprise cloud migration milestone payment.",
+  },
+  {
+    id: "act-17",
+    date: "Jul 26, 2025",
+    type: "Payroll",
+    reference: "PRL-0725",
+    departmentSource: "Human Resources",
+    amount: "$350,000",
+    status: "Completed",
+    paymentMethod: "Direct Deposit",
+    description: "Bi-weekly contractor and consulting staff compensations.",
+  },
+  {
+    id: "act-18",
+    date: "Jul 24, 2025",
+    type: "Expense",
+    reference: "EXP-03725",
+    departmentSource: "Operations",
+    amount: "$165,000",
+    status: "Completed",
+    paymentMethod: "Corporate ACH",
+    description: "Logistics, supply chain warehousing, and field operations expenses.",
   },
 ]
+
+export const RECENT_FINANCIAL_ACTIVITIES: FinancialActivityItem[] = ALL_FINANCIAL_ACTIVITIES.slice(0, 5)

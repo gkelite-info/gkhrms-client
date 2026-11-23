@@ -42,14 +42,13 @@ const leaveItems = [
 
 export default function EmployeeLeaveBalance() {
   return (
-    <div className="w-full mt-5">
-      <h3 className="text-sm font-bold text-[#1F2937] mb-2.5">Leave Balance</h3>
+    <div className="w-full mt-4 sm:mt-5">
+      <h3 className="text-xs sm:text-sm font-bold text-[#1F2937] mb-2 sm:mb-2.5">Leave Balance</h3>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5 w-full">
         {leaveItems.map((item, index) => (
-          <div key={index} className="flex flex-col">
-            {/* Horizontal Capsule Bar */}
-            <div className="h-6 w-full bg-[#E6E6E6] rounded-full overflow-hidden shadow-inner p-0.5">
+          <div key={index} className="flex flex-col min-w-0">
+            <div className="h-5 sm:h-6 w-full bg-[#E6E6E6] rounded-full overflow-hidden shadow-inner p-0.5">
               <motion.div
                 className={`h-full rounded-full bg-gradient-to-r ${item.fromColor} ${item.toColor}`}
                 initial={{ width: "0%" }}
@@ -58,13 +57,12 @@ export default function EmployeeLeaveBalance() {
               />
             </div>
 
-            {/* Label below */}
             <div className="flex items-center justify-center gap-1.5 mt-1.5 text-center">
               <span
                 className="h-2 w-2 rounded-full flex-shrink-0"
                 style={{ backgroundColor: item.dotColor }}
               />
-              <span className="text-[11px] text-gray-600 font-medium">
+              <span className="text-[10px] sm:text-[11px] text-gray-600 font-medium truncate">
                 {item.label}
               </span>
             </div>

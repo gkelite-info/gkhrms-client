@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import {
   MagnifyingGlass,
   VideoCamera,
@@ -133,6 +133,7 @@ const initialContacts: ChatContact[] = [
 
 export default function EngageChatPanel() {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const chatParam = searchParams?.get("chat")
 
@@ -170,21 +171,22 @@ export default function EngageChatPanel() {
       return
     }
 
-    const found = contacts.find(
-      (c) =>
-        c.id.toLowerCase() === chatParam.toLowerCase() ||
-        c.name.toLowerCase() === chatParam.toLowerCase().replace(/-/g, " ")
-    ) || {
-      id: chatParam,
-      name: chatParam
-        .split("-")
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" "),
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
-      lastMessage: "i Wanted to ask about the project status",
-      time: "9:43 AM",
-      isOnline: true,
-    }
+    const found =
+      contacts.find(
+        (c) =>
+          c.id.toLowerCase() === chatParam.toLowerCase() ||
+          c.name.toLowerCase() === chatParam.toLowerCase().replace(/-/g, " ")
+      ) || {
+        id: chatParam,
+        name: chatParam
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" "),
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+        lastMessage: "i Wanted to ask about the project status",
+        time: "9:43 AM",
+        isOnline: true,
+      }
 
     setActiveChatId(found.id)
     setOpenChats((prev) => {
@@ -219,16 +221,16 @@ export default function EngageChatPanel() {
       return [...prev, contact]
     })
 
-    const params = new URLSearchParams(searchParams?.toString() || "")
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
     params.set("chat", contact.id)
-    router.push(`/employee/engage?${params.toString()}`, { scroll: false })
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
   const handleActivateChat = (contactId: string) => {
     setActiveChatId(contactId)
-    const params = new URLSearchParams(searchParams?.toString() || "")
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
     params.set("chat", contactId)
-    router.push(`/employee/engage?${params.toString()}`, { scroll: false })
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
   const handleCloseChat = (contactId: string) => {
@@ -239,15 +241,15 @@ export default function EngageChatPanel() {
       if (nextChats.length > 0) {
         const nextActive = nextChats[nextChats.length - 1]
         setActiveChatId(nextActive.id)
-        const params = new URLSearchParams(searchParams?.toString() || "")
+        const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
         params.set("chat", nextActive.id)
-        router.push(`/employee/engage?${params.toString()}`, { scroll: false })
+        router.push(`${pathname}?${params.toString()}`, { scroll: false })
       } else {
         setActiveChatId("")
-        const params = new URLSearchParams(searchParams?.toString() || "")
+        const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
         params.delete("chat")
         const q = params.toString()
-        router.push(q ? `/employee/engage?${q}` : `/employee/engage`, { scroll: false })
+        router.push(`${pathname}${q ? `?${q}` : ""}`, { scroll: false })
       }
     }
   }
@@ -255,10 +257,10 @@ export default function EngageChatPanel() {
   const handleCloseAll = () => {
     setOpenChats([])
     setActiveChatId("")
-    const params = new URLSearchParams(searchParams?.toString() || "")
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
     params.delete("chat")
     const q = params.toString()
-    router.push(q ? `/employee/engage?${q}` : `/employee/engage`, { scroll: false })
+    router.push(`${pathname}${q ? `?${q}` : ""}`, { scroll: false })
   }
 
   const handleSendMessage = (contactId: string) => {
@@ -305,11 +307,17 @@ export default function EngageChatPanel() {
     )
   }
 
+  const handleGoToMeetings = () => {
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    params.set("tab", "meetings")
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
   return (
     <>
-      <div className="relative z-30 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col w-full h-[520px] xl:h-full min-h-0 overflow-hidden select-none">
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 shrink-0">
-          <h2 className="text-xl font-bold text-[#1F2937] tracking-tight">Chat</h2>
+      <div className="relative z-30 bg-white rounded-xl sm:rounded-2xl shadow-xs border border-gray-100 flex flex-col w-full h-[520px] xl:h-full min-h-0 overflow-hidden select-none">
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3.5 border-b border-gray-100 shrink-0">
+          <h2 className="text-lg sm:text-xl font-bold text-[#1F2937] tracking-tight">Chat</h2>
 
           <div className="flex items-center gap-1">
             <button
@@ -318,7 +326,7 @@ export default function EngageChatPanel() {
                 setShowSearch((prev) => !prev)
                 if (showSearch) setSearchQuery("")
               }}
-              className="p-2 text-gray-600 hover:text-[#5B50EC] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 text-gray-600 hover:text-[#5B50EC] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               aria-label="Search chats"
             >
               <MagnifyingGlass size={19} weight="bold" />
@@ -326,8 +334,8 @@ export default function EngageChatPanel() {
 
             <button
               type="button"
-              onClick={() => router.push("/employee/engage?tab=meetings")}
-              className="p-2 text-gray-600 hover:text-[#5B50EC] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+              onClick={handleGoToMeetings}
+              className="p-1.5 sm:p-2 text-gray-600 hover:text-[#5B50EC] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               aria-label="Meetings"
             >
               <VideoCamera size={19} weight="bold" />
@@ -336,7 +344,7 @@ export default function EngageChatPanel() {
         </div>
 
         {showSearch && (
-          <div className="px-4 py-2 bg-gray-50/70 border-b border-gray-100 flex items-center gap-2">
+          <div className="px-3.5 sm:px-4 py-2 bg-gray-50/70 border-b border-gray-100 flex items-center gap-2 animate-in fade-in duration-100">
             <MagnifyingGlass size={15} weight="bold" className="text-gray-400 shrink-0" />
             <input
               type="text"
@@ -365,16 +373,17 @@ export default function EngageChatPanel() {
               <div
                 key={contact.id}
                 onClick={() => handleSelectContact(contact)}
-                className={`flex items-center gap-3 px-4 py-3 transition-colors cursor-pointer group ${isSelected
-                  ? "bg-[#F3F2FD] border-l-4 border-[#5B50EC]"
-                  : "hover:bg-gray-50/80"
-                  }`}
+                className={`flex items-center gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 transition-colors cursor-pointer group ${
+                  isSelected
+                    ? "bg-[#F3F2FD] border-l-4 border-[#5B50EC]"
+                    : "hover:bg-gray-50/80"
+                }`}
               >
                 <div className="relative shrink-0">
                   <img
                     src={contact.avatar}
                     alt={contact.name}
-                    className="w-10 h-10 rounded-full object-cover ring-1 ring-gray-100"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover ring-1 ring-gray-100"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement
                       target.src = "/images/alexander.png"
@@ -387,11 +396,11 @@ export default function EngageChatPanel() {
                     <h4 className="text-xs sm:text-sm font-bold text-[#1F2937] truncate">
                       {contact.name}
                     </h4>
-                    <span className="text-[11px] sm:text-xs text-gray-400 font-medium shrink-0">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-medium shrink-0">
                       {contact.time}
                     </span>
                   </div>
-                  <p className="text-xs sm:text-[13px] text-gray-600 truncate font-normal">
+                  <p className="text-[11px] sm:text-xs text-gray-600 truncate font-normal">
                     {contact.lastMessage}
                   </p>
                 </div>
@@ -411,13 +420,13 @@ export default function EngageChatPanel() {
 
       {openChats.length > 0 && (
         <div
-          className="fixed inset-0 z-20 bg-black/20 backdrop-blur-sm transition-opacity animate-in fade-in duration-200 cursor-pointer"
+          className="fixed inset-0 z-20 bg-black/20 backdrop-blur-xs transition-opacity animate-in fade-in duration-200 cursor-pointer"
           onClick={handleCloseAll}
         />
       )}
 
       {openChats.length > 0 && (
-        <div className="fixed z-40 bottom-6 right-4 xl:right-[305px] 2xl:right-[315px] flex items-end gap-3 pointer-events-none max-w-[calc(100vw-2rem)] overflow-x-auto sm:overflow-visible">
+        <div className="fixed z-40 bottom-4 sm:bottom-6 right-3 sm:right-4 xl:right-[305px] 2xl:right-[315px] flex items-end gap-2.5 sm:gap-3 pointer-events-none max-w-[calc(100vw-1.5rem)] overflow-x-auto sm:overflow-visible">
           {openChats.map((contact) => {
             const isBig = activeChatId === contact.id
             const chatMessages = getChatMessages(contact)
@@ -427,7 +436,7 @@ export default function EngageChatPanel() {
                 <div
                   key={contact.id}
                   onClick={() => handleActivateChat(contact.id)}
-                  className="w-[230px] sm:w-[245px] h-[215px] sm:h-[225px] bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col overflow-hidden pointer-events-auto cursor-pointer transition-all duration-200 hover:shadow-2xl animate-in fade-in slide-in-from-bottom-3 select-none"
+                  className="w-[210px] sm:w-[245px] h-[200px] sm:h-[225px] bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col overflow-hidden pointer-events-auto cursor-pointer transition-all duration-200 hover:shadow-2xl animate-in fade-in slide-in-from-bottom-3 select-none shrink-0"
                 >
                   <div className="flex items-center justify-between px-3 py-1.5 border-b border-gray-100 shrink-0 bg-white">
                     <div className="flex items-center gap-2 min-w-0">
@@ -523,8 +532,8 @@ export default function EngageChatPanel() {
                 key={contact.id}
                 className={
                   isExpanded
-                    ? "fixed z-50 inset-3 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[500px] sm:h-[560px] max-w-[95vw] max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden pointer-events-auto animate-in zoom-in-95 duration-150 select-none"
-                    : "w-[calc(100vw-2rem)] sm:w-[320px] md:w-[330px] h-[340px] sm:h-[350px] max-h-[58vh] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-200 select-none"
+                    ? "fixed z-50 inset-2 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[500px] sm:h-[560px] max-w-[95vw] max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden pointer-events-auto animate-in zoom-in-95 duration-150 select-none"
+                    : "w-[calc(100vw-1.5rem)] sm:w-[320px] md:w-[330px] h-[340px] sm:h-[350px] max-h-[60vh] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-200 select-none"
                 }
                 onClick={(e) => e.stopPropagation()}
               >
@@ -589,10 +598,11 @@ export default function EngageChatPanel() {
                         className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
                       >
                         <div
-                          className={`max-w-[85%] px-3 py-1.5 rounded-2xl text-xs leading-relaxed shadow-2xs ${isMe
-                            ? "bg-[#EDE9FE] text-gray-800 rounded-br-xs"
-                            : "bg-[#F1F3F5] text-gray-800 rounded-bl-xs"
-                            }`}
+                          className={`max-w-[85%] px-3 py-1.5 rounded-2xl text-xs leading-relaxed shadow-2xs ${
+                            isMe
+                              ? "bg-[#EDE9FE] text-gray-800 rounded-br-xs"
+                              : "bg-[#F1F3F5] text-gray-800 rounded-bl-xs"
+                          }`}
                         >
                           {msg.text}
                         </div>
@@ -662,4 +672,3 @@ export default function EngageChatPanel() {
     </>
   )
 }
-

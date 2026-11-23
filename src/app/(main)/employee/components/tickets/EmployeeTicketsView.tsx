@@ -161,8 +161,7 @@ export default function EmployeeTicketsView({
           These are your Tickets that are yet to be Addressed.
         </p>
 
-        {/* Form Card - Matching Image 1 with comfortable, legible text sizes */}
-        <div className="w-full max-w-[460px] ml-0 sm:ml-12 md:ml-14 bg-white rounded-xl shadow-xs border border-gray-200/90 p-4 sm:p-4.5 flex flex-col gap-2.5 mt-2.5">
+        <div className="w-full max-w-[460px] ml-0 sm:ml-6 md:ml-10 lg:ml-14 bg-white rounded-xl shadow-xs border border-gray-200/90 p-3.5 sm:p-4.5 flex flex-col gap-2.5 mt-2.5">
           {/* Ticket Number */}
           <div className="flex flex-col gap-1">
             <label className="text-xs sm:text-[13px] font-semibold text-[#1E293B]">
@@ -297,8 +296,8 @@ export default function EmployeeTicketsView({
             headerBgColor="#BCB7F7"
             headerTextColor="#1E293B"
             headerRounded="rounded-none"
-            containerClassName="w-full"
-            tableClassName="border-collapse"
+            containerClassName="w-full overflow-x-auto"
+            tableClassName="border-collapse min-w-[550px] sm:min-w-[650px]"
             rowHover={true}
           />
         </div>

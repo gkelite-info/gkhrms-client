@@ -1,6 +1,7 @@
 "use client"
 
-import {  useState  } from "react";
+import { useState, useEffect, useCallback } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { CaretDown } from "phosphor-react"
 import { ReusableTable, ReusablePagination, TableColumn } from "@/../reusableComponents"
 
@@ -163,10 +164,68 @@ const availableDepartments = [
 ]
 
 export default function DepartmentPerformanceView() {
-  const [selectedDept, setSelectedDept] = useState("Design")
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const parseDeptFromQuery = useCallback((param: string | null): string => {
+    if (!param) return "Design"
+    const match = availableDepartments.find(
+      (d) => d.toLowerCase() === param.toLowerCase()
+    )
+    return match || "Design"
+  }, [])
+
+  const initialDept = parseDeptFromQuery(
+    searchParams?.get("dept") || searchParams?.get("department")
+  )
+  const initialPage = Math.max(
+    1,
+    parseInt(searchParams?.get("deptPage") || "1", 10) || 1
+  )
+
+  const [selectedDept, setSelectedDept] = useState(initialDept)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(initialPage)
   const [pageSize, setPageSize] = useState(5)
+
+  useEffect(() => {
+    const d = parseDeptFromQuery(
+      searchParams?.get("dept") || searchParams?.get("department")
+    )
+    setSelectedDept(d)
+    const p = Math.max(
+      1,
+      parseInt(searchParams?.get("deptPage") || "1", 10) || 1
+    )
+    setCurrentPage(p)
+  }, [searchParams, parseDeptFromQuery])
+
+  const handleDeptSelect = (dept: string) => {
+    setSelectedDept(dept)
+    setCurrentPage(1)
+    setIsDropdownOpen(false)
+
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    params.set("tab", "department")
+    params.set("dept", dept)
+    params.delete("deptPage")
+    const query = params.toString()
+    router.push(`${pathname}${query ? `?${query}` : ""}`, { scroll: false })
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage)
+
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    if (newPage <= 1) {
+      params.delete("deptPage")
+    } else {
+      params.set("deptPage", String(newPage))
+    }
+    const query = params.toString()
+    router.push(`${pathname}${query ? `?${query}` : ""}`, { scroll: false })
+  }
 
   const currentData = departmentObjectivesData[selectedDept] || []
   const totalPages = Math.ceil(currentData.length / pageSize)
@@ -180,31 +239,31 @@ export default function DepartmentPerformanceView() {
       key: "objective",
       header: "Objective",
       accessor: "objective",
-      className: "font-medium text-gray-800 text-xs sm:text-sm py-3.5 px-5",
-      headerClassName: "py-3 px-5 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "font-medium text-gray-800 text-xs sm:text-sm py-3 sm:py-3.5 px-3 sm:px-5",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 text-gray-800 text-xs sm:text-sm font-semibold",
     },
     {
       key: "owner",
       header: "Owner",
       accessor: "owner",
-      className: "text-gray-700 text-xs sm:text-sm py-3.5 px-5",
-      headerClassName: "py-3 px-5 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "text-gray-700 text-xs sm:text-sm py-3 sm:py-3.5 px-3 sm:px-5",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 text-gray-800 text-xs sm:text-sm font-semibold",
     },
     {
       key: "status",
       header: "Status",
       accessor: "status",
-      className: "text-gray-700 text-xs sm:text-sm py-3.5 px-5 whitespace-nowrap",
-      headerClassName: "py-3 px-5 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "text-gray-700 text-xs sm:text-sm py-3 sm:py-3.5 px-3 sm:px-5 whitespace-nowrap",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 text-gray-800 text-xs sm:text-sm font-semibold",
     },
     {
       key: "progress",
       header: "Progress",
-      className: "py-3.5 px-5 whitespace-nowrap",
-      headerClassName: "py-3 px-5 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "py-3 sm:py-3.5 px-3 sm:px-5 whitespace-nowrap",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 text-gray-800 text-xs sm:text-sm font-semibold",
       render: (row) => (
-        <div className="flex items-center gap-2.5">
-          <div className="w-20 sm:w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="w-16 sm:w-20 md:w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-gray-900 rounded-full transition-all duration-300"
               style={{ width: `${row.progress}%` }}
@@ -220,19 +279,18 @@ export default function DepartmentPerformanceView() {
       key: "timeline",
       header: "Timeline",
       accessor: "timeline",
-      className: "text-gray-700 text-xs sm:text-sm py-3.5 px-5 whitespace-nowrap",
-      headerClassName: "py-3 px-5 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "text-gray-700 text-xs sm:text-sm py-3 sm:py-3.5 px-3 sm:px-5 whitespace-nowrap",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 text-gray-800 text-xs sm:text-sm font-semibold",
     },
   ]
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      {/* 1. Department Filter Dropdown Button */}
-      <div className="relative inline-block w-fit">
+      <div className="relative inline-block w-full sm:w-fit">
         <button
           type="button"
           onClick={() => setIsDropdownOpen((prev) => !prev)}
-          className="bg-white border border-gray-200 rounded-xl px-4 py-2 flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-800 hover:border-purple-300 shadow-xs transition-colors cursor-pointer"
+          className="w-full sm:w-auto bg-white border border-gray-200 rounded-xl px-4 py-2 sm:py-2.5 flex items-center justify-between sm:justify-start gap-2 text-xs sm:text-sm font-medium text-gray-800 hover:border-purple-300 shadow-xs transition-colors cursor-pointer"
         >
           <span>Department : {selectedDept}</span>
           <CaretDown
@@ -245,17 +303,13 @@ export default function DepartmentPerformanceView() {
         </button>
 
         {isDropdownOpen && (
-          <div className="absolute top-full left-0 mt-1.5 w-52 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-30 animate-in fade-in zoom-in-95 duration-150">
+          <div className="absolute top-full left-0 mt-1.5 w-full sm:w-56 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-30 animate-in fade-in zoom-in-95 duration-150">
             {availableDepartments.map((dept) => (
               <button
                 key={dept}
                 type="button"
-                onClick={() => {
-                  setSelectedDept(dept)
-                  setCurrentPage(1)
-                  setIsDropdownOpen(false)
-                }}
-                className={`w-full text-left px-4 py-2 text-xs sm:text-sm cursor-pointer transition-colors ${
+                onClick={() => handleDeptSelect(dept)}
+                className={`w-full text-left px-4 py-2.5 text-xs sm:text-sm cursor-pointer transition-colors ${
                   selectedDept === dept
                     ? "bg-purple-50 text-[#8571EE] font-semibold"
                     : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
@@ -285,10 +339,10 @@ export default function DepartmentPerformanceView() {
             totalPages={totalPages}
             totalItems={currentData.length}
             pageSize={pageSize}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
             onPageSizeChange={(newSize) => {
               setPageSize(newSize)
-              setCurrentPage(1)
+              handlePageChange(1)
             }}
             pageSizeOptions={[3, 5, 10]}
           />

@@ -104,7 +104,7 @@ export default function EmployeePayslipDocument({
   return (
     <div
       id={id}
-      className="w-full bg-white text-slate-800 p-6 sm:p-10 md:p-12 font-sans select-text max-w-4xl mx-auto shadow-sm rounded-xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:m-0 print:max-w-none"
+      className="w-full bg-white text-slate-800 p-4 sm:p-8 md:p-12 font-sans select-text max-w-4xl mx-auto shadow-sm rounded-xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:m-0 print:max-w-none"
     >
       <div className="flex flex-col items-center text-center pb-4 border-b border-slate-200">
         <div className="flex items-center justify-center gap-2 mb-1.5">

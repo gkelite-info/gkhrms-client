@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useMemo } from "react"
+import React, { useState, useEffect, useMemo, useCallback } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { Download } from "lucide-react"
 import { ReusableCalendar } from "@/../reusableComponents"
@@ -83,24 +83,33 @@ export default function FinanceMyPayView({
     Record<string, AddPayDetailsData>
   >({})
 
-  const [subTab, setSubTab] = useState<"salary_payslips" | "income_tax">(
-    () =>
-      rawSubTab?.toLowerCase() === "income_tax" ||
-      rawSubTab?.toLowerCase() === "incometax"
-        ? "income_tax"
-        : "salary_payslips"
+  const parseSubTab = useCallback(
+    (param: string | null): "salary_payslips" | "income_tax" => {
+      const lower = param?.toLowerCase()
+      if (lower === "income_tax" || lower === "incometax") {
+        return "income_tax"
+      }
+      return "salary_payslips"
+    },
+    []
+  )
+
+  const [subTab, setSubTab] = useState<"salary_payslips" | "income_tax">(() =>
+    parseSubTab(rawSubTab)
   )
 
   useEffect(() => {
-    if (
-      rawSubTab?.toLowerCase() === "income_tax" ||
-      rawSubTab?.toLowerCase() === "incometax"
-    ) {
-      setSubTab("income_tax")
-    } else {
-      setSubTab("salary_payslips")
+    setSubTab(parseSubTab(rawSubTab))
+  }, [rawSubTab, parseSubTab])
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const currentParams = new URLSearchParams(window.location.search)
+      setSubTab(parseSubTab(currentParams.get("subtab")))
     }
-  }, [rawSubTab])
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [parseSubTab])
 
   const targetPathname = pathname || basePath.split("?")[0]
 
@@ -113,14 +122,22 @@ export default function FinanceMyPayView({
     params.delete("action")
     params.delete("addpay")
     params.delete("addPay")
-    router.push(`${targetPathname}?${params.toString()}`, { scroll: false })
+    const url = `${targetPathname}?${params.toString()}`
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", url)
+    }
+    router.push(url, { scroll: false })
   }
 
   const handleOpenAddPay = () => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("tab", "mypay")
     params.set("modal", "add-pay")
-    router.push(`${targetPathname}?${params.toString()}`, { scroll: false })
+    const url = `${targetPathname}?${params.toString()}`
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", url)
+    }
+    router.push(url, { scroll: false })
   }
 
   const handleCloseAddPay = () => {
@@ -130,9 +147,11 @@ export default function FinanceMyPayView({
     params.delete("addpay")
     params.delete("addPay")
     const query = params.toString()
-    router.push(query ? `${targetPathname}?${query}` : targetPathname, {
-      scroll: false,
-    })
+    const url = query ? `${targetPathname}?${query}` : targetPathname
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", url)
+    }
+    router.push(url, { scroll: false })
   }
 
   const employeeKey = employee?.employeeId || "default"
@@ -234,192 +253,192 @@ export default function FinanceMyPayView({
         {subTab === "income_tax" ? (
           <FinanceIncomeTaxView />
         ) : (
-        <div className="w-full flex flex-col gap-3.5 sm:gap-4">
-          <div className="w-full flex flex-col gap-2">
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
-              {isHrMode ? "Salary" : "My Salary"}
-            </h3>
+          <div className="w-full flex flex-col gap-3.5 sm:gap-4">
+            <div className="w-full flex flex-col gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                {isHrMode ? "Salary" : "My Salary"}
+              </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
-              <div className="bg-white rounded-xl py-3 px-4 border border-slate-100 shadow-2xs flex flex-col items-center justify-center text-center">
-                <span className="text-[11px] text-slate-500 font-normal">
-                  Current Compensation
-                </span>
-                <span className="text-sm sm:text-base font-bold text-slate-900 mt-0.5">
-                  {salarySummary.compensation}
-                </span>
-              </div>
-
-              <div className="bg-white rounded-xl py-3 px-6 sm:px-10 border border-slate-100 shadow-2xs flex items-center justify-between">
-                <span className="text-xs sm:text-sm font-bold text-slate-900">
-                  Payroll
-                </span>
-                <div className="flex flex-col items-end">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+                <div className="bg-white rounded-xl py-3 px-4 border border-slate-100 shadow-2xs flex flex-col items-center justify-center text-center">
                   <span className="text-[11px] text-slate-500 font-normal">
-                    Paycycle
+                    Current Compensation
                   </span>
                   <span className="text-sm sm:text-base font-bold text-slate-900 mt-0.5">
-                    Monthly
+                    {salarySummary.compensation}
                   </span>
                 </div>
-              </div>
-            </div>
 
-            <div className="flex flex-col lg:flex-row gap-2.5 sm:gap-3 items-stretch mt-0.5">
-              <div className="flex-1 min-w-0 bg-white rounded-xl p-3.5 sm:p-4 border border-slate-100 shadow-2xs flex flex-col justify-between">
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-900">
-                    Salary Timeline
-                  </h4>
-
-                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5 text-xs">
-                    <span className="font-bold text-slate-800 text-[10px] sm:text-[11px] uppercase tracking-wide">
-                      SALARY Revision :
+                <div className="bg-white rounded-xl py-3 px-4 sm:px-6 md:px-10 border border-slate-100 shadow-2xs flex items-center justify-between">
+                  <span className="text-xs sm:text-sm font-bold text-slate-900">
+                    Payroll
+                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[11px] text-slate-500 font-normal">
+                      Paycycle
                     </span>
-                    <span className="text-slate-500 text-[10px] sm:text-[11px]">
-                      Effective Jan 23, 2025
-                    </span>
-                    <span className="bg-[#7D73E3] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] tracking-wider uppercase ml-1">
-                      CURRENT
+                    <span className="text-sm sm:text-base font-bold text-slate-900 mt-0.5">
+                      Monthly
                     </span>
                   </div>
+                </div>
+              </div>
 
-                  <div className="border border-slate-200/80 rounded-lg p-3 sm:p-3.5 mt-2.5">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                      <div>
-                        <div className="font-semibold text-[11px] sm:text-xs text-slate-900">
-                          Regular Salary
-                        </div>
-                        <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
-                          {salarySummary.regularSalary}
-                        </div>
-                      </div>
+              <div className="flex flex-col lg:flex-row gap-2.5 sm:gap-3 items-stretch mt-0.5">
+                <div className="flex-1 min-w-0 bg-white rounded-xl p-3.5 sm:p-4 border border-slate-100 shadow-2xs flex flex-col justify-between">
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900">
+                      Salary Timeline
+                    </h4>
 
-                      <div>
-                        <div className="font-semibold text-[11px] sm:text-xs text-slate-900">
-                          Other
-                        </div>
-                        <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
-                          {salarySummary.other}
-                        </div>
-                      </div>
+                    <div className="flex flex-wrap items-center gap-1.5 mt-1.5 text-xs">
+                      <span className="font-bold text-slate-800 text-[10px] sm:text-[11px] uppercase tracking-wide">
+                        SALARY Revision :
+                      </span>
+                      <span className="text-slate-500 text-[10px] sm:text-[11px]">
+                        Effective Jan 23, 2025
+                      </span>
+                      <span className="bg-[#7D73E3] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] tracking-wider uppercase ml-1">
+                        CURRENT
+                      </span>
+                    </div>
 
-                      <div>
-                        <div className="font-semibold text-[11px] sm:text-xs text-slate-900">
-                          Bonus
+                    <div className="border border-slate-200/80 rounded-lg p-3 sm:p-3.5 mt-2.5">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                        <div>
+                          <div className="font-semibold text-[11px] sm:text-xs text-slate-900">
+                            Regular Salary
+                          </div>
+                          <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
+                            {salarySummary.regularSalary}
+                          </div>
                         </div>
-                        <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
-                          {salarySummary.bonus}
-                        </div>
-                      </div>
 
-                      <div>
-                        <div className="font-semibold text-[11px] sm:text-xs text-slate-900">
-                          Total
+                        <div>
+                          <div className="font-semibold text-[11px] sm:text-xs text-slate-900">
+                            Other
+                          </div>
+                          <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
+                            {salarySummary.other}
+                          </div>
                         </div>
-                        <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
-                          {salarySummary.total}
+
+                        <div>
+                          <div className="font-semibold text-[11px] sm:text-xs text-slate-900">
+                            Bonus
+                          </div>
+                          <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
+                            {salarySummary.bonus}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="font-semibold text-[11px] sm:text-xs text-slate-900">
+                            Total
+                          </div>
+                          <div className="text-[11px] sm:text-xs text-slate-600 mt-1">
+                            {salarySummary.total}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="w-full lg:w-[215px] shrink-0">
-                <ReusableCalendar monthName="January" className="h-full" />
+                <div className="w-full lg:w-[215px] shrink-0">
+                  <ReusableCalendar monthName="January" className="h-full" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="w-full flex flex-col gap-2 mt-0.5">
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
-              Pay Slips
-            </h3>
+            <div className="w-full flex flex-col gap-2 mt-0.5">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                Pay Slips
+              </h3>
 
-            <div className="flex flex-col lg:flex-row gap-2.5 sm:gap-3 items-stretch">
-              <div className="w-full lg:w-[215px] shrink-0">
-                <ReusableCalendar monthName="January" className="h-full" />
-              </div>
+              <div className="flex flex-col lg:flex-row gap-2.5 sm:gap-3 items-stretch">
+                <div className="w-full lg:w-[215px] shrink-0">
+                  <ReusableCalendar monthName="January" className="h-full" />
+                </div>
 
-              <div className="flex-1 min-w-0 w-full flex flex-col gap-2.5">
-                {PAY_SLIP_ITEMS.map((card, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-white rounded-xl p-3 sm:p-3.5 border border-slate-100 shadow-2xs flex flex-col gap-2"
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100/90 pb-2">
-                      <button
-                        type="button"
-                        onClick={onViewPayslip}
-                        className="text-xs sm:text-sm font-bold text-slate-900 hover:text-[#5B50EC] transition-colors cursor-pointer text-left"
-                      >
-                        {card.title}
-                      </button>
-
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <span className="text-xs text-slate-700">
-                          Status -{" "}
-                          <span className="text-emerald-600 font-semibold">
-                            {card.status}
-                          </span>
-                        </span>
-
+                <div className="flex-1 min-w-0 w-full flex flex-col gap-2.5">
+                  {PAY_SLIP_ITEMS.map((card, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-white rounded-xl p-3 sm:p-3.5 border border-slate-100 shadow-2xs flex flex-col gap-2"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100/90 pb-2">
                         <button
                           type="button"
-                          onClick={(e) => handleDownloadCard(card.title, e)}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-[#5B50EC] hover:text-[#4338CA] transition-colors cursor-pointer sm:ml-1"
+                          onClick={onViewPayslip}
+                          className="text-xs sm:text-sm font-bold text-slate-900 hover:text-[#5B50EC] transition-colors cursor-pointer text-left"
                         >
-                          <span>Download</span>
-                          <Download className="w-3.5 h-3.5 stroke-[2]" />
+                          {card.title}
                         </button>
+
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                          <span className="text-xs text-slate-700">
+                            Status -{" "}
+                            <span className="text-emerald-600 font-semibold">
+                              {card.status}
+                            </span>
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={(e) => handleDownloadCard(card.title, e)}
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-[#5B50EC] hover:text-[#4338CA] transition-colors cursor-pointer sm:ml-1"
+                          >
+                            <span>Download</span>
+                            <Download className="w-3.5 h-3.5 stroke-[2]" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1.5 text-xs">
+                        <div className="flex items-center justify-between sm:justify-start">
+                          <span className="w-24 sm:w-20 shrink-0 font-semibold text-slate-800">
+                            Pay Date :
+                          </span>
+                          <span className="text-slate-600 font-normal sm:ml-2">
+                            {card.payDate}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between sm:justify-end">
+                          <span className="w-24 shrink-0 font-semibold text-slate-800">
+                            Deductions :
+                          </span>
+                          <span className="text-slate-600 font-normal sm:ml-2">
+                            {card.deductions}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between sm:justify-start">
+                          <span className="w-24 sm:w-20 shrink-0 font-semibold text-slate-800">
+                            Gross Pay :
+                          </span>
+                          <span className="text-slate-600 font-normal sm:ml-2">
+                            {card.grossPay}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between sm:justify-end">
+                          <span className="w-24 shrink-0 font-semibold text-slate-800">
+                            Net Pay :
+                          </span>
+                          <span className="text-slate-600 font-normal sm:ml-2">
+                            {card.netPay}
+                          </span>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs">
-                      <div className="flex items-center justify-between sm:justify-start">
-                        <span className="w-24 sm:w-20 shrink-0 font-semibold text-slate-800">
-                          Pay Date :
-                        </span>
-                        <span className="text-slate-600 font-normal sm:ml-2">
-                          {card.payDate}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between sm:justify-end">
-                        <span className="w-24 shrink-0 font-semibold text-slate-800">
-                          Deductions :
-                        </span>
-                        <span className="text-slate-600 font-normal sm:ml-2">
-                          {card.deductions}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between sm:justify-start">
-                        <span className="w-24 sm:w-20 shrink-0 font-semibold text-slate-800">
-                          Gross Pay :
-                        </span>
-                        <span className="text-slate-600 font-normal sm:ml-2">
-                          {card.grossPay}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between sm:justify-end">
-                        <span className="w-24 shrink-0 font-semibold text-slate-800">
-                          Net Pay :
-                        </span>
-                        <span className="text-slate-600 font-normal sm:ml-2">
-                          {card.netPay}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
 
       {isHrMode && (
