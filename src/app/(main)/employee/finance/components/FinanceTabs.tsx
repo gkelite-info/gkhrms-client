@@ -17,6 +17,7 @@ export const EMPLOYEE_TABS: TabItem[] = [
   { id: "summary", label: "Summary" },
   { id: "mypay", label: "My Pay" },
   { id: "manage_tax", label: "Manage TAX" },
+  { id: "expenses_travel", label: "Expenses & Travel" },
 ]
 
 const HR_TABS: TabItem[] = [
@@ -36,9 +37,9 @@ export default function FinanceTabs({
   const displayTabs = tabs && tabs.length > 0 ? tabs : defaultList
 
   return (
-    <div className="w-full bg-white rounded-2xl border border-slate-100/80 shadow-2xs p-1.5 overflow-x-auto scrollbar-hide">
+    <div className="shrink-0 w-full bg-white rounded-2xl border border-slate-100/80 shadow-2xs p-1.5 overflow-x-auto scrollbar-hide">
       <div
-        className="grid gap-1.5 sm:gap-2 min-w-full"
+        className="flex items-center min-w-max sm:min-w-0 sm:grid gap-1.5 sm:gap-2"
         style={{
           gridTemplateColumns: `repeat(${displayTabs.length}, minmax(0, 1fr))`,
         }}
@@ -50,10 +51,10 @@ export default function FinanceTabs({
               key={tab.id}
               type="button"
               onClick={() => onSelectTab(tab.id)}
-              className={`w-full py-1.5 sm:py-2 px-1.5 sm:px-3 rounded-lg font-medium text-[11px] sm:text-sm text-center transition-all duration-150 cursor-pointer select-none focus:outline-none truncate ${
+              className={`flex-1 sm:w-full py-1.5 sm:py-2 px-3 sm:px-2 rounded-lg font-semibold text-xs sm:text-sm text-center transition-all duration-150 cursor-pointer select-none focus:outline-none whitespace-nowrap sm:whitespace-normal shrink-0 ${
                 isActive
                   ? "bg-[#7D73E3] text-white shadow-2xs"
-                  : "bg-[#A3A3A3] text-white hover:bg-[#969696]"
+                  : "bg-white text-[#374151] hover:bg-gray-50 border border-gray-200/70 shadow-2xs"
               }`}
             >
               {tab.label}

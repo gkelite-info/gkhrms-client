@@ -143,15 +143,15 @@ export default function EmployeePerformanceDetail({
         </div>
       </div>
 
-      <div className="w-full max-w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 overflow-hidden">
-        <div className="flex items-center justify-between pb-4">
-          <h3 className="text-sm sm:text-base font-bold text-[#1F2937]">
+      <div className="w-full max-w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-5 md:p-6 overflow-hidden">
+        <div className="flex items-center justify-between pb-3 sm:pb-4">
+          <h3 className="text-xs sm:text-sm md:text-base font-bold text-[#1F2937]">
             Performance Score by Month
           </h3>
           <div className="relative">
             <button
               type="button"
-              className="border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 bg-white flex items-center gap-2 hover:bg-gray-50 cursor-pointer shadow-2xs"
+              className="border border-gray-200 rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold text-gray-700 bg-white flex items-center gap-1.5 sm:gap-2 hover:bg-gray-50 cursor-pointer shadow-2xs"
             >
               <span>{selectedFilter}</span>
               <CaretDown size={14} weight="bold" className="text-gray-500" />
@@ -160,7 +160,7 @@ export default function EmployeePerformanceDetail({
         </div>
 
         <div className="w-full overflow-x-auto select-none pt-2">
-          <div className="min-w-[650px] sm:min-w-[750px] relative">
+          <div className="min-w-[580px] sm:min-w-[700px] md:min-w-[750px] relative">
             <svg viewBox="0 0 800 200" className="w-full h-44 sm:h-52">
               <defs>
                 <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">

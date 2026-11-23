@@ -39,7 +39,7 @@ export default function EmployeeMeTabs({
               className={`flex-shrink-0 whitespace-nowrap px-3.5 sm:px-5 md:px-6 py-1.5 sm:py-2 rounded-lg text-xs md:text-sm font-semibold transition-all duration-200 cursor-pointer select-none focus:outline-none ${
                 isActive
                   ? "bg-[#7D73E3] text-white shadow-sm"
-                  : "bg-[#E6E5EA] text-[#374151] hover:bg-[#dedde3] hover:text-[#1F2937]"
+                  : "bg-white text-[#374151] hover:bg-white/90 hover:text-[#1F2937] shadow-xs"
               }`}
             >
               {tab.label}

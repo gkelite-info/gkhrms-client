@@ -150,7 +150,7 @@ export default function FinanceFormsView() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 self-start md:self-auto">
             <div className="relative" ref={f16DropdownRef}>
               <button
                 type="button"
@@ -225,7 +225,7 @@ export default function FinanceFormsView() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 self-start md:self-auto">
             <div className="relative" ref={f12DropdownRef}>
               <button
                 type="button"
@@ -273,4 +273,3 @@ export default function FinanceFormsView() {
     </div>
   )
 }
-

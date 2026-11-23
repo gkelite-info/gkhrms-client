@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import { ReusableTable, ReusablePagination, TableColumn } from "@/../reusableComponents"
-
 
 interface LogRecord {
   sNo: string
@@ -51,10 +51,18 @@ const filterTabs = [
   { key: "jan", label: "JAN" },
 ]
 
-export default function EmployeeAttendanceLogTable() {
-  const [activeFilter, setActiveFilter] = useState("30days")
+function EmployeeAttendanceLogTableContent() {
+  const searchParams = useSearchParams()
+  const filterFromQuery = searchParams?.get("filter") || searchParams?.get("logFilter") || "30days"
+  const [activeFilter, setActiveFilter] = useState(filterFromQuery)
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(6)
+
+  useEffect(() => {
+    if (filterFromQuery && filterTabs.some((t) => t.key === filterFromQuery)) {
+      setActiveFilter(filterFromQuery)
+    }
+  }, [filterFromQuery])
 
   const getDotClass = (dot: "green" | "orange" | "red") => {
     switch (dot) {
@@ -171,17 +179,22 @@ export default function EmployeeAttendanceLogTable() {
   const handleFilterChange = (key: string) => {
     setActiveFilter(key)
     setCurrentPage(1)
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href)
+      url.searchParams.set("filter", key)
+      window.history.pushState(null, "", url.toString())
+    }
   }
 
   return (
-    <div className="w-full max-w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mt-2">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4">
+    <div className="w-full max-w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-5 mt-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4">
         <div>
-          <h3 className="text-base font-bold text-[#1F2937]">Attendance Log</h3>
-          <p className="text-xs text-gray-400 font-medium mt-0.5">Last 30 Days</p>
+          <h3 className="text-sm sm:text-base font-bold text-[#1F2937]">Attendance Log</h3>
+          <p className="text-[11px] sm:text-xs text-gray-400 font-medium mt-0.5">Last 30 Days</p>
         </div>
 
-        <div className="flex items-center flex-wrap gap-2">
+        <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
           {filterTabs.map((tab) => {
             const isActive = activeFilter === tab.key
             return (
@@ -189,10 +202,11 @@ export default function EmployeeAttendanceLogTable() {
                 key={tab.key}
                 type="button"
                 onClick={() => handleFilterChange(tab.key)}
-                className={`text-xs px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${isActive
-                  ? "bg-[#7D73E3] text-white shadow-sm"
-                  : "bg-[#E1DFFB] text-[#323232] hover:bg-[#d5d2fa]"
-                  }`}
+                className={`text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-[#7D73E3] text-white shadow-sm"
+                    : "bg-[#E1DFFB] text-[#323232] hover:bg-[#d5d2fa]"
+                }`}
               >
                 {tab.label}
               </button>
@@ -214,7 +228,7 @@ export default function EmployeeAttendanceLogTable() {
         />
       </div>
 
-      <div className="pt-3 border-t border-gray-100 mt-3">
+      <div className="pt-3 border-t border-gray-100 mt-3 overflow-x-auto">
         <ReusablePagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -229,5 +243,13 @@ export default function EmployeeAttendanceLogTable() {
         />
       </div>
     </div>
+  )
+}
+
+export default function EmployeeAttendanceLogTable() {
+  return (
+    <Suspense fallback={null}>
+      <EmployeeAttendanceLogTableContent />
+    </Suspense>
   )
 }

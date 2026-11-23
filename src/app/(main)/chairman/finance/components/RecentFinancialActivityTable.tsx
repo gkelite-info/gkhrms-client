@@ -1,9 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import { FileText, ArrowRight, Check, X } from "lucide-react"
 import { RECENT_FINANCIAL_ACTIVITIES } from "./ChairmanFinanceData"
+import ChairmanAllFinancialActivitiesModal from "./ChairmanAllFinancialActivitiesModal"
 
 export default function RecentFinancialActivityTable() {
+  const [isAllActivitiesModalOpen, setIsAllActivitiesModalOpen] = useState(false)
+
   const renderTypePill = (type: "Revenue" | "Expense" | "Payroll") => {
     switch (type) {
       case "Revenue":
@@ -46,6 +50,7 @@ export default function RecentFinancialActivityTable() {
 
         <button
           type="button"
+          onClick={() => setIsAllActivitiesModalOpen(true)}
           className="text-xs font-semibold text-[#5B50E5] hover:text-[#4E44C9] inline-flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span>View All</span>
@@ -81,7 +86,8 @@ export default function RecentFinancialActivityTable() {
             {RECENT_FINANCIAL_ACTIVITIES.map((item) => (
               <tr
                 key={item.id}
-                className="hover:bg-slate-50/60 transition-colors"
+                onClick={() => setIsAllActivitiesModalOpen(true)}
+                className="hover:bg-slate-50/60 transition-colors cursor-pointer"
               >
                 <td className="py-3.5 px-5 text-xs text-slate-700 font-medium whitespace-nowrap">
                   {item.date}
@@ -114,6 +120,11 @@ export default function RecentFinancialActivityTable() {
           </tbody>
         </table>
       </div>
+
+      <ChairmanAllFinancialActivitiesModal
+        isOpen={isAllActivitiesModalOpen}
+        onClose={() => setIsAllActivitiesModalOpen(false)}
+      />
     </div>
   )
 }

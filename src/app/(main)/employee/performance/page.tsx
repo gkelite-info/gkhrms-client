@@ -1,7 +1,7 @@
 "use client"
 
-import {  useState, useEffect, Suspense  } from "react";
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect, Suspense, useCallback } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import PerformanceMetricCards from "./components/PerformanceMetricCards"
 import PerformanceScoreChart from "./components/PerformanceScoreChart"
 import TopEmployeesChart from "./components/TopEmployeesChart"
@@ -14,9 +14,10 @@ type TabType = "Performance" | "Department" | "Skills Building"
 
 function PerformancePageContent() {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const parseTabFromQuery = (tabParam: string | null): TabType => {
+  const parseTabFromQuery = useCallback((tabParam: string | null): TabType => {
     const t = (tabParam || "").toLowerCase()
     if (t === "department" || t === "dept") {
       return "Department"
@@ -25,47 +26,38 @@ function PerformancePageContent() {
       return "Skills Building"
     }
     return "Performance"
-  }
+  }, [])
 
-  const [activeTab, setActiveTab] = useState<TabType>(() =>
-    parseTabFromQuery(searchParams?.get("tab"))
-  )
+  const currentTabFromQuery = parseTabFromQuery(searchParams?.get("tab"))
+  const [activeTab, setActiveTab] = useState<TabType>(currentTabFromQuery)
 
-  // Sync state if URL search params change (e.g., browser Back / Forward)
   useEffect(() => {
-    const tabParam = searchParams?.get("tab")
-    setActiveTab(parseTabFromQuery(tabParam))
-  }, [searchParams])
+    setActiveTab(currentTabFromQuery)
+  }, [currentTabFromQuery])
 
-  // Update query params in URL
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab)
 
-    if (typeof window === "undefined") return
-    const url = new URL(window.location.href)
-
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
     if (tab === "Performance") {
-      url.searchParams.set("tab", "performance")
+      params.set("tab", "performance")
     } else if (tab === "Department") {
-      url.searchParams.set("tab", "department")
+      params.set("tab", "department")
     } else if (tab === "Skills Building") {
-      url.searchParams.set("tab", "skills")
+      params.set("tab", "skills")
     }
 
-    window.history.pushState(null, "", url.toString())
-    try {
-      router.push(url.pathname + url.search, { scroll: false })
-    } catch {}
+    const query = params.toString()
+    router.push(`${pathname}${query ? `?${query}` : ""}`, { scroll: false })
   }
 
   return (
-    <div className="w-full min-h-full px-4 pt-4 md:px-6 md:pt-6 pb-4 md:pb-5 flex flex-col gap-4 sm:gap-5 select-none">
-      {/* 1. Main Navigation Tabs (Performance | Department | Skills Building) */}
-      <div className="w-full bg-white rounded-xl p-2.5 flex items-center gap-3 shadow-xs border border-gray-100">
+    <div className="w-full min-h-full px-3 py-3 sm:px-5 sm:py-5 md:px-6 md:pt-6 pb-6 flex flex-col gap-4 sm:gap-5 select-none">
+      <div className="w-full bg-white rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 flex items-center gap-1.5 sm:gap-3 shadow-xs border border-gray-100 overflow-x-auto no-scrollbar">
         <button
           type="button"
           onClick={() => handleTabChange("Performance")}
-          className={`flex-1 py-2 px-4 rounded-lg font-medium text-xs sm:text-sm text-center transition-all cursor-pointer ${
+          className={`flex-1 min-w-[100px] sm:min-w-0 py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm text-center whitespace-nowrap transition-all cursor-pointer ${
             activeTab === "Performance"
               ? "bg-[#8571EE] text-white shadow-xs"
               : "bg-[#B3B3B3] text-white hover:bg-gray-400"
@@ -76,7 +68,7 @@ function PerformancePageContent() {
         <button
           type="button"
           onClick={() => handleTabChange("Department")}
-          className={`flex-1 py-2 px-4 rounded-lg font-medium text-xs sm:text-sm text-center transition-all cursor-pointer ${
+          className={`flex-1 min-w-[100px] sm:min-w-0 py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm text-center whitespace-nowrap transition-all cursor-pointer ${
             activeTab === "Department"
               ? "bg-[#8571EE] text-white shadow-xs"
               : "bg-[#B3B3B3] text-white hover:bg-gray-400"
@@ -87,7 +79,7 @@ function PerformancePageContent() {
         <button
           type="button"
           onClick={() => handleTabChange("Skills Building")}
-          className={`flex-1 py-2 px-4 rounded-lg font-medium text-xs sm:text-sm text-center transition-all cursor-pointer ${
+          className={`flex-1 min-w-[100px] sm:min-w-0 py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm text-center whitespace-nowrap transition-all cursor-pointer ${
             activeTab === "Skills Building"
               ? "bg-[#8571EE] text-white shadow-xs"
               : "bg-[#B3B3B3] text-white hover:bg-gray-400"
@@ -97,38 +89,29 @@ function PerformancePageContent() {
         </button>
       </div>
 
-      {/* 2. Content when "Performance" is selected */}
       {activeTab === "Performance" && (
-        <div className="flex flex-col gap-4 sm:gap-5">
-          {/* Row 1: 3 Rating Metric Cards */}
+        <div className="flex flex-col gap-4 sm:gap-5 w-full">
           <PerformanceMetricCards />
 
-          {/* Row 2: Charts Row (Performance Score by Month + Top 3 Employees) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full">
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-8 min-w-0">
               <PerformanceScoreChart />
             </div>
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 min-w-0">
               <TopEmployeesChart />
             </div>
           </div>
 
-          {/* Row 3: Performance Feedback Table using ReusableTable */}
           <PerformanceFeedbackTable />
-
-          {/* Row 4: Skill Breakdown & Achievements */}
           <SkillsAndAchievements />
         </div>
       )}
 
-      {/* 3. Content when "Department" is selected (Department Objectives with ReusableTable) */}
       {activeTab === "Department" && <DepartmentPerformanceView />}
 
-      {/* 4. Content when "Skills Building" is selected (Skills Courses with ReusableTable) */}
       {activeTab === "Skills Building" && <SkillsBuildingView />}
 
-      {/* Small subtle bottom clearance */}
-      <div className="w-full h-4 shrink-0" aria-hidden="true" />
+      <div className="w-full h-2 shrink-0" aria-hidden="true" />
     </div>
   )
 }

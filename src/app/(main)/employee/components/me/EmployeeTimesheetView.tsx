@@ -1,6 +1,7 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import { CalendarBlank } from "phosphor-react"
 import { ReusableTable, ReusablePagination, TableColumn } from "@/../reusableComponents"
 
@@ -117,9 +118,18 @@ const columns: TableColumn<TimesheetRecord>[] = [
   },
 ]
 
-export default function EmployeeTimesheetView() {
-  const [currentPage, setCurrentPage] = useState(1)
+function EmployeeTimesheetViewContent() {
+  const searchParams = useSearchParams()
+  const pageParam = parseInt(searchParams?.get("page") || "1", 10)
+  const initialPage = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam
+  const [currentPage, setCurrentPage] = useState(initialPage)
   const [pageSize, setPageSize] = useState(5)
+
+  useEffect(() => {
+    if (!isNaN(pageParam) && pageParam >= 1) {
+      setCurrentPage(pageParam)
+    }
+  }, [pageParam])
 
   const totalPages = Math.ceil(timesheetData.length / pageSize)
   const paginatedData = timesheetData.slice(
@@ -127,8 +137,17 @@ export default function EmployeeTimesheetView() {
     currentPage * pageSize
   )
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href)
+      url.searchParams.set("page", String(page))
+      window.history.pushState(null, "", url.toString())
+    }
+  }
+
   return (
-    <div className="w-full max-w-full flex flex-col gap-4 sm:gap-5">
+    <div className="w-full max-w-full flex flex-col gap-3.5 sm:gap-4 md:gap-5">
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-4 md:p-5 flex flex-col justify-between min-h-[105px]">
           <div>
@@ -188,21 +207,29 @@ export default function EmployeeTimesheetView() {
           headerRounded="rounded-xl"
         />
 
-        <div className="pt-3 border-t border-gray-100 mt-3">
+        <div className="pt-3 border-t border-gray-100 mt-3 overflow-x-auto">
           <ReusablePagination
             currentPage={currentPage}
             totalPages={totalPages}
             totalItems={timesheetData.length}
             pageSize={pageSize}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
             onPageSizeChange={(newSize) => {
               setPageSize(newSize)
-              setCurrentPage(1)
+              handlePageChange(1)
             }}
             pageSizeOptions={[5, 10, 15]}
           />
         </div>
       </div>
     </div>
+  )
+}
+
+export default function EmployeeTimesheetView() {
+  return (
+    <Suspense fallback={null}>
+      <EmployeeTimesheetViewContent />
+    </Suspense>
   )
 }

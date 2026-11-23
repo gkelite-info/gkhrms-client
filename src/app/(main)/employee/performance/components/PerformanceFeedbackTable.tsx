@@ -1,7 +1,9 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { ReusableTable, ReusablePagination, TableColumn } from "@/../reusableComponents"
+
 export interface FeedbackRow {
   month: string
   score: string
@@ -85,8 +87,18 @@ const feedbackRows: FeedbackRow[] = [
 ]
 
 export default function PerformanceFeedbackTable() {
-  const [currentPage, setCurrentPage] = useState(1)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const initialPage = Math.max(1, parseInt(searchParams?.get("feedbackPage") || "1", 10) || 1)
+  const [currentPage, setCurrentPage] = useState(initialPage)
   const [pageSize, setPageSize] = useState(5)
+
+  useEffect(() => {
+    const p = Math.max(1, parseInt(searchParams?.get("feedbackPage") || "1", 10) || 1)
+    setCurrentPage(p)
+  }, [searchParams])
 
   const totalPages = Math.ceil(feedbackRows.length / pageSize)
   const paginatedRows = feedbackRows.slice(
@@ -94,34 +106,46 @@ export default function PerformanceFeedbackTable() {
     currentPage * pageSize
   )
 
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage)
+    const params = new URLSearchParams(searchParams ? Array.from(searchParams.entries()) : [])
+    if (newPage <= 1) {
+      params.delete("feedbackPage")
+    } else {
+      params.set("feedbackPage", String(newPage))
+    }
+    const query = params.toString()
+    router.push(`${pathname}${query ? `?${query}` : ""}`, { scroll: false })
+  }
+
   const columns: TableColumn<FeedbackRow>[] = [
     {
       key: "month",
       header: "Month",
       accessor: "month",
-      className: "py-3.5 px-5 sm:px-6 font-medium text-gray-800 whitespace-nowrap text-xs sm:text-sm",
-      headerClassName: "py-3 px-5 sm:px-6 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "py-3 sm:py-3.5 px-3 sm:px-5 md:px-6 font-medium text-gray-800 whitespace-nowrap text-xs sm:text-sm",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 md:px-6 text-gray-800 text-xs sm:text-sm font-semibold",
     },
     {
       key: "score",
       header: "Performance Score",
       accessor: "score",
-      className: "py-3.5 px-5 sm:px-6 font-semibold text-gray-800 whitespace-nowrap text-xs sm:text-sm",
-      headerClassName: "py-3 px-5 sm:px-6 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "py-3 sm:py-3.5 px-3 sm:px-5 md:px-6 font-semibold text-gray-800 whitespace-nowrap text-xs sm:text-sm",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 md:px-6 text-gray-800 text-xs sm:text-sm font-semibold",
     },
     {
       key: "feedback",
       header: "Manager Feedback",
       accessor: "feedback",
-      className: "py-3.5 px-5 sm:px-6 text-gray-700 text-xs sm:text-sm",
-      headerClassName: "py-3 px-5 sm:px-6 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "py-3 sm:py-3.5 px-3 sm:px-5 md:px-6 text-gray-700 text-xs sm:text-sm",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 md:px-6 text-gray-800 text-xs sm:text-sm font-semibold",
     },
     {
       key: "comments",
       header: "Comments",
       accessor: "comments",
-      className: "py-3.5 px-5 sm:px-6 text-gray-600 text-xs sm:text-sm",
-      headerClassName: "py-3 px-5 sm:px-6 text-gray-800 text-xs sm:text-sm font-semibold",
+      className: "py-3 sm:py-3.5 px-3 sm:px-5 md:px-6 text-gray-600 text-xs sm:text-sm",
+      headerClassName: "py-2.5 sm:py-3 px-3 sm:px-5 md:px-6 text-gray-800 text-xs sm:text-sm font-semibold",
     },
   ]
 
@@ -143,10 +167,10 @@ export default function PerformanceFeedbackTable() {
           totalPages={totalPages}
           totalItems={feedbackRows.length}
           pageSize={pageSize}
-          onPageChange={setCurrentPage}
+          onPageChange={handlePageChange}
           onPageSizeChange={(newSize) => {
             setPageSize(newSize)
-            setCurrentPage(1)
+            handlePageChange(1)
           }}
           pageSizeOptions={[5, 10, 15]}
         />

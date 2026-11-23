@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, Suspense } from "react"
+import React, { useState, useEffect, Suspense, useCallback } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { FinanceTabType } from "./components/types"
 import FinanceTabs from "./components/FinanceTabs"
@@ -19,59 +19,89 @@ function FinanceContent() {
   const payslipParam = searchParams.get("payslip")?.toLowerCase()
   const isPayslipActive = viewParam === "payslip" || payslipParam === "true"
 
-  useEffect(() => {
-    const rawTab = searchParams.get("tab")?.toLowerCase()
+  const parseTabFromQuery = useCallback((params: URLSearchParams | { get: (k: string) => string | null }): FinanceTabType => {
+    const rawTab = params.get("tab")?.toLowerCase()
     if (rawTab === "mypay" || rawTab === "my-pay") {
-      setActiveTab("mypay")
+      return "mypay"
     } else if (
       rawTab === "manage_tax" ||
       rawTab === "manage-tax" ||
       rawTab === "tax"
     ) {
-      setActiveTab("manage_tax")
+      return "manage_tax"
     } else if (
       rawTab === "expenses" ||
       rawTab === "expenses_travel" ||
       rawTab === "expenses-travel"
     ) {
-      setActiveTab("expenses_travel")
-    } else {
-      setActiveTab("summary")
+      return "expenses_travel"
     }
-  }, [searchParams])
+    return "summary"
+  }, [])
+
+  useEffect(() => {
+    setActiveTab(parseTabFromQuery(searchParams))
+  }, [searchParams, parseTabFromQuery])
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const currentParams = new URLSearchParams(window.location.search)
+      setActiveTab(parseTabFromQuery(currentParams))
+    }
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [parseTabFromQuery])
 
   const handleSelectTab = (tab: FinanceTabType) => {
     setActiveTab(tab)
-    if (tab === "summary") {
-      router.push("/employee/finance")
-    } else {
-      router.push(`/employee/finance?tab=${tab}`)
+    const params = new URLSearchParams()
+    if (tab !== "summary") {
+      params.set("tab", tab)
     }
+    const query = params.toString()
+    const url = query ? `/employee/finance?${query}` : "/employee/finance"
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", url)
+    }
+    router.push(url, { scroll: false })
   }
 
   const handleOpenPayslip = () => {
-    const tabSuffix = activeTab === "summary" ? "" : `tab=${activeTab}&`
-    router.push(`/employee/finance?${tabSuffix}view=payslip`)
+    const params = new URLSearchParams()
+    if (activeTab !== "summary") {
+      params.set("tab", activeTab)
+    }
+    params.set("view", "payslip")
+    const url = `/employee/finance?${params.toString()}`
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", url)
+    }
+    router.push(url, { scroll: false })
   }
 
   const handleClosePayslip = () => {
-    if (activeTab === "summary") {
-      router.push("/employee/finance")
-    } else {
-      router.push(`/employee/finance?tab=${activeTab}`)
+    const params = new URLSearchParams()
+    if (activeTab !== "summary") {
+      params.set("tab", activeTab)
     }
+    const query = params.toString()
+    const url = query ? `/employee/finance?${query}` : "/employee/finance"
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", url)
+    }
+    router.push(url, { scroll: false })
   }
 
   if (isPayslipActive) {
     return (
-      <div className="w-full h-full max-w-full min-w-0 flex flex-col px-3 pt-2.5 sm:px-4 sm:pt-3 md:px-6 md:pt-3 pb-3 overflow-y-auto overflow-x-hidden scrollbar-hide">
+      <div className="w-full h-full max-w-full min-w-0 flex flex-col px-2.5 sm:px-4 md:px-6 pt-2 sm:pt-3 pb-4 overflow-y-auto overflow-x-hidden scrollbar-hide">
         <PayslipView onBack={handleClosePayslip} />
       </div>
     )
   }
 
   return (
-    <div className="w-full min-h-full max-w-full min-w-0 flex flex-col px-3 pt-2.5 sm:px-4 sm:pt-3 md:px-6 md:pt-3 pb-8 overflow-y-auto overflow-x-hidden scrollbar-hide">
+    <div className="w-full min-h-full max-w-full min-w-0 flex flex-col px-2.5 sm:px-4 md:px-6 pt-2 sm:pt-3 pb-8 overflow-y-auto overflow-x-hidden scrollbar-hide">
       <div className="shrink-0 mb-2 sm:mb-2.5">
         <FinanceTabs activeTab={activeTab} onSelectTab={handleSelectTab} />
       </div>
@@ -103,8 +133,8 @@ export default function FinancePage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full p-4">
-          <div className="w-full h-9 bg-white/60 animate-pulse rounded-xl mb-3" />
+        <div className="w-full p-3 sm:p-4">
+          <div className="w-full h-10 bg-white/60 animate-pulse rounded-xl mb-3" />
           <div className="w-full h-16 bg-white/60 animate-pulse rounded-xl mb-3" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <div className="h-48 bg-white/60 animate-pulse rounded-xl" />

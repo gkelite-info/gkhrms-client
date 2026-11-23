@@ -68,7 +68,7 @@ export default function FinanceIncomeTaxView() {
 
       <div className="w-full bg-white rounded-xl shadow-2xs p-3.5 sm:p-4 border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto scrollbar-hide">
-          <table className="w-full text-left border-collapse text-xs">
+          <table className="w-full text-left border-collapse text-xs min-w-[620px]">
             <thead>
               <tr className="border-b border-slate-200">
                 <th className="py-2.5 px-3 sm:px-4 font-semibold text-slate-800 border-r border-slate-100 whitespace-nowrap min-w-[130px]">
@@ -133,4 +133,3 @@ export default function FinanceIncomeTaxView() {
     </div>
   )
 }
-
