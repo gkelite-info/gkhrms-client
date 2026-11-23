@@ -1,7 +1,10 @@
 "use client"
 
-import { FilePdf, FileDoc, DownloadSimple } from "phosphor-react"
+import { useState } from "react"
+import { FilePdf, FileDoc } from "phosphor-react"
 import { ChatAttachment } from "../types"
+import ReusableDownloadButton from "../../ReusableDownloadButton"
+import ImageLightboxModal from "./ImageLightboxModal"
 
 interface ChatAttachmentBubbleProps {
   attachment: ChatAttachment
@@ -10,51 +13,56 @@ interface ChatAttachmentBubbleProps {
 export default function ChatAttachmentBubble({
   attachment,
 }: ChatAttachmentBubbleProps) {
+  const [isImageOpen, setIsImageOpen] = useState(false)
+
   if (attachment.type === "image" && attachment.url) {
     return (
-      <div className="mb-2 overflow-hidden rounded-xl border border-gray-200 shadow-2xs max-w-full">
-        <img
-          src={attachment.url}
-          alt={attachment.name}
-          className="max-h-52 w-full object-cover"
+      <>
+        <div
+          onClick={() => setIsImageOpen(true)}
+          className="mb-1.5 overflow-hidden rounded-xl border border-gray-200 shadow-2xs max-w-full cursor-pointer hover:opacity-95 transition-opacity"
+          title="Click to view full image"
+        >
+          <img
+            src={attachment.url}
+            alt={attachment.name}
+            className="max-h-52 w-full object-cover"
+          />
+        </div>
+        <ImageLightboxModal
+          isOpen={isImageOpen}
+          onClose={() => setIsImageOpen(false)}
+          imageUrl={attachment.url}
+          title={attachment.name}
         />
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5 mb-2 rounded-xl bg-white border border-[#D5D2FB] shadow-xs w-full max-w-full min-w-0 overflow-hidden">
-      <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
-        {attachment.type === "pdf" ? (
-          <FilePdf size={20} weight="fill" className="text-rose-500" />
-        ) : (
-          <FileDoc size={20} weight="fill" className="text-blue-500" />
-        )}
+    <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 mb-1.5 rounded-xl bg-white border border-[#D5D2FB] shadow-xs w-full min-w-0">
+      <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
+        <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
+          {attachment.type === "pdf" ? (
+            <FilePdf size={18} weight="fill" className="text-rose-500" />
+          ) : (
+            <FileDoc size={18} weight="fill" className="text-blue-500" />
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <span className="block text-xs font-bold text-gray-900 truncate w-full" title={attachment.name}>
+            {attachment.name}
+          </span>
+          <span className="block text-[10px] sm:text-[11px] font-medium text-gray-500 mt-0.5">{attachment.size}</span>
+        </div>
       </div>
-      <div className="min-w-0 flex-1 overflow-hidden">
-        <span className="block text-xs font-bold text-gray-900 truncate w-full">
-          {attachment.name}
-        </span>
-        <span className="block text-[11px] font-medium text-gray-500">{attachment.size}</span>
-      </div>
-      {attachment.url && attachment.url !== "#" ? (
-        <a
-          href={attachment.url}
-          download={attachment.name}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors shrink-0"
-          title="Download attachment"
-        >
-          <DownloadSimple size={15} weight="bold" />
-        </a>
-      ) : (
-        <button
-          type="button"
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer shrink-0"
-          title="Download attachment"
-        >
-          <DownloadSimple size={15} weight="bold" />
-        </button>
-      )}
+      <ReusableDownloadButton
+        fileName={attachment.name}
+        fileUrl={attachment.url}
+        fileType={attachment.type === "pdf" ? "application/pdf" : "application/octet-stream"}
+        iconSize={15}
+        className="hover:bg-gray-100 shrink-0 p-1.5 rounded-lg"
+      />
     </div>
   )
 }

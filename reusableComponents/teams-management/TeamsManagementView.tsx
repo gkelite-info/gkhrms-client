@@ -9,6 +9,7 @@ import TeamsTableView from "./TeamsTableView"
 import TeamTreeView from "./TeamTreeView"
 import TeamChatView from "./chat/TeamChatView"
 import HrTeamsManagementContainer from "./hr-manager/HrTeamsManagementContainer"
+import { ChairmanTeamsManagementView } from "./chairman"
 
 const VALID_TABS: TeamsTabKey[] = ["management", "tree", "chat"]
 
@@ -86,16 +87,18 @@ export default function TeamsManagementView({
   }
 
   return (
-    <div className="w-full flex flex-col gap-4 sm:gap-5 p-3.5 sm:p-5 md:p-6 max-w-7xl mx-auto select-none">
+    <div className="w-full flex flex-col gap-3 sm:gap-5 p-2 sm:p-4 md:p-6 max-w-7xl mx-auto select-none">
       <TeamsManagementTabsHeader
         activeTab={activeTab}
         onTabChange={handleTabChange}
-        onAddNewTeam={canCreateTeam && currentRole !== "hrmanager" && currentRole !== "manager" ? () => setIsCreateModalOpen(true) : undefined}
+        onAddNewTeam={canCreateTeam && currentRole !== "hrmanager" && currentRole !== "manager" && currentRole !== "chairman" ? () => setIsCreateModalOpen(true) : undefined}
         role={currentRole}
       />
 
       {activeTab === "management" && (
-        currentRole === "hrmanager" || currentRole === "manager" ? (
+        currentRole === "chairman" ? (
+          <ChairmanTeamsManagementView />
+        ) : currentRole === "hrmanager" || currentRole === "manager" ? (
           <HrTeamsManagementContainer />
         ) : (
           <TeamsTableView

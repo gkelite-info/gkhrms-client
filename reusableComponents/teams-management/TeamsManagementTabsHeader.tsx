@@ -43,8 +43,15 @@ export default function TeamsManagementTabsHeader({
 }: TeamsManagementTabsHeaderProps) {
   const current = TAB_CONFIG[activeTab]
   const isTeamsRole = (role === "hrmanager" || role === "manager") && activeTab === "management"
-  const title = isTeamsRole ? "Teams" : current.title
-  const subtitle = isTeamsRole
+  const isChairmanRole = role === "chairman" && activeTab === "management"
+  const title = isChairmanRole
+    ? "My Teams"
+    : isTeamsRole
+    ? "Teams"
+    : current.title
+  const subtitle = isChairmanRole
+    ? "View and organize people across key roles in the organization."
+    : isTeamsRole
     ? "Manage all teams across the organization, create new teams and view team details."
     : current.subtitle
 

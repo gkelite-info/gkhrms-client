@@ -47,7 +47,7 @@ export default function HrTeamMembersTable({ members }: HrTeamMembersTableProps)
                 </td>
                 <td className="py-3 px-3 whitespace-nowrap">
                   <div className="flex items-center gap-2.5">
-                    <ReusableAvatar name={m.name} avatar={m.avatar} size="sm" />
+                    <ReusableAvatar name={m.name} src={m.avatar} size="sm" />
                     <span className="font-bold text-gray-900 truncate">{m.name}</span>
                   </div>
                 </td>

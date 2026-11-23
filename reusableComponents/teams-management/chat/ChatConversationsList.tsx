@@ -74,18 +74,15 @@ export default function ChatConversationsList({
                   : "bg-white border-transparent hover:bg-gray-50/80"
               }`}
             >
-              <div className="relative shrink-0">
-                <ReusableAvatar
-                  src={item.avatar}
-                  name={item.name}
-                  size={36}
-                  shape="circle"
-                  fallbackType="icon"
-                />
-                {item.isOnline && (
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
-                )}
-              </div>
+              <ReusableAvatar
+                src={item.avatar}
+                name={item.name}
+                size={36}
+                shape="circle"
+                fallbackType="icon"
+                status={item.isOnline ? "online" : undefined}
+                className="shrink-0"
+              />
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1">

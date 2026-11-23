@@ -67,7 +67,7 @@ export default function HrTeamsTable({
               </td>
               <td className="py-3 px-3 whitespace-nowrap">
                 <div className="flex items-center gap-2">
-                  <ReusableAvatar name={team.managerName} avatar={team.managerAvatar} size="sm" />
+                  <ReusableAvatar name={team.managerName} src={team.managerAvatar} size="sm" />
                   <span className="font-medium text-gray-900">{team.managerName}</span>
                 </div>
               </td>
