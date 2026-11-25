@@ -1,5 +1,7 @@
 "use client"
 
+import { ArrowsHorizontal } from "phosphor-react"
+
 interface NodeMember {
   id: string
   name: string
@@ -95,8 +97,13 @@ export default function TeamTreeChart() {
   ]
 
   return (
-    <div className="w-full bg-white rounded-2xl p-6 sm:p-8 shadow-xs border border-gray-100 flex flex-col items-center">
-      <div className="w-full overflow-x-auto flex justify-center py-2">
+    <div className="w-full bg-white rounded-2xl p-4 sm:p-6 md:p-8 shadow-xs border border-gray-100 flex flex-col items-center">
+      <div className="sm:hidden flex items-center justify-end w-full text-[11px] text-gray-400 gap-1 pb-1 select-none">
+        <ArrowsHorizontal size={13} />
+        <span>Swipe horizontally to view full hierarchy</span>
+      </div>
+
+      <div className="w-full overflow-x-auto flex justify-start sm:justify-center py-2 scrollbar-thin touch-pan-x">
         <div className="w-[840px] min-w-[840px] flex flex-col items-center relative select-none">
           <div className="w-full flex" style={{ paddingLeft: "472px" }}>
             <div className="flex flex-col items-center group cursor-pointer">
@@ -168,18 +175,20 @@ export default function TeamTreeChart() {
               className="w-[160px] flex flex-col items-center group cursor-pointer"
               style={{ marginLeft: "160px" }}
             >
-              <img
-                src={manager1.avatar}
-                alt={manager1.name}
-                className="w-13 h-13 rounded-full object-cover shadow-xs ring-2 ring-red-400/20 group-hover:scale-105 group-hover:ring-red-500 transition-all duration-200"
-              />
-              <span className="text-xs font-bold text-gray-900 mt-1">
-                {manager1.role}
-              </span>
-              <span className="text-[11px] font-medium text-gray-700">
+              <div className="relative">
+                <img
+                  src={manager1.avatar}
+                  alt={manager1.name}
+                  className="w-13 h-13 rounded-full object-cover shadow-xs ring-2 ring-rose-500/20 group-hover:scale-105 group-hover:ring-rose-500 transition-all duration-200"
+                />
+              </div>
+              <span className="text-sm font-bold text-gray-900 mt-1">
                 {manager1.name}
               </span>
-              <div className="flex items-center gap-1 text-[9px] text-[#EF4444] font-medium mt-0.5">
+              <span className="text-[11px] text-gray-500 font-medium">
+                {manager1.role}
+              </span>
+              <div className="flex items-center gap-1 text-[10px] text-[#EF4444] font-medium mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
                 <span>Absent</span>
               </div>
@@ -189,18 +198,20 @@ export default function TeamTreeChart() {
               className="w-[160px] flex flex-col items-center group cursor-pointer"
               style={{ marginLeft: "120px" }}
             >
-              <img
-                src={manager2.avatar}
-                alt={manager2.name}
-                className="w-13 h-13 rounded-full object-cover shadow-xs ring-2 ring-emerald-500/20 group-hover:scale-105 group-hover:ring-emerald-500 transition-all duration-200"
-              />
-              <span className="text-xs font-bold text-gray-900 mt-1">
-                {manager2.role}
-              </span>
-              <span className="text-[11px] font-medium text-gray-700">
+              <div className="relative">
+                <img
+                  src={manager2.avatar}
+                  alt={manager2.name}
+                  className="w-13 h-13 rounded-full object-cover shadow-xs ring-2 ring-emerald-500/20 group-hover:scale-105 group-hover:ring-emerald-500 transition-all duration-200"
+                />
+              </div>
+              <span className="text-sm font-bold text-gray-900 mt-1">
                 {manager2.name}
               </span>
-              <div className="flex items-center gap-1 text-[9px] text-[#10B981] font-medium mt-0.5">
+              <span className="text-[11px] text-gray-500 font-medium">
+                {manager2.role}
+              </span>
+              <div className="flex items-center gap-1 text-[10px] text-[#10B981] font-medium mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                 <span>Present</span>
               </div>
@@ -210,18 +221,20 @@ export default function TeamTreeChart() {
               className="w-[160px] flex flex-col items-center group cursor-pointer"
               style={{ marginLeft: "80px" }}
             >
-              <img
-                src={manager3.avatar}
-                alt={manager3.name}
-                className="w-13 h-13 rounded-full object-cover shadow-xs ring-2 ring-emerald-500/20 group-hover:scale-105 group-hover:ring-emerald-500 transition-all duration-200"
-              />
-              <span className="text-xs font-bold text-gray-900 mt-1">
-                {manager3.role}
-              </span>
-              <span className="text-[11px] font-medium text-gray-700">
+              <div className="relative">
+                <img
+                  src={manager3.avatar}
+                  alt={manager3.name}
+                  className="w-13 h-13 rounded-full object-cover shadow-xs ring-2 ring-emerald-500/20 group-hover:scale-105 group-hover:ring-emerald-500 transition-all duration-200"
+                />
+              </div>
+              <span className="text-sm font-bold text-gray-900 mt-1">
                 {manager3.name}
               </span>
-              <div className="flex items-center gap-1 text-[9px] text-[#10B981] font-medium mt-0.5">
+              <span className="text-[11px] text-gray-500 font-medium">
+                {manager3.role}
+              </span>
+              <div className="flex items-center gap-1 text-[10px] text-[#10B981] font-medium mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                 <span>Present</span>
               </div>
@@ -247,19 +260,21 @@ export default function TeamTreeChart() {
               className="w-[160px] flex flex-col items-center group cursor-pointer"
               style={{ marginLeft: "160px" }}
             >
-              <img
-                src={teamLead.avatar}
-                alt={teamLead.name}
-                className="w-11 h-11 rounded-full object-cover shadow-xs ring-2 ring-red-400/20 group-hover:scale-105 group-hover:ring-red-500 transition-all duration-200"
-              />
-              <span className="text-[11px] font-bold text-gray-900 mt-1">
-                {teamLead.role}
-              </span>
-              <span className="text-[10px] font-medium text-gray-700">
+              <div className="relative">
+                <img
+                  src={teamLead.avatar}
+                  alt={teamLead.name}
+                  className="w-12 h-12 rounded-full object-cover shadow-xs ring-2 ring-rose-500/20 group-hover:scale-105 group-hover:ring-rose-500 transition-all duration-200"
+                />
+              </div>
+              <span className="text-xs font-bold text-gray-900 mt-1">
                 {teamLead.name}
               </span>
-              <div className="flex items-center gap-1 text-[8px] text-[#EF4444] font-medium mt-0.5">
-                <span className="w-1 h-1 rounded-full bg-[#EF4444]" />
+              <span className="text-[11px] text-gray-500 font-medium">
+                {teamLead.role}
+              </span>
+              <div className="flex items-center gap-1 text-[10px] text-[#EF4444] font-medium mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
                 <span>Absent</span>
               </div>
             </div>
@@ -331,24 +346,26 @@ export default function TeamTreeChart() {
             {members.map((member, index) => (
               <div
                 key={member.id}
-                className="w-[95px] flex flex-col items-center text-center group cursor-pointer"
+                className="w-[90px] flex flex-col items-center group cursor-pointer"
                 style={{
-                  marginLeft: index === 0 ? "0px" : "2.5px",
+                  marginLeft: index === 0 ? "0px" : "7.5px",
                 }}
               >
-                <img
-                  src={member.avatar}
-                  alt={member.name}
-                  className="w-9 h-9 rounded-full object-cover shadow-xs ring-2 ring-emerald-500/20 group-hover:scale-105 group-hover:ring-emerald-500 transition-all duration-200"
-                />
-                <span className="text-[10px] font-bold text-gray-900 mt-1 leading-tight">
+                <span className="text-[11px] font-bold text-gray-900 truncate max-w-[85px] text-center mb-1">
                   {member.name}
                 </span>
-                <span className="text-[9px] text-gray-500 leading-tight">
+                <div className="relative">
+                  <img
+                    src={member.avatar}
+                    alt={member.name}
+                    className="w-11 h-11 rounded-full object-cover shadow-xs ring-2 ring-emerald-500/20 group-hover:scale-105 group-hover:ring-emerald-500 transition-all duration-200"
+                  />
+                </div>
+                <span className="text-[10px] text-gray-500 font-medium mt-1">
                   {member.role}
                 </span>
-                <div className="flex items-center gap-1 text-[8px] text-[#10B981] font-medium mt-0.5">
-                  <span className="w-1 h-1 rounded-full bg-[#10B981]" />
+                <div className="flex items-center gap-1 text-[9px] text-[#10B981] font-medium mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                   <span>Present</span>
                 </div>
               </div>
@@ -359,4 +376,3 @@ export default function TeamTreeChart() {
     </div>
   )
 }
-

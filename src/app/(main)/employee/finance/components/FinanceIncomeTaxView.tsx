@@ -52,7 +52,7 @@ export default function FinanceIncomeTaxView() {
   return (
     <div className="w-full flex flex-col gap-3 sm:gap-3.5">
       <div className="w-full bg-white rounded-xl shadow-2xs p-3.5 sm:p-4 border border-slate-100">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3.5 md:gap-4">
           {TAX_METRICS.map((metric, idx) => (
             <div key={idx} className="flex flex-col">
               <span className="text-[11px] sm:text-xs font-semibold text-slate-800 leading-tight">
@@ -67,7 +67,7 @@ export default function FinanceIncomeTaxView() {
       </div>
 
       <div className="w-full bg-white rounded-xl shadow-2xs p-3.5 sm:p-4 border border-slate-100 overflow-hidden">
-        <div className="overflow-x-auto scrollbar-hide">
+        <div className="overflow-x-auto scrollbar-thin touch-pan-x">
           <table className="w-full text-left border-collapse text-xs min-w-[620px]">
             <thead>
               <tr className="border-b border-slate-200">

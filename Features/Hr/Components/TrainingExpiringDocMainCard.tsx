@@ -1,4 +1,5 @@
 "use client"
+
 import ExpiringDocument from "./ExpiringDocument"
 
 type ProgramSectionProps = {
@@ -12,16 +13,16 @@ const ProgramSection = ({
   title,
   programs,
 }: ProgramSectionProps) => (
-  <div className="w-full flex flex-col lg:flex-row items-start gap-2">
-    <div className="w-full lg:w-1/2 flex items-center gap-2">
-      <span className="w-[25px] h-[25px] flex rounded-full justify-center items-center bg-[#272372] text-white font-semibold">
+  <div className="w-full flex flex-col sm:flex-row items-start gap-2.5 sm:gap-4">
+    <div className="w-full sm:w-1/2 flex items-center gap-2 shrink-0">
+      <span className="w-[24px] h-[24px] sm:w-[25px] sm:h-[25px] flex rounded-full justify-center items-center bg-[#272372] text-white text-xs font-semibold shrink-0">
         {number}
       </span>
-      <span className="text-[#272372] text-xs">{title}</span>
+      <span className="text-[#272372] text-xs font-semibold">{title}</span>
     </div>
-    <div className="w-full lg:w-1/2 flex flex-col gap-2">
+    <div className="w-full sm:w-1/2 flex flex-col gap-1.5 sm:gap-2">
       {programs.map((program, idx) => (
-        <span key={idx} className="text-xs text-[#4C488F]">
+        <span key={idx} className="text-xs text-[#4C488F] truncate">
           {program}
         </span>
       ))}
@@ -45,12 +46,12 @@ const TrainingExpiringDocMainCard = () => {
   ]
 
   return (
-    <div className="w-full flex flex-col lg:flex-row gap-2.5">
-      <div className="w-full lg:w-1/2 bg-[#F9FAFB] rounded-lg p-6 flex flex-col gap-6 shadow-md">
-        <h3 className="text-[#323232] font-semibold text-sm">
+    <div className="w-full flex flex-col lg:flex-row gap-3 sm:gap-4 items-stretch">
+      <div className="w-full lg:w-1/2 bg-[#F9FAFB] rounded-2xl p-4 sm:p-6 flex flex-col gap-5 sm:gap-6 shadow-xs border border-gray-100 min-w-0">
+        <h3 className="text-[#323232] font-semibold text-xs sm:text-sm">
           Training Programs
         </h3>
-        <div className="w-full flex flex-col gap-6">
+        <div className="w-full flex flex-col gap-5 sm:gap-6">
           <ProgramSection
             number={1}
             title="On Going Programs:"

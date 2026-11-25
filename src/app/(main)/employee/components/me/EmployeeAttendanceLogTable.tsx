@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, Suspense } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { ReusableTable, ReusablePagination, TableColumn } from "@/../reusableComponents"
 
 interface LogRecord {
@@ -52,10 +52,18 @@ const filterTabs = [
 ]
 
 function EmployeeAttendanceLogTableContent() {
+  const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
-  const filterFromQuery = searchParams?.get("filter") || searchParams?.get("logFilter") || "30days"
+
+  const filterFromQuery = searchParams?.get("logFilter") || searchParams?.get("filter") || "30days"
+  const pageFromQuery = searchParams?.get("logPage")
+
   const [activeFilter, setActiveFilter] = useState(filterFromQuery)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(() => {
+    const p = pageFromQuery ? parseInt(pageFromQuery, 10) : 1
+    return isNaN(p) || p < 1 ? 1 : p
+  })
   const [pageSize, setPageSize] = useState(6)
 
   useEffect(() => {
@@ -63,6 +71,15 @@ function EmployeeAttendanceLogTableContent() {
       setActiveFilter(filterFromQuery)
     }
   }, [filterFromQuery])
+
+  useEffect(() => {
+    if (pageFromQuery) {
+      const p = parseInt(pageFromQuery, 10)
+      if (!isNaN(p) && p >= 1) {
+        setCurrentPage(p)
+      }
+    }
+  }, [pageFromQuery])
 
   const getDotClass = (dot: "green" | "orange" | "red") => {
     switch (dot) {
@@ -179,15 +196,21 @@ function EmployeeAttendanceLogTableContent() {
   const handleFilterChange = (key: string) => {
     setActiveFilter(key)
     setCurrentPage(1)
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href)
-      url.searchParams.set("filter", key)
-      window.history.pushState(null, "", url.toString())
-    }
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.set("logFilter", key)
+    params.set("logPage", "1")
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.set("logPage", String(page))
+    router.push(`${pathname}?${params.toString()}`)
   }
 
   return (
-    <div className="w-full max-w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-3.5 sm:p-5 mt-2">
+    <div className="w-full max-w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-5 mt-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4">
         <div>
           <h3 className="text-sm sm:text-base font-bold text-[#1F2937]">Attendance Log</h3>
@@ -202,7 +225,7 @@ function EmployeeAttendanceLogTableContent() {
                 key={tab.key}
                 type="button"
                 onClick={() => handleFilterChange(tab.key)}
-                className={`text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+                className={`text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
                   isActive
                     ? "bg-[#7D73E3] text-white shadow-sm"
                     : "bg-[#E1DFFB] text-[#323232] hover:bg-[#d5d2fa]"
@@ -215,7 +238,7 @@ function EmployeeAttendanceLogTableContent() {
         </div>
       </div>
 
-      <div className="w-full max-w-full overflow-hidden rounded-xl border border-gray-100">
+      <div className="w-full max-w-full overflow-x-auto rounded-xl border border-gray-100 scrollbar-thin">
         <ReusableTable<LogRecord>
           columns={columns}
           data={paginatedData}
@@ -234,10 +257,10 @@ function EmployeeAttendanceLogTableContent() {
           totalPages={totalPages}
           totalItems={mockData.length}
           pageSize={pageSize}
-          onPageChange={setCurrentPage}
+          onPageChange={handlePageChange}
           onPageSizeChange={(newSize) => {
             setPageSize(newSize)
-            setCurrentPage(1)
+            handlePageChange(1)
           }}
           pageSizeOptions={[6, 12, 18]}
         />

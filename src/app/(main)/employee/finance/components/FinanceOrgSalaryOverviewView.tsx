@@ -1,6 +1,7 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useEffect } from "react"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { ChevronDown } from "lucide-react"
 import { ReusableTable, ReusablePagination, TableColumn } from "@/../reusableComponents"
 
@@ -185,13 +186,111 @@ const EMPLOYEE_PAYROLL_DATA: OrgEmployeePayroll[] = [
 export default function FinanceOrgSalaryOverviewView({
   onViewPayslip,
 }: FinanceOrgSalaryOverviewViewProps) {
-  const [selectedDept, setSelectedDept] = useState("all")
-  const [selectedRole, setSelectedRole] = useState("all")
-  const [selectedMonthType, setSelectedMonthType] = useState("all")
-  const [selectedMonth, setSelectedMonth] = useState("September")
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  const [currentPage, setCurrentPage] = useState(1)
+  const deptParam = searchParams?.get("orgDept") || "all"
+  const roleParam = searchParams?.get("orgRole") || "all"
+  const monthTypeParam = searchParams?.get("orgMonthType") || "all"
+  const monthParam = searchParams?.get("orgMonth") || "September"
+  const pageParam = searchParams?.get("orgPage")
+
+  const [selectedDept, setSelectedDept] = useState(deptParam)
+  const [selectedRole, setSelectedRole] = useState(roleParam)
+  const [selectedMonthType, setSelectedMonthType] = useState(monthTypeParam)
+  const [selectedMonth, setSelectedMonth] = useState(monthParam)
+
+  const [currentPage, setCurrentPage] = useState(() => {
+    const p = pageParam ? parseInt(pageParam, 10) : 1
+    return isNaN(p) || p < 1 ? 1 : p
+  })
   const [pageSize, setPageSize] = useState(8)
+
+  useEffect(() => {
+    setSelectedDept(deptParam)
+  }, [deptParam])
+
+  useEffect(() => {
+    setSelectedRole(roleParam)
+  }, [roleParam])
+
+  useEffect(() => {
+    setSelectedMonthType(monthTypeParam)
+  }, [monthTypeParam])
+
+  useEffect(() => {
+    setSelectedMonth(monthParam)
+  }, [monthParam])
+
+  useEffect(() => {
+    if (pageParam) {
+      const p = parseInt(pageParam, 10)
+      if (!isNaN(p) && p >= 1) {
+        setCurrentPage(p)
+      }
+    }
+  }, [pageParam])
+
+  const updateUrl = (newParams: {
+    dept?: string
+    role?: string
+    monthType?: string
+    month?: string
+    page?: number
+  }) => {
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    if (newParams.dept !== undefined) {
+      if (newParams.dept !== "all") params.set("orgDept", newParams.dept)
+      else params.delete("orgDept")
+    }
+    if (newParams.role !== undefined) {
+      if (newParams.role !== "all") params.set("orgRole", newParams.role)
+      else params.delete("orgRole")
+    }
+    if (newParams.monthType !== undefined) {
+      if (newParams.monthType !== "all") params.set("orgMonthType", newParams.monthType)
+      else params.delete("orgMonthType")
+    }
+    if (newParams.month !== undefined) {
+      if (newParams.month !== "September") params.set("orgMonth", newParams.month)
+      else params.delete("orgMonth")
+    }
+    if (newParams.page !== undefined) {
+      if (newParams.page > 1) params.set("orgPage", String(newParams.page))
+      else params.delete("orgPage")
+    }
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
+  const handleDeptChange = (val: string) => {
+    setSelectedDept(val)
+    setCurrentPage(1)
+    updateUrl({ dept: val, page: 1 })
+  }
+
+  const handleRoleChange = (val: string) => {
+    setSelectedRole(val)
+    setCurrentPage(1)
+    updateUrl({ role: val, page: 1 })
+  }
+
+  const handleMonthTypeChange = (val: string) => {
+    setSelectedMonthType(val)
+    setCurrentPage(1)
+    updateUrl({ monthType: val, page: 1 })
+  }
+
+  const handleMonthChange = (val: string) => {
+    setSelectedMonth(val)
+    setCurrentPage(1)
+    updateUrl({ month: val, page: 1 })
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    updateUrl({ page })
+  }
 
   const filteredData = useMemo(() => {
     return EMPLOYEE_PAYROLL_DATA.filter((item) => {
@@ -218,70 +317,69 @@ export default function FinanceOrgSalaryOverviewView({
     return filteredData.slice(startIndex, startIndex + pageSize)
   }, [filteredData, currentPage, pageSize])
 
-  const handleDeptChange = (val: string) => {
-    setSelectedDept(val)
-    setCurrentPage(1)
-  }
-
-  const handleRoleChange = (val: string) => {
-    setSelectedRole(val)
-    setCurrentPage(1)
-  }
-
   const columns: TableColumn<OrgEmployeePayroll>[] = [
     {
       header: "Employee Name",
       accessor: "name",
-      className: "font-medium text-slate-800",
+      className: "font-medium text-slate-800 whitespace-nowrap",
+      headerClassName: "whitespace-nowrap",
     },
     {
       header: "Department",
       accessor: "department",
-      className: "text-slate-700 font-normal",
+      className: "text-slate-700 font-normal whitespace-nowrap",
+      headerClassName: "whitespace-nowrap",
     },
     {
       header: "Designation",
       accessor: "designation",
-      className: "text-slate-700 font-normal",
+      className: "text-slate-700 font-normal whitespace-nowrap",
+      headerClassName: "whitespace-nowrap",
     },
     {
       header: "Gross Pay",
       accessor: "grossPay",
-      className: "text-slate-800 font-normal",
+      className: "text-slate-800 font-medium whitespace-nowrap",
+      headerClassName: "whitespace-nowrap",
     },
     {
       header: "Deductions",
       accessor: "deductions",
-      className: "text-slate-800 font-normal",
+      className: "text-slate-700 font-normal whitespace-nowrap",
+      headerClassName: "whitespace-nowrap",
     },
     {
       header: "Net Pay",
       accessor: "netPay",
-      className: "text-slate-800 font-normal",
+      className: "text-slate-900 font-semibold whitespace-nowrap",
+      headerClassName: "whitespace-nowrap",
     },
     {
       header: "Pay Date",
       accessor: "payDate",
-      className: "text-slate-700 font-normal",
+      className: "text-slate-600 font-normal whitespace-nowrap",
+      headerClassName: "whitespace-nowrap",
     },
     {
-      header: "Action",
+      header: "Payslip",
       render: (row) => (
         <button
           type="button"
           onClick={() => onViewPayslip && onViewPayslip(row.name)}
-          className="text-slate-700 hover:text-[#5B50EC] font-normal transition-colors cursor-pointer"
+          className="text-slate-700 hover:text-[#5B50EC] font-normal transition-colors cursor-pointer whitespace-nowrap underline"
         >
           View Payslip
         </button>
       ),
+      className: "whitespace-nowrap",
+      headerClassName: "whitespace-nowrap",
     },
   ]
 
   return (
-    <div className="w-full flex flex-col gap-3.5 sm:gap-4">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col items-center justify-center text-center">
+    <div className="w-full flex flex-col gap-3.5 sm:gap-4 select-none">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-4 w-full">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col items-center justify-center text-center">
           <span className="text-slate-500 font-medium text-xs sm:text-sm">
             Total Employees
           </span>
@@ -290,7 +388,7 @@ export default function FinanceOrgSalaryOverviewView({
           </span>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col items-center justify-center text-center">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col items-center justify-center text-center">
           <span className="text-slate-500 font-medium text-xs sm:text-sm">
             Total Monthly Payroll
           </span>
@@ -299,7 +397,7 @@ export default function FinanceOrgSalaryOverviewView({
           </span>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col items-center justify-center text-center">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col items-center justify-center text-center">
           <span className="text-slate-500 font-medium text-xs sm:text-sm">
             Average Salary
           </span>
@@ -308,7 +406,7 @@ export default function FinanceOrgSalaryOverviewView({
           </span>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col items-center justify-center text-center">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100/80 shadow-xs flex flex-col items-center justify-center text-center">
           <span className="text-slate-500 font-medium text-xs sm:text-sm">
             Last Payroll Processed
           </span>
@@ -318,15 +416,15 @@ export default function FinanceOrgSalaryOverviewView({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-3.5 border border-slate-100/80 shadow-xs">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 border border-slate-100/80 shadow-xs">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
           <div className="relative">
             <select
               value={selectedDept}
               onChange={(e) => handleDeptChange(e.target.value)}
-              className="w-full appearance-none bg-transparent py-1.5 px-3 pr-8 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer"
+              className="w-full appearance-none bg-slate-50/70 border border-slate-200/80 rounded-lg py-1.5 px-3 pr-8 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer"
             >
-              <option value="all">Department</option>
+              <option value="all">All Departments</option>
               <option value="Design">Design</option>
               <option value="HR">HR</option>
               <option value="Tech">Tech</option>
@@ -339,9 +437,9 @@ export default function FinanceOrgSalaryOverviewView({
             <select
               value={selectedRole}
               onChange={(e) => handleRoleChange(e.target.value)}
-              className="w-full appearance-none bg-transparent py-1.5 px-3 pr-8 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer"
+              className="w-full appearance-none bg-slate-50/70 border border-slate-200/80 rounded-lg py-1.5 px-3 pr-8 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer"
             >
-              <option value="all">Role</option>
+              <option value="all">All Roles</option>
               <option value="UI/UX Designer">UI/UX Designer</option>
               <option value="HR Manager">HR Manager</option>
               <option value="Frontend Dev">Frontend Dev</option>
@@ -353,10 +451,10 @@ export default function FinanceOrgSalaryOverviewView({
           <div className="relative">
             <select
               value={selectedMonthType}
-              onChange={(e) => setSelectedMonthType(e.target.value)}
-              className="w-full appearance-none bg-transparent py-1.5 px-3 pr-8 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer"
+              onChange={(e) => handleMonthTypeChange(e.target.value)}
+              className="w-full appearance-none bg-slate-50/70 border border-slate-200/80 rounded-lg py-1.5 px-3 pr-8 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer"
             >
-              <option value="all">Month</option>
+              <option value="all">All Cycles</option>
               <option value="current">Current Month</option>
               <option value="last">Last Month</option>
               <option value="custom">Custom Range</option>
@@ -367,8 +465,8 @@ export default function FinanceOrgSalaryOverviewView({
           <div className="relative">
             <select
               value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full appearance-none bg-transparent py-1.5 px-3 pr-8 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer"
+              onChange={(e) => handleMonthChange(e.target.value)}
+              className="w-full appearance-none bg-slate-50/70 border border-slate-200/80 rounded-lg py-1.5 px-3 pr-8 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer"
             >
               <option value="September">September</option>
               <option value="August">August</option>
@@ -381,37 +479,35 @@ export default function FinanceOrgSalaryOverviewView({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-slate-100/80 shadow-xs flex flex-col gap-4">
-        <ReusableTable<OrgEmployeePayroll>
-          columns={columns}
-          data={paginatedData}
-          keyExtractor={(row, index) => `${row.id}-${index}`}
-          headerBgColor="transparent"
-          headerTextColor="#0F172A"
-          headerRounded="rounded-none"
-          showBorder={false}
-          rowHover={true}
-          emptyMessage="No employee payroll records found"
-        />
+      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-100/80 shadow-xs overflow-hidden">
+        <div className="w-full max-w-full overflow-x-auto scrollbar-thin">
+          <ReusableTable<OrgEmployeePayroll>
+            columns={columns}
+            data={paginatedData}
+            headerBgColor="#F3F0EC"
+            headerTextColor="#1F2937"
+            headerRounded="rounded-xl"
+            tableClassName="border-collapse w-full min-w-[760px]"
+            containerClassName="w-full"
+            rowHover={true}
+            keyExtractor={(row) => row.id}
+          />
+        </div>
 
-        {filteredData.length > 0 && (
-          <div className="pt-2 border-t border-slate-100">
-            <ReusablePagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={filteredData.length}
-              pageSize={pageSize}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={(newSize: number) => {
-                setPageSize(newSize)
-                setCurrentPage(1)
-              }}
-              pageSizeOptions={[5, 8, 10, 20]}
-              showPageSize={true}
-              showTotalInfo={true}
-            />
-          </div>
-        )}
+        <div className="pt-3 border-t border-slate-100 mt-3 overflow-x-auto">
+          <ReusablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredData.length}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize)
+              handlePageChange(1)
+            }}
+            pageSizeOptions={[4, 8, 12, 16]}
+          />
+        </div>
       </div>
     </div>
   )

@@ -1,9 +1,10 @@
 "use client"
 
-import {  useState  } from "react";
+import { useState, useEffect } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import EmployeeModal, { StatusEmployee } from "./EmployeeModal"
 
-interface MetricCardData {
+export interface MetricCardData {
   id: string
   title: string
   count: number
@@ -16,7 +17,7 @@ const metricCardsData: MetricCardData[] = [
     id: "off-today",
     title: "Who is off today",
     count: 2,
-    titleColor: "#F59E0B", // Vibrant amber/yellow
+    titleColor: "#F59E0B",
     employees: [
       {
         id: 1,
@@ -46,7 +47,7 @@ const metricCardsData: MetricCardData[] = [
     id: "on-time",
     title: "Employees on Time Today",
     count: 7,
-    titleColor: "#4338CA", // Deep indigo
+    titleColor: "#4338CA",
     employees: [
       {
         id: 11,
@@ -138,7 +139,7 @@ const metricCardsData: MetricCardData[] = [
     id: "late-arrivals",
     title: "Late Arrivals Today",
     count: 3,
-    titleColor: "#EC4899", // Magenta/pink
+    titleColor: "#EC4899",
     employees: [
       {
         id: 21,
@@ -182,7 +183,7 @@ const metricCardsData: MetricCardData[] = [
     id: "wfh",
     title: "Work from Home",
     count: 2,
-    titleColor: "#10B981", // Bright green
+    titleColor: "#10B981",
     employees: [
       {
         id: 31,
@@ -214,7 +215,7 @@ const metricCardsData: MetricCardData[] = [
     id: "remote",
     title: "Remote",
     count: 2,
-    titleColor: "#06B6D4", // Cyan/teal
+    titleColor: "#06B6D4",
     employees: [
       {
         id: 41,
@@ -246,7 +247,7 @@ const metricCardsData: MetricCardData[] = [
     id: "not-in-yet",
     title: "Not in yet Today",
     count: 2,
-    titleColor: "#EF4444", // Red/orange
+    titleColor: "#EF4444",
     employees: [
       {
         id: 51,
@@ -275,34 +276,63 @@ const metricCardsData: MetricCardData[] = [
 ]
 
 export default function StatusCards() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const modalParam = searchParams?.get("modal") || ""
+
   const [selectedCard, setSelectedCard] = useState<MetricCardData | null>(null)
+
+  useEffect(() => {
+    if (modalParam) {
+      const match = metricCardsData.find((c) => c.id === modalParam)
+      if (match) {
+        setSelectedCard(match)
+      }
+    } else {
+      setSelectedCard(null)
+    }
+  }, [modalParam])
+
+  const handleOpenModal = (card: MetricCardData) => {
+    setSelectedCard(card)
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.set("modal", card.id)
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
+  const handleCloseModal = () => {
+    setSelectedCard(null)
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.delete("modal")
+    const newQuery = params.toString()
+    router.push(newQuery ? `${pathname}?${newQuery}` : pathname)
+  }
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 md:gap-4 w-full">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4 w-full">
         {metricCardsData.map((card) => (
           <div
             key={card.id}
-            className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200"
+            className="bg-white rounded-2xl p-3 sm:p-4 md:p-5 shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200"
           >
-            {/* Title in distinctive color */}
             <h3
-              className="text-xs sm:text-sm font-bold tracking-tight"
+              className="text-xs sm:text-sm font-bold tracking-tight line-clamp-1 sm:line-clamp-none"
               style={{ color: card.titleColor }}
             >
               {card.title}
             </h3>
 
-            {/* Bottom Row: Count & Action */}
-            <div className="flex items-baseline justify-between mt-3 sm:mt-4">
-              <span className="text-2xl sm:text-3xl font-bold text-gray-900 leading-none">
+            <div className="flex items-baseline justify-between mt-2.5 sm:mt-4">
+              <span className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-none">
                 {card.count}
               </span>
 
               <button
                 type="button"
-                onClick={() => setSelectedCard(card)}
-                className="text-xs font-semibold text-[#8571EE] hover:text-[#6D54E6] cursor-pointer transition-colors hover:underline"
+                onClick={() => handleOpenModal(card)}
+                className="text-[11px] sm:text-xs font-semibold text-[#8571EE] hover:text-[#6D54E6] cursor-pointer transition-colors hover:underline"
               >
                 View Employees
               </button>
@@ -311,11 +341,10 @@ export default function StatusCards() {
         ))}
       </div>
 
-      {/* Interactive Modal */}
       {selectedCard && (
         <EmployeeModal
           isOpen={!!selectedCard}
-          onClose={() => setSelectedCard(null)}
+          onClose={handleCloseModal}
           title={selectedCard.title}
           color={selectedCard.titleColor}
           employees={selectedCard.employees}
