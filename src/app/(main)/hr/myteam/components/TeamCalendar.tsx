@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useMemo, useRef } from "react"
+import { useState, useMemo, useRef, useEffect, Suspense } from "react"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { CaretLeft, CaretRight, ArrowLeft, ArrowRight } from "phosphor-react"
 import ReusablePagination from "../../../../../../reusableComponents/ReusablePagination"
 
@@ -162,8 +163,21 @@ function getMemberStatusForDay(
   return "pink"
 }
 
-export default function TeamCalendar() {
-  const [currentDate, setCurrentDate] = useState(() => new Date(2025, 7, 1))
+function TeamCalendarContent() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const yearParam = searchParams?.get("calYear")
+  const monthParam = searchParams?.get("calMonth")
+  const pageParam = searchParams?.get("calPage")
+
+  const [currentDate, setCurrentDate] = useState(() => {
+    const y = yearParam ? parseInt(yearParam, 10) : 2025
+    const m = monthParam ? parseInt(monthParam, 10) - 1 : 7
+    return new Date(isNaN(y) ? 2025 : y, isNaN(m) ? 7 : m, 1)
+  })
+
   const [hoveredCell, setHoveredCell] = useState<{
     member: string
     day: number
@@ -171,10 +185,33 @@ export default function TeamCalendar() {
     year: number
     status: string
   } | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(7)
 
+  const [currentPage, setCurrentPage] = useState(() => {
+    const p = pageParam ? parseInt(pageParam, 10) : 1
+    return isNaN(p) || p < 1 ? 1 : p
+  })
+
+  const [pageSize, setPageSize] = useState(7)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (yearParam || monthParam) {
+      const y = yearParam ? parseInt(yearParam, 10) : 2025
+      const m = monthParam ? parseInt(monthParam, 10) - 1 : 7
+      if (!isNaN(y) && !isNaN(m)) {
+        setCurrentDate(new Date(y, m, 1))
+      }
+    }
+  }, [yearParam, monthParam])
+
+  useEffect(() => {
+    if (pageParam) {
+      const p = parseInt(pageParam, 10)
+      if (!isNaN(p) && p >= 1) {
+        setCurrentPage(p)
+      }
+    }
+  }, [pageParam])
 
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
@@ -204,36 +241,53 @@ export default function TeamCalendar() {
     })
   }, [year, month, daysInMonth])
 
+  const updateUrlCalendar = (newDate: Date, newPage = currentPage) => {
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.set("calYear", String(newDate.getFullYear()))
+    params.set("calMonth", String(newDate.getMonth() + 1))
+    params.set("calPage", String(newPage))
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
   const handlePrevMonth = () => {
-    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
+    const prev = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+    setCurrentDate(prev)
+    updateUrlCalendar(prev)
   }
 
   const handleNextMonth = () => {
-    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
+    const next = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+    setCurrentDate(next)
+    updateUrlCalendar(next)
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    updateUrlCalendar(currentDate, page)
   }
 
   const scrollCalendar = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
-      const offset = direction === "left" ? -300 : 300
+      const offset = direction === "left" ? -280 : 280
       scrollContainerRef.current.scrollBy({ left: offset, behavior: "smooth" })
     }
   }
 
   return (
     <div className="w-full flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
           Team Calendar
         </h2>
 
-        <div className="hidden sm:flex items-center gap-1.5 text-xs text-gray-500 font-medium">
-          <span className="text-[11px] text-gray-400 mr-1">
+        <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+          <span className="text-[11px] text-gray-400 mr-1 hidden sm:inline">
             Scroll {daysInMonth} days
           </span>
           <button
             type="button"
             onClick={() => scrollCalendar("left")}
-            className="p-1 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 transition-colors cursor-pointer"
+            className="p-1 sm:p-1.5 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 transition-colors cursor-pointer"
             title="Scroll Left"
           >
             <ArrowLeft size={13} weight="bold" />
@@ -241,7 +295,7 @@ export default function TeamCalendar() {
           <button
             type="button"
             onClick={() => scrollCalendar("right")}
-            className="p-1 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 transition-colors cursor-pointer"
+            className="p-1 sm:p-1.5 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 transition-colors cursor-pointer"
             title="Scroll Right"
           >
             <ArrowRight size={13} weight="bold" />
@@ -249,15 +303,15 @@ export default function TeamCalendar() {
         </div>
       </div>
 
-      <div className="w-full bg-white rounded-2xl p-4 sm:p-6 shadow-xs border border-gray-100 relative">
+      <div className="w-full bg-white rounded-2xl p-3.5 sm:p-5 md:p-6 shadow-xs border border-gray-100 relative">
         <div
           ref={scrollContainerRef}
-          className="w-full overflow-x-auto pb-3 scrollbar-thin"
+          className="w-full overflow-x-auto pb-3 scrollbar-thin touch-pan-x"
         >
           <div className="w-max min-w-full">
             <div className="flex items-center pb-3 border-b border-gray-100">
-              <div className="w-[185px] min-w-[185px] shrink-0 sticky left-0 bg-white z-20 pr-3 border-r border-gray-100 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.03)]">
-                <div className="inline-flex items-center gap-2 bg-[#C5C1FF] hover:bg-[#b8b3ff] transition-colors rounded-lg px-3 py-1.5 shadow-xs select-none">
+              <div className="w-[135px] sm:w-[185px] min-w-[135px] sm:min-w-[185px] shrink-0 sticky left-0 bg-white z-20 pr-2.5 sm:pr-3 border-r border-gray-100 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.03)]">
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#C5C1FF] hover:bg-[#b8b3ff] transition-colors rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 shadow-xs select-none">
                   <button
                     onClick={handlePrevMonth}
                     type="button"
@@ -266,7 +320,7 @@ export default function TeamCalendar() {
                   >
                     <CaretLeft size={14} weight="bold" />
                   </button>
-                  <span className="text-xs font-bold text-gray-900 min-w-[70px] text-center whitespace-nowrap">
+                  <span className="text-[11px] sm:text-xs font-bold text-gray-900 min-w-[60px] sm:min-w-[70px] text-center whitespace-nowrap">
                     {monthLabel}
                   </span>
                   <button
@@ -280,11 +334,11 @@ export default function TeamCalendar() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-2.5 pl-3">
+              <div className="flex items-center gap-1.5 sm:gap-2.5 pl-2.5 sm:pl-3">
                 {monthDays.map((md) => (
                   <div
                     key={md.day}
-                    className="w-8 sm:w-8.5 text-center text-[10px] sm:text-[11px] font-bold text-gray-600 tracking-wider select-none uppercase shrink-0"
+                    className="w-7 sm:w-8.5 text-center text-[10px] sm:text-[11px] font-bold text-gray-600 tracking-wider select-none uppercase shrink-0"
                   >
                     {md.weekDay}
                   </div>
@@ -296,20 +350,20 @@ export default function TeamCalendar() {
               {paginatedMembers.map((member) => (
                 <div
                   key={member.id}
-                  className="flex items-center py-2.5 hover:bg-gray-50/50 rounded-xl transition-colors group"
+                  className="flex items-center py-2 sm:py-2.5 hover:bg-gray-50/50 rounded-xl transition-colors group"
                 >
-                  <div className="w-[185px] min-w-[185px] shrink-0 flex items-center gap-3 sticky left-0 bg-white z-10 pr-3 border-r border-gray-100 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.03)] group-hover:bg-gray-50/80 transition-colors">
+                  <div className="w-[135px] sm:w-[185px] min-w-[135px] sm:min-w-[185px] shrink-0 flex items-center gap-2 sm:gap-3 sticky left-0 bg-white z-10 pr-2.5 sm:pr-3 border-r border-gray-100 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.03)] group-hover:bg-gray-50/80 transition-colors">
                     <img
                       src={member.avatar}
                       alt={member.name}
-                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-purple-100 shrink-0"
+                      className="w-7 h-7 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-purple-100 shrink-0"
                     />
                     <span className="text-xs sm:text-sm font-semibold text-gray-800 truncate">
                       {member.name}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 sm:gap-2.5 pl-3">
+                  <div className="flex items-center gap-1.5 sm:gap-2.5 pl-2.5 sm:pl-3">
                     {monthDays.map(({ day }) => {
                       const status = getMemberStatusForDay(
                         member.id,
@@ -319,10 +373,24 @@ export default function TeamCalendar() {
                       )
                       const config = colorStyles[status]
 
+                      const handleCellSelect = () => {
+                        setHoveredCell((prev) =>
+                          prev?.member === member.name && prev?.day === day
+                            ? null
+                            : {
+                                member: member.name,
+                                day,
+                                monthName: monthLabel.split(" ")[0],
+                                year,
+                                status: config.label,
+                              }
+                        )
+                      }
+
                       return (
                         <div
                           key={day}
-                          className="w-8 sm:w-8.5 flex justify-center items-center shrink-0"
+                          className="w-7 sm:w-8.5 flex justify-center items-center shrink-0"
                           onMouseEnter={() =>
                             setHoveredCell({
                               member: member.name,
@@ -333,9 +401,10 @@ export default function TeamCalendar() {
                             })
                           }
                           onMouseLeave={() => setHoveredCell(null)}
+                          onClick={handleCellSelect}
                         >
                           <div
-                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full ${config.bg} ${config.text} flex items-center justify-center text-xs font-bold select-none cursor-pointer hover:scale-110 shadow-xs transition-transform duration-150`}
+                            className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full ${config.bg} ${config.text} flex items-center justify-center text-[11px] sm:text-xs font-bold select-none cursor-pointer hover:scale-110 shadow-xs transition-transform duration-150`}
                           >
                             {day}
                           </div>
@@ -349,10 +418,10 @@ export default function TeamCalendar() {
           </div>
         </div>
 
-        <div className="mt-4 pt-3.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-600 select-none min-h-[38px]">
+        <div className="mt-3 sm:mt-4 pt-3 sm:pt-3.5 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-gray-600 select-none min-h-[38px]">
           <div className="flex items-center min-h-[28px]">
             {hoveredCell ? (
-              <div className="bg-gray-900 text-white text-[11px] py-1 px-3 rounded-lg shadow-xs flex items-center gap-2 animate-in fade-in duration-150">
+              <div className="bg-gray-900 text-white text-[10px] sm:text-[11px] py-1 px-2.5 sm:px-3 rounded-lg shadow-xs flex items-center gap-1.5 sm:gap-2 animate-in fade-in duration-150 flex-wrap">
                 <span className="font-semibold">{hoveredCell.member}</span>
                 <span className="text-gray-400">•</span>
                 <span>
@@ -364,46 +433,54 @@ export default function TeamCalendar() {
               </div>
             ) : (
               <span className="text-[11px] text-gray-400 italic">
-                Hover over any date to view attendance detail
+                Tap or hover over any date to view attendance detail
               </span>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-gray-600">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-4 md:gap-6 text-[11px] sm:text-xs text-gray-600">
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-[#C5C1FF]" />
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#C5C1FF] shrink-0" />
               <span>Present</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-[#BBF7D0]" />
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#BBF7D0] shrink-0" />
               <span>On Time</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-[#A7F3D0]" />
-              <span>Work from Home / Remote</span>
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#A7F3D0] shrink-0" />
+              <span>Remote / WFH</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-[#FECDD3]" />
-              <span>Leave / Off / Late</span>
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FECDD3] shrink-0" />
+              <span>Leave / Off</span>
             </div>
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-gray-100 overflow-x-auto">
           <ReusablePagination
             currentPage={currentPage}
             totalPages={totalPages}
             totalItems={teamMembers.length}
             pageSize={pageSize}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
             onPageSizeChange={(newSize: number) => {
               setPageSize(newSize)
-              setCurrentPage(1)
+              handlePageChange(1)
             }}
             pageSizeOptions={[3, 5, 7, 10]}
           />
         </div>
       </div>
     </div>
+  )
+}
+
+export default function TeamCalendar() {
+  return (
+    <Suspense fallback={null}>
+      <TeamCalendarContent />
+    </Suspense>
   )
 }

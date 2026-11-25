@@ -19,28 +19,28 @@ const chartData: DonotChatData[] = [
 
 const categories = {
   lessThan1: {
-    label: "Total Experience : < 1 year",
+    label: "Experience : < 1 yr",
     color: "#2A266E",
     males: 65,
     females: 55,
     total: 120,
   },
   greaterThan1: {
-    label: "Total Experience : > 1 year",
+    label: "Experience : > 1 yr",
     color: "#110F2C",
     males: 45,
     females: 35,
     total: 80,
   },
   greaterThan4: {
-    label: "Total Experience : > 4 year",
+    label: "Experience : > 4 yr",
     color: "#554DDD",
     males: 110,
     females: 90,
     total: 200,
   },
   greaterThan6: {
-    label: "Total Experience : > 6 year",
+    label: "Experience : > 6 yr",
     color: "#C6C4F4",
     males: 28,
     females: 22,
@@ -50,20 +50,20 @@ const categories = {
 
 export default function ExperienceDistribution() {
   return (
-    <div className="w-full lg:w-[40%] h-[330px] bg-[#F9FAFB] shadow-md rounded-lg p-3.5 sm:p-4 flex flex-col justify-between select-none">
-      <h3 className="text-[#323232] font-semibold text-sm text-center">
+    <div className="w-full lg:w-[40%] min-w-0 min-h-[320px] bg-[#F9FAFB] shadow-xs border border-gray-100 rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between select-none">
+      <h3 className="text-[#323232] font-semibold text-xs sm:text-sm text-center">
         Experience Distribution
       </h3>
 
-      <div className="w-full flex-1 flex items-center justify-between gap-1.5 sm:gap-2.5 min-w-0 pt-1">
-        <div className="flex-1 flex flex-col justify-between h-full py-1 min-w-0">
+      <div className="w-full flex-1 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2.5 min-w-0 pt-2">
+        <div className="w-full sm:flex-1 grid grid-cols-2 sm:flex sm:flex-col justify-between gap-2.5 sm:gap-2 sm:h-full py-1 min-w-0">
           <div className="flex flex-col gap-0.5 min-w-0">
             <div className="flex items-start gap-1.5 min-w-0">
               <span
                 className="w-2 h-2 mt-1 rounded-full shrink-0"
                 style={{ backgroundColor: categories.lessThan1.color }}
               />
-              <span className="text-[11px] font-semibold text-[#1F2433] leading-tight break-words">
+              <span className="text-[10.5px] sm:text-[11px] font-semibold text-[#1F2433] leading-tight truncate">
                 {categories.lessThan1.label}
               </span>
             </div>
@@ -89,7 +89,7 @@ export default function ExperienceDistribution() {
                 className="w-2 h-2 mt-1 rounded-full shrink-0"
                 style={{ backgroundColor: categories.greaterThan4.color }}
               />
-              <span className="text-[11px] font-semibold text-[#1F2433] leading-tight break-words">
+              <span className="text-[10.5px] sm:text-[11px] font-semibold text-[#1F2433] leading-tight truncate">
                 {categories.greaterThan4.label}
               </span>
             </div>
@@ -110,7 +110,7 @@ export default function ExperienceDistribution() {
           </div>
         </div>
 
-        <div className="w-[120px] sm:w-[130px] h-[130px] shrink-0 flex items-center justify-center">
+        <div className="w-[120px] sm:w-[130px] h-[120px] sm:h-[130px] shrink-0 flex items-center justify-center my-1 sm:my-0">
           <DonutChart
             chartData={chartData}
             innerRadius={36}
@@ -119,14 +119,14 @@ export default function ExperienceDistribution() {
           />
         </div>
 
-        <div className="flex-1 flex flex-col justify-between h-full py-1 min-w-0">
+        <div className="w-full sm:flex-1 grid grid-cols-2 sm:flex sm:flex-col justify-between gap-2.5 sm:gap-2 sm:h-full py-1 min-w-0">
           <div className="flex flex-col gap-0.5 min-w-0">
             <div className="flex items-start gap-1.5 min-w-0">
               <span
                 className="w-2 h-2 mt-1 rounded-full shrink-0"
                 style={{ backgroundColor: categories.greaterThan1.color }}
               />
-              <span className="text-[11px] font-semibold text-[#1F2433] leading-tight break-words">
+              <span className="text-[10.5px] sm:text-[11px] font-semibold text-[#1F2433] leading-tight truncate">
                 {categories.greaterThan1.label}
               </span>
             </div>
@@ -152,7 +152,7 @@ export default function ExperienceDistribution() {
                 className="w-2 h-2 mt-1 rounded-full shrink-0"
                 style={{ backgroundColor: categories.greaterThan6.color }}
               />
-              <span className="text-[11px] font-semibold text-[#1F2433] leading-tight break-words">
+              <span className="text-[10.5px] sm:text-[11px] font-semibold text-[#1F2433] leading-tight truncate">
                 {categories.greaterThan6.label}
               </span>
             </div>

@@ -22,8 +22,8 @@ export default function DepartmentWiseChart() {
   const yTicks = [40, 30, 20, 10, 0]
 
   return (
-    <div className="w-full bg-white rounded-lg p-5 sm:p-6 border border-gray-100/80 shadow-2xs flex flex-col select-none">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-full bg-white rounded-xl p-4 sm:p-5 md:p-6 border border-gray-100/80 shadow-2xs flex flex-col select-none">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h3 className="text-sm sm:text-base font-bold text-gray-900 tracking-tight">
           Department - Wise Employee Count
         </h3>
@@ -35,9 +35,9 @@ export default function DepartmentWiseChart() {
         )}
       </div>
 
-      <div className="w-full overflow-x-auto pb-1">
-        <div className="min-w-[560px] flex">
-          <div className="flex flex-col justify-between h-[190px] sm:h-[200px] pr-3 text-right text-xs font-medium text-gray-400 shrink-0 select-none pb-6">
+      <div className="w-full overflow-x-auto pb-1 scrollbar-thin touch-pan-x">
+        <div className="min-w-[520px] sm:min-w-[560px] flex">
+          <div className="flex flex-col justify-between h-[180px] sm:h-[200px] pr-2.5 sm:pr-3 text-right text-xs font-medium text-gray-400 shrink-0 select-none pb-6">
             {yTicks.map((tick) => (
               <span key={tick} className="leading-none">
                 {tick}
@@ -46,7 +46,7 @@ export default function DepartmentWiseChart() {
           </div>
 
           <div className="flex-1 flex flex-col">
-            <div className="relative h-[190px] sm:h-[200px] w-full flex items-end justify-around pb-6 border-b border-gray-100">
+            <div className="relative h-[180px] sm:h-[200px] w-full flex items-end justify-around pb-6 border-b border-gray-100">
               <div className="absolute inset-x-0 top-0 h-[1px] border-b border-gray-100/70 pointer-events-none" />
               <div className="absolute inset-x-0 top-[25%] h-[1px] border-b border-gray-100/70 pointer-events-none" />
               <div className="absolute inset-x-0 top-[50%] h-[1px] border-b border-gray-100/70 pointer-events-none" />
@@ -58,7 +58,7 @@ export default function DepartmentWiseChart() {
                 return (
                   <div
                     key={dept.name}
-                    className="flex flex-col items-center justify-end h-full w-10 sm:w-12 lg:w-14 group cursor-pointer relative z-10"
+                    className="flex flex-col items-center justify-end h-full w-9 sm:w-12 lg:w-14 group relative z-10"
                     onMouseEnter={() => setHoveredDept(dept)}
                     onMouseLeave={() => setHoveredDept(null)}
                   >
@@ -75,7 +75,7 @@ export default function DepartmentWiseChart() {
               {departmentData.map((dept) => (
                 <div
                   key={dept.name}
-                  className="w-20 -mx-4 text-center text-xs sm:text-sm font-semibold text-gray-700 tracking-tight whitespace-nowrap"
+                  className="w-18 sm:w-20 -mx-3 text-center text-xs sm:text-sm font-semibold text-gray-700 tracking-tight whitespace-nowrap"
                   title={dept.name}
                 >
                   {dept.name}

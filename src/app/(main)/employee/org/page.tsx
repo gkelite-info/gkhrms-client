@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect, useCallback, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import {
   CaretDown,
   Funnel,
@@ -317,6 +317,7 @@ type OrgSubTab = "Organization Tree" | "Employee Directory"
 function OrgPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname() || "/employee/org"
 
   const parseTabFromQuery = useCallback(
     (tabParam: string | null): OrgMainTab => {
@@ -491,7 +492,8 @@ function OrgPageContent() {
     }
 
     const query = params.toString()
-    const url = query ? `/employee/org?${query}` : "/employee/org"
+    const base = pathname.split("?")[0] || "/employee/org"
+    const url = query ? `${base}?${query}` : base
     window.history.pushState(null, "", url)
     try {
       router.push(url, { scroll: false })
@@ -679,13 +681,14 @@ function OrgPageContent() {
           <button
             type="button"
             onClick={() => handleMainTabChange("Org Terms and conditions")}
-            className={`w-full py-2 sm:py-2.5 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm text-center transition-all cursor-pointer select-none focus:outline-none shrink-0 ${
+            className={`w-full py-2 sm:py-2.5 px-1.5 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm text-center transition-all cursor-pointer select-none focus:outline-none shrink-0 truncate ${
               activeMainTab === "Org Terms and conditions"
                 ? "bg-[#8571EE] text-white shadow-xs"
                 : "bg-white text-[#374151] hover:bg-gray-50 border border-gray-200/70 shadow-2xs"
             }`}
           >
-            Org Terms and conditions
+            <span className="sm:inline hidden">Org Terms and conditions</span>
+            <span className="sm:hidden inline">Terms & Conditions</span>
           </button>
           <button
             type="button"
@@ -733,10 +736,48 @@ function OrgPageContent() {
           {activeSubTab === "Employee Directory" && (
             <>
               <div
-                className="w-full bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-3 shadow-xs border border-gray-100 relative z-20"
+                className="w-full bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-3 shadow-xs border border-gray-100 relative z-20 flex flex-col gap-2.5"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 items-center">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full">
+                  <div className="relative flex-1">
+                    <MagnifyingGlass
+                      size={16}
+                      weight="bold"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setSearchQuery(val)
+                        setDirectoryPage(1)
+                        updateQueryParams("employees", "directory", {
+                          page: 1,
+                          pageSize: directoryPageSize,
+                          search: val || undefined,
+                          dept: selectedDepartment !== "Department" ? selectedDepartment : undefined,
+                          unit: selectedBusinessUnit !== "Business Unit" ? selectedBusinessUnit : undefined,
+                          loc: selectedLocation !== "Location" ? selectedLocation : undefined,
+                        })
+                      }}
+                      placeholder="Search employee by name, role, email..."
+                      className="w-full pl-9 pr-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-xs text-[#1F2937] placeholder-gray-400 focus:outline-none focus:border-[#8571EE] transition-colors"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    title="Reset all filters"
+                    className="p-1.5 sm:p-2 text-[#374151] hover:text-[#8571EE] hover:bg-purple-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 border border-gray-200 text-xs font-semibold shrink-0"
+                  >
+                    <Funnel size={14} weight="bold" />
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 items-center">
                   <div className="relative w-full">
                     <button
                       type="button"
@@ -912,7 +953,7 @@ function OrgPageContent() {
                     )}
                   </div>
 
-                  <div className="relative w-full">
+                  <div className="relative w-full col-span-2 sm:col-span-1">
                     <button
                       type="button"
                       onClick={() => handleDropdownClick("legalEntry")}
@@ -947,18 +988,6 @@ function OrgPageContent() {
                         ))}
                       </div>
                     )}
-                  </div>
-
-                  <div className="w-full flex items-center justify-end col-span-2 sm:col-span-1">
-                    <button
-                      type="button"
-                      onClick={handleResetFilters}
-                      title="Reset all filters"
-                      className="w-full sm:w-auto p-2 text-[#374151] hover:text-[#8571EE] hover:bg-purple-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 border border-gray-200 sm:border-transparent text-xs font-semibold"
-                    >
-                      <Funnel size={16} weight="bold" />
-                      <span className="sm:hidden">Reset</span>
-                    </button>
                   </div>
                 </div>
               </div>

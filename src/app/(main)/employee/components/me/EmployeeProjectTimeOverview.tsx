@@ -57,50 +57,50 @@ function EmployeeProjectTimeOverviewContent() {
         </div>
       </div>
 
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white rounded-2xl p-4 sm:p-5 md:p-6 flex flex-col justify-center min-h-[135px] sm:min-h-[155px] md:min-h-[170px] shadow-sm border border-gray-100">
-          <h3 className="text-lg sm:text-xl font-bold text-[#1F2937] leading-tight">GKElite</h3>
-          <p className="text-xs sm:text-sm font-semibold text-gray-600 mt-2 sm:mt-3">Project : HRMS</p>
+      <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="bg-white rounded-2xl p-3.5 sm:p-5 md:p-6 flex flex-col justify-center min-h-[125px] sm:min-h-[155px] md:min-h-[170px] shadow-sm border border-gray-100">
+          <h3 className="text-base sm:text-xl font-bold text-[#1F2937] leading-tight truncate">GKElite</h3>
+          <p className="text-xs sm:text-sm font-semibold text-gray-600 mt-1.5 sm:mt-3 truncate">Project : HRMS</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-4 sm:p-5 md:p-6 flex flex-col items-center justify-center text-center min-h-[135px] sm:min-h-[155px] md:min-h-[170px] shadow-sm border border-gray-100">
-          <span className="text-xs font-bold text-gray-700">Total Duration</span>
-          <div className="flex items-baseline justify-center gap-1.5 mt-2 sm:mt-3">
-            <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1F2937] tracking-tight">6,657</span>
-            <span className="text-xs font-semibold text-gray-600">Hours</span>
+        <div className="bg-white rounded-2xl p-3.5 sm:p-5 md:p-6 flex flex-col items-center justify-center text-center min-h-[125px] sm:min-h-[155px] md:min-h-[170px] shadow-sm border border-gray-100">
+          <span className="text-[11px] sm:text-xs font-bold text-gray-700">Total Duration</span>
+          <div className="flex items-baseline justify-center gap-1 mt-1.5 sm:mt-3">
+            <span className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-[#1F2937] tracking-tight">6,657</span>
+            <span className="text-[10px] sm:text-xs font-semibold text-gray-600">Hours</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-4 sm:p-5 md:p-6 flex flex-col justify-between min-h-[135px] sm:min-h-[155px] md:min-h-[170px] shadow-sm border border-gray-100">
-          <span className="text-xs font-bold text-gray-700 text-center block">Billable Hours</span>
-          <div className="flex flex-col gap-1 my-1.5 sm:my-2">
-            <div className="flex items-baseline justify-center gap-1.5">
-              <span className="text-xl sm:text-2xl font-bold text-[#1F2937]">3000</span>
-              <span className="text-xs font-semibold text-gray-600">Hours</span>
+        <div className="bg-white rounded-2xl p-3.5 sm:p-5 md:p-6 flex flex-col justify-between min-h-[125px] sm:min-h-[155px] md:min-h-[170px] shadow-sm border border-gray-100">
+          <span className="text-[11px] sm:text-xs font-bold text-gray-700 text-center block">Billable Hours</span>
+          <div className="flex flex-col gap-0.5 sm:gap-1 my-1 sm:my-2">
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-lg sm:text-2xl font-bold text-[#1F2937]">3000</span>
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-600">Hours</span>
             </div>
-            <div className="flex items-baseline justify-center gap-1.5">
-              <span className="text-xl sm:text-2xl font-bold text-[#1F2937]">50,000</span>
-              <span className="text-xs font-semibold text-gray-600">Pay</span>
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-lg sm:text-2xl font-bold text-[#1F2937]">50,000</span>
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-600">Pay</span>
             </div>
           </div>
-          <div className="h-2.5 sm:h-3 w-full bg-[#EAEAEA] rounded-full overflow-hidden mt-1">
+          <div className="h-2 sm:h-3 w-full bg-[#EAEAEA] rounded-full overflow-hidden mt-0.5 sm:mt-1">
             <div className="h-full rounded-full bg-gradient-to-r from-[#6357E8] to-[#E056FD] w-[65%]" />
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-4 sm:p-5 md:p-6 flex flex-col justify-between min-h-[135px] sm:min-h-[155px] md:min-h-[170px] shadow-sm border border-gray-100">
-          <span className="text-xs font-bold text-gray-700 text-center block">Non Billable Hours</span>
-          <div className="flex flex-col gap-1 my-1.5 sm:my-2">
-            <div className="flex items-baseline justify-center gap-1.5">
-              <span className="text-xl sm:text-2xl font-bold text-[#1F2937]">1000</span>
-              <span className="text-xs font-semibold text-gray-600">Hours</span>
+        <div className="bg-white rounded-2xl p-3.5 sm:p-5 md:p-6 flex flex-col justify-between min-h-[125px] sm:min-h-[155px] md:min-h-[170px] shadow-sm border border-gray-100">
+          <span className="text-[11px] sm:text-xs font-bold text-gray-700 text-center block">Non Billable Hours</span>
+          <div className="flex flex-col gap-0.5 sm:gap-1 my-1 sm:my-2">
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-lg sm:text-2xl font-bold text-[#1F2937]">1000</span>
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-600">Hours</span>
             </div>
-            <div className="flex items-baseline justify-center gap-1.5">
-              <span className="text-xl sm:text-2xl font-bold text-[#1F2937]">30,000</span>
-              <span className="text-xs font-semibold text-gray-600">Pay</span>
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-lg sm:text-2xl font-bold text-[#1F2937]">30,000</span>
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-600">Pay</span>
             </div>
           </div>
-          <div className="h-2.5 sm:h-3 w-full bg-[#EAEAEA] rounded-full overflow-hidden mt-1">
+          <div className="h-2 sm:h-3 w-full bg-[#EAEAEA] rounded-full overflow-hidden mt-0.5 sm:mt-1">
             <div className="h-full rounded-full bg-gradient-to-r from-[#6357E8] to-[#E056FD] w-[55%]" />
           </div>
         </div>

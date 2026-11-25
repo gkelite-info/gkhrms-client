@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import EmployeeModal, { StatusEmployee } from "./EmployeeModal"
 
-interface MetricCardData {
+export interface MetricCardData {
   id: string
   title: string
   count: number
@@ -275,32 +276,63 @@ const metricCardsData: MetricCardData[] = [
 ]
 
 export default function StatusCards() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const modalParam = searchParams?.get("modal") || ""
+
   const [selectedCard, setSelectedCard] = useState<MetricCardData | null>(null)
+
+  useEffect(() => {
+    if (modalParam) {
+      const match = metricCardsData.find((c) => c.id === modalParam)
+      if (match) {
+        setSelectedCard(match)
+      }
+    } else {
+      setSelectedCard(null)
+    }
+  }, [modalParam])
+
+  const handleOpenModal = (card: MetricCardData) => {
+    setSelectedCard(card)
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.set("modal", card.id)
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
+  const handleCloseModal = () => {
+    setSelectedCard(null)
+    const params = new URLSearchParams(searchParams?.toString() || "")
+    params.delete("modal")
+    const newQuery = params.toString()
+    router.push(newQuery ? `${pathname}?${newQuery}` : pathname)
+  }
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 md:gap-4 w-full">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4 w-full">
         {metricCardsData.map((card) => (
           <div
             key={card.id}
-            className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200"
+            className="bg-white rounded-2xl p-3 sm:p-4 md:p-5 shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200"
           >
             <h3
-              className="text-xs sm:text-sm font-bold tracking-tight"
+              className="text-xs sm:text-sm font-bold tracking-tight line-clamp-1 sm:line-clamp-none"
               style={{ color: card.titleColor }}
             >
               {card.title}
             </h3>
 
-            <div className="flex items-baseline justify-between mt-3 sm:mt-4">
-              <span className="text-2xl sm:text-3xl font-bold text-gray-900 leading-none">
+            <div className="flex items-baseline justify-between mt-2.5 sm:mt-4">
+              <span className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-none">
                 {card.count}
               </span>
 
               <button
                 type="button"
-                onClick={() => setSelectedCard(card)}
-                className="text-xs font-semibold text-[#8571EE] hover:text-[#6D54E6] cursor-pointer transition-colors hover:underline"
+                onClick={() => handleOpenModal(card)}
+                className="text-[11px] sm:text-xs font-semibold text-[#8571EE] hover:text-[#6D54E6] cursor-pointer transition-colors hover:underline"
               >
                 View Employees
               </button>
@@ -312,7 +344,7 @@ export default function StatusCards() {
       {selectedCard && (
         <EmployeeModal
           isOpen={!!selectedCard}
-          onClose={() => setSelectedCard(null)}
+          onClose={handleCloseModal}
           title={selectedCard.title}
           color={selectedCard.titleColor}
           employees={selectedCard.employees}
@@ -321,4 +353,3 @@ export default function StatusCards() {
     </>
   )
 }
-
