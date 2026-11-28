@@ -4,6 +4,7 @@ import {
   SquaresFour,
   Buildings,
   CurrencyInr,
+  Users,
 } from "phosphor-react"
 import ReusableSidebar, {
   ReusableSidebarItem,
@@ -12,6 +13,7 @@ import ReusableSidebar, {
 export const superAdminNavItems: ReusableSidebarItem[] = [
   { label: "Dashboard", href: "/superadmin", icon: SquaresFour, exact: true },
   { label: "Companies", href: "/superadmin/companies", icon: Buildings },
+  { label: "Teams", href: "/superadmin/teams", icon: Users },
   { label: "Finance", href: "/superadmin/finance", icon: CurrencyInr },
 ]
 

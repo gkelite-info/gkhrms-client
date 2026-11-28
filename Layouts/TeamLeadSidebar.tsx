@@ -6,6 +6,7 @@ import ReusableSidebar, {
 } from "../reusableComponents/ReusableSidebar"
 
 export const teamLeadNavItems: ReusableSidebarItem[] = [
+  { label: "My Team", href: "/teamlead/my-team", icon: UsersThree },
   { label: "Attendance", href: "/teamlead/attendance", icon: UsersThree },
   { label: "Performance", href: "/teamlead/performance", icon: ChartLineUp },
   {
@@ -22,10 +23,21 @@ export default function TeamLeadSidebar() {
     currentPath: string
   ): boolean => {
     const isOtherSubRoute = [
+      "/teamlead/my-team",
+      "/teamlead/myteam",
       "/teamlead/performance",
       "/teamlead/finance",
       "/teamlead/profile",
     ].some((route) => currentPath === route || currentPath.startsWith(`${route}/`))
+
+    if (item.href === "/teamlead/my-team") {
+      return (
+        currentPath === "/teamlead/my-team" ||
+        currentPath.startsWith("/teamlead/my-team/") ||
+        currentPath === "/teamlead/myteam" ||
+        currentPath.startsWith("/teamlead/myteam/")
+      )
+    }
 
     if (item.href === "/teamlead/attendance") {
       return (

@@ -7,7 +7,7 @@ import { INITIAL_TEAMS } from "./mockTeamsData"
 import CreateTeamModal from "./CreateTeamModal"
 import DeleteTeamModal from "./DeleteTeamModal"
 import ViewTeamModal from "./ViewTeamModal"
-import ReusableTable, { TableColumn } from "@/components/reusableComponents/ReusableTable"
+import ReusableTable, { TableColumn } from "../../src/components/reusableComponents/ReusableTable"
 import ReusablePagination from "../ReusablePagination"
 import ReusableAvatar from "../ReusableAvatar"
 

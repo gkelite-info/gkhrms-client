@@ -44,9 +44,9 @@ export default function MainLayout({
   return (
     <div className="w-full h-[100vh] bg-gradient-to-b from-[#DEDCFA] to-[#F1F1FD] flex flex-col overflow-hidden">
       <Header />
-      <div className="w-full h-[calc(100%-70px)] flex items-start overflow-hidden">
+      <div className="w-full flex-1 min-h-0 flex items-stretch overflow-hidden">
         <Sidebar />
-        <main className="h-full flex-1 min-w-0 flex flex-col overflow-y-auto overflow-x-hidden scrollbar-hide">
+        <main className="h-full flex-1 min-w-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
           {children}
         </main>
       </div>

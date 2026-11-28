@@ -21,6 +21,7 @@ export interface ReusablePaginationProps {
   className?: string
   align?: "center" | "between"
   layout?: "auto" | "two-row"
+  itemLabel?: string
 }
 
 export default function ReusablePagination({
@@ -37,6 +38,7 @@ export default function ReusablePagination({
   quickJumpPages,
   className = "",
   layout = "auto",
+  itemLabel = "entries",
 }: ReusablePaginationProps) {
   const [isJumpOpen, setIsJumpOpen] = useState(false)
 
@@ -79,7 +81,7 @@ export default function ReusablePagination({
                   <span>Showing </span>
                   <strong className="text-gray-800">0</strong> of{" "}
                   <strong className="text-gray-800">0</strong>
-                  <span> entries</span>
+                  <span> {itemLabel}</span>
                 </>
               ) : (
                 <>
@@ -87,7 +89,7 @@ export default function ReusablePagination({
                   <strong className="text-gray-800">{startItem.toLocaleString()}</strong>-
                   <strong className="text-gray-800">{endItem.toLocaleString()}</strong> of{" "}
                   <strong className="text-gray-800">{totalItems.toLocaleString()}</strong>
-                  <span> entries</span>
+                  <span> {itemLabel}</span>
                 </>
               )
             ) : (
