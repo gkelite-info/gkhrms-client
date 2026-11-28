@@ -26,6 +26,9 @@ export interface ChairmanMemberItem {
   status: "Active" | "Inactive"
   avatar?: string
   category: ChairmanRoleCategoryId
+  phone?: string
+  workMode?: string
+  joinDate?: string
 }
 
 export interface ChairmanFilterState {

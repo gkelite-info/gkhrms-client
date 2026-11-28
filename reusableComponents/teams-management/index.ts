@@ -5,3 +5,5 @@ export { default as HrTeamsManagementContainer } from "./hr-manager/HrTeamsManag
 export * from "./types"
 export * from "./hr-manager/types"
 export * from "./chairman"
+export * from "./product-manager"
+export * from "./team-lead"

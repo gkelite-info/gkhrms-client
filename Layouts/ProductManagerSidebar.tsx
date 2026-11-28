@@ -6,6 +6,7 @@ import ReusableSidebar, {
 } from "../reusableComponents/ReusableSidebar"
 
 export const productManagerNavItems: ReusableSidebarItem[] = [
+  { label: "My Team", href: "/productmanager/my-team", icon: UsersThree },
   { label: "Attendance", href: "/productmanager/attendance", icon: UsersThree },
   {
     label: "Finance & Payroll",
@@ -21,6 +22,7 @@ export default function ProductManagerSidebar() {
   ): boolean => {
     const isOtherSubRoute = [
       "/productmanager/finance",
+      "/productmanager/my-team",
     ].some((route) => currentPath === route || currentPath.startsWith(`${route}/`))
 
     if (item.href === "/productmanager/attendance") {

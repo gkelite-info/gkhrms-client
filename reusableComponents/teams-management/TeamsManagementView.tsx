@@ -9,7 +9,8 @@ import TeamsTableView from "./TeamsTableView"
 import TeamTreeView from "./TeamTreeView"
 import TeamChatView from "./chat/TeamChatView"
 import HrTeamsManagementContainer from "./hr-manager/HrTeamsManagementContainer"
-import { ChairmanTeamsManagementView } from "./chairman"
+import { ChairmanTeamsManagementView, ChairmanTeamTreeView, ChairmanTeamChatView } from "./chairman"
+import { ProductManagerTeamsView } from "./product-manager"
 
 const VALID_TABS: TeamsTabKey[] = ["management", "tree", "chat"]
 
@@ -96,9 +97,11 @@ export default function TeamsManagementView({
       />
 
       {activeTab === "management" && (
-        currentRole === "chairman" ? (
+        currentRole === "chairman" || currentRole === "manager" ? (
           <ChairmanTeamsManagementView />
-        ) : currentRole === "hrmanager" || currentRole === "manager" ? (
+        ) : currentRole === "productmanager" ? (
+          <ProductManagerTeamsView />
+        ) : currentRole === "hrmanager" ? (
           <HrTeamsManagementContainer />
         ) : (
           <TeamsTableView
@@ -116,18 +119,29 @@ export default function TeamsManagementView({
       )}
 
       {activeTab === "tree" && (
-        <TeamTreeView
-          teams={teams}
-          selectedTeamId={selectedTeamId}
-          onSelectTeamId={handleSelectTeamId}
-        />
+        currentRole === "chairman" || currentRole === "manager" ? (
+          <ChairmanTeamTreeView />
+        ) : (
+          <TeamTreeView
+            teams={teams}
+            selectedTeamId={selectedTeamId}
+            onSelectTeamId={handleSelectTeamId}
+          />
+        )
       )}
 
       {activeTab === "chat" && (
-        <TeamChatView
-          initialChatId={chatIdQuery}
-          onChatChange={handleChatChange}
-        />
+        currentRole === "chairman" || currentRole === "manager" ? (
+          <ChairmanTeamChatView
+            initialChatId={chatIdQuery}
+            onChatChange={handleChatChange}
+          />
+        ) : (
+          <TeamChatView
+            initialChatId={chatIdQuery}
+            onChatChange={handleChatChange}
+          />
+        )
       )}
     </div>
   )
